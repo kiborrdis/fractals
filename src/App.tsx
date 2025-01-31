@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
@@ -61,7 +62,7 @@ class WorkerRequestsManager {
     ) => void = () => {};
     let reject: () => void = () => {};
 
-    let promise = new Promise<Extract<WorkerResponse, { type: T }>>(
+    const promise = new Promise<Extract<WorkerResponse, { type: T }>>(
       (newResolve, newReject) => {
         resolve = newResolve;
         reject = newReject;
@@ -79,7 +80,7 @@ class WorkerRequestsManager {
 
   private async popQueueAndRun() {
     const emptyWorkerId = Object.keys(this.workersCurrentRequest).find(
-      (k) => !Boolean(this.workersCurrentRequest[Number(k)])
+      (k) => !this.workersCurrentRequest[Number(k)]
     );
 
     if (!emptyWorkerId) {
@@ -121,10 +122,10 @@ function App() {
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
+        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
-        <a href="https://react.dev" target="_blank">
+        <a href="https://react.dev" target="_blank" rel="noreferrer">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>

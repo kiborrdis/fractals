@@ -33,6 +33,7 @@ export const createIterationsColorConverterFn = (
   return (
     iterations: number,
     maxIterations: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _coords: Vector2
   ): RGBAVector => {
     if (iterations === -1) {
