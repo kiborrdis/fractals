@@ -1,0 +1,11 @@
+{
+  "name": "fractals",
+  "main": "cf/index.js",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}
