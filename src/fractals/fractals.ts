@@ -1,13 +1,13 @@
-import { JuliaSet, JuliaSetRenderer } from "./JuliaSetRenderer";
-import {
-  randomRange,
-  randomRangeInt,
-  distance,
-  createIterationsColorConverterFn,
-  convertScreenCoordToSpace,
-} from "./utils";
+// import { JuliaSet, JuliaSetRenderer } from "./JuliaSetRenderer";
+// import {
+//   randomRange,
+//   randomRangeInt,
+//   distance,
+//   createIterationsColorConverterFn,
+//   convertScreenCoordToSpace,
+// } from "./utils";
 import { createRenderLoop } from "./renderLoop";
-import { workers } from "../App";
+// import { workers } from "../App";
 import vertex from "./vertexshader.glsl?raw";
 import fragment from "./fragmentshader.glsl?raw";
 
@@ -16,14 +16,14 @@ export {};
 export type Vector2 = [number, number];
 export type RGBAVector = [number, number, number, number];
 
-type RendererContext = {
-  maxCoords: Vector2 | undefined;
-};
+// type RendererContext = {
+//   maxCoords: Vector2 | undefined;
+// };
 
-const width = 1000;
-const height = 600;
+// const width = 1000;
+// const height = 600;
 
-const initialIterationNumber = 60;
+// const initialIterationNumber = 60;
 
 // export const createFractalVisualizer = (
 //   canvas: HTMLCanvasElement,
@@ -127,7 +127,7 @@ export const createFractalVisualizer = (
 
   context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);
 
-  var positions = [
+  const positions = [
     0, 0,
     0, canvasSize[1],
     canvasSize[0], 0,
@@ -184,7 +184,7 @@ export const createFractalVisualizer = (
 
 
   const loop = createRenderLoop({
-    loopIterationCallback: async ({ timeDelta, timeSinceStart }) => {
+    loopIterationCallback: async ({ timeSinceStart }) => {
       // console.log('timeSinceStart', timeSinceStart, timeDelta, 1000/timeDelta);
       const iterationFractalC = [fractalC[0] + Math.cos(timeSinceStart/1000) * 0.05, fractalC[1] + Math.sin(timeSinceStart/1000) * 0.05]
 
@@ -215,9 +215,9 @@ export const createFractalVisualizer = (
       context.uniform2f(fractalRRangeStartLocation, fractalRRangeStart[0], fractalRRangeStart[1]);
       context.uniform2f(fractalRRangeEndLocation, fractalRRangeEnd[0], fractalRRangeEnd[1]);
 
-      var primitiveType = context.TRIANGLES;
-      var offset2 = 0;
-      var count2 = 6;
+      const primitiveType = context.TRIANGLES;
+      const offset2 = 0;
+      const count2 = 6;
       context.drawArrays(primitiveType, offset2, count2);
     },
   });
@@ -225,296 +225,296 @@ export const createFractalVisualizer = (
   return loop;
 };
 
-const renderLoop = (context: CanvasRenderingContext2D) => {
-  let timeS = 0;
+// const renderLoop = (context: CanvasRenderingContext2D) => {
+//   let timeS = 0;
 
-  const R = 2;
+//   const R = 2;
 
-  let lastOverflowColor: RGBAVector = [
-    randomRangeInt(0, 255),
-    randomRangeInt(0, 255),
-    randomRangeInt(0, 255),
-    255,
-  ];
+//   let lastOverflowColor: RGBAVector = [
+//     randomRangeInt(0, 255),
+//     randomRangeInt(0, 255),
+//     randomRangeInt(0, 255),
+//     255,
+//   ];
 
-  const renderer0 = new JuliaSetRenderer({
-    juliaSet: new JuliaSet({
-      c: [randomRange(-0.712, -0.5), randomRange(-0.712, -0.5)],
-      R: randomRange(80, 100),
-      midPoint: [0, 0],
-      maxIterations: initialIterationNumber,
-      screenSize: [width, height],
-      scale: 1,
-    }),
-    maxIterations: initialIterationNumber,
-    screenSize: [width, height],
-    colorConverter: createIterationsColorConverterFn(
-      [
-        [
-          randomRangeInt(0, 255),
-          randomRangeInt(0, 255),
-          randomRangeInt(0, 255),
-          255,
-        ],
-        [
-          randomRangeInt(0, 255),
-          randomRangeInt(0, 255),
-          randomRangeInt(0, 255),
-          255,
-        ],
-      ],
-      lastOverflowColor
-    ),
-  });
+//   const renderer0 = new JuliaSetRenderer({
+//     juliaSet: new JuliaSet({
+//       c: [randomRange(-0.712, -0.5), randomRange(-0.712, -0.5)],
+//       R: randomRange(80, 100),
+//       midPoint: [0, 0],
+//       maxIterations: initialIterationNumber,
+//       screenSize: [width, height],
+//       scale: 1,
+//     }),
+//     maxIterations: initialIterationNumber,
+//     screenSize: [width, height],
+//     colorConverter: createIterationsColorConverterFn(
+//       [
+//         [
+//           randomRangeInt(0, 255),
+//           randomRangeInt(0, 255),
+//           randomRangeInt(0, 255),
+//           255,
+//         ],
+//         [
+//           randomRangeInt(0, 255),
+//           randomRangeInt(0, 255),
+//           randomRangeInt(0, 255),
+//           255,
+//         ],
+//       ],
+//       lastOverflowColor
+//     ),
+//   });
 
-  const renderers = [renderer0];
-  const rendererContexts: RendererContext[] = [
-    {
-      maxCoords: undefined,
-    },
-  ];
+//   const renderers = [renderer0];
+//   const rendererContexts: RendererContext[] = [
+//     {
+//       maxCoords: undefined,
+//     },
+//   ];
 
-  let lastRender = Date.now();
+//   let lastRender = Date.now();
 
-  const numOfPixels = width * height;
-  const rawRender = () => {
-    render(context, renderers);
+//   const numOfPixels = width * height;
+//   const rawRender = () => {
+//     render(context, renderers);
 
-    const currentTime = Date.now();
-    const timeDelta = currentTime - lastRender;
-    lastRender = currentTime;
-    const deltaSeconds = timeDelta / 1000;
-    timeS += deltaSeconds;
+//     const currentTime = Date.now();
+//     const timeDelta = currentTime - lastRender;
+//     lastRender = currentTime;
+//     const deltaSeconds = timeDelta / 1000;
+//     timeS += deltaSeconds;
 
-    renderers.forEach((renderer, i) => {
-      const { maxCoords } = rendererContexts[i];
+//     renderers.forEach((renderer, i) => {
+//       const { maxCoords } = rendererContexts[i];
 
-      if (!maxCoords) {
-        rendererContexts[i].maxCoords = renderer.maxIntensityPoints[0];
-      } else {
-        let minDPoint = renderer.maxIntensityPoints[0];
-        let minD = distance(maxCoords, minDPoint);
+//       if (!maxCoords) {
+//         rendererContexts[i].maxCoords = renderer.maxIntensityPoints[0];
+//       } else {
+//         let minDPoint = renderer.maxIntensityPoints[0];
+//         let minD = distance(maxCoords, minDPoint);
 
-        renderer.maxIntensityPoints.forEach((p) => {
-          const newD = distance(maxCoords, p);
-          if (newD < minD) {
-            minD = newD;
-            minDPoint = p;
-          }
-        });
-        rendererContexts[i].maxCoords = minDPoint;
-      }
-      const zoom = rendererContexts[i].maxCoords;
+//         renderer.maxIntensityPoints.forEach((p) => {
+//           const newD = distance(maxCoords, p);
+//           if (newD < minD) {
+//             minD = newD;
+//             minDPoint = p;
+//           }
+//         });
+//         rendererContexts[i].maxCoords = minDPoint;
+//       }
+//       const zoom = rendererContexts[i].maxCoords;
 
-      const targetRXMidPoint = convertScreenCoordToSpace(
-        zoom?.[0] || 0,
-        renderer.screenSize[0],
-        renderer.juliaSet.midPoint[0],
-        renderer.juliaSet.R,
-        renderer.juliaSet.scale
-      );
-      const targetRYMidPoint = convertScreenCoordToSpace(
-        zoom?.[1] || 0,
-        renderer.screenSize[1],
-        renderer.juliaSet.midPoint[1],
-        renderer.juliaSet.R,
-        renderer.juliaSet.scale
-      );
+//       const targetRXMidPoint = convertScreenCoordToSpace(
+//         zoom?.[0] || 0,
+//         renderer.screenSize[0],
+//         renderer.juliaSet.midPoint[0],
+//         renderer.juliaSet.R,
+//         renderer.juliaSet.scale
+//       );
+//       const targetRYMidPoint = convertScreenCoordToSpace(
+//         zoom?.[1] || 0,
+//         renderer.screenSize[1],
+//         renderer.juliaSet.midPoint[1],
+//         renderer.juliaSet.R,
+//         renderer.juliaSet.scale
+//       );
 
-      const speed = i === 0 ? 0.5 : 0.35;
-      renderer.juliaSet.midPoint[0] -=
-        (renderer.juliaSet.midPoint[0] - targetRXMidPoint) *
-        deltaSeconds *
-        speed;
-      renderer.juliaSet.midPoint[1] -=
-        (renderer.juliaSet.midPoint[1] - targetRYMidPoint) *
-        deltaSeconds *
-        speed;
+//       const speed = i === 0 ? 0.5 : 0.35;
+//       renderer.juliaSet.midPoint[0] -=
+//         (renderer.juliaSet.midPoint[0] - targetRXMidPoint) *
+//         deltaSeconds *
+//         speed;
+//       renderer.juliaSet.midPoint[1] -=
+//         (renderer.juliaSet.midPoint[1] - targetRYMidPoint) *
+//         deltaSeconds *
+//         speed;
 
-      renderer.juliaSet.scale -=
-        renderer.juliaSet.scale * (speed * deltaSeconds);
+//       renderer.juliaSet.scale -=
+//         renderer.juliaSet.scale * (speed * deltaSeconds);
 
-      if (
-        i === renderers.length - 1 &&
-        renderer.numberOfOverflows / numOfPixels > 0.2
-      ) {
-        const prevOverflowColor = lastOverflowColor;
-        lastOverflowColor = [
-          randomRangeInt(0, 255),
-          randomRangeInt(0, 255),
-          randomRangeInt(0, 255),
-          255,
-        ];
-        renderers.push(
-          new JuliaSetRenderer({
-            juliaSet: new JuliaSet({
-              c: [randomRange(-0.712, -0.5), randomRange(-0.712, -0.5)],
-              R: randomRange(80, 100),
-              midPoint: [0, 0],
-              maxIterations: initialIterationNumber,
-              screenSize: [width, height],
-              scale: 1,
-            }),
-            maxIterations: initialIterationNumber,
-            screenSize: [width, height],
-            colorConverter: createIterationsColorConverterFn(
-              [
-                prevOverflowColor,
-                [
-                  randomRangeInt(0, 255),
-                  randomRangeInt(0, 255),
-                  randomRangeInt(0, 255),
-                  255,
-                ],
-              ],
-              lastOverflowColor
-            ),
-          })
-        );
-        rendererContexts.push({
-          maxCoords: undefined,
-        });
-      }
+//       if (
+//         i === renderers.length - 1 &&
+//         renderer.numberOfOverflows / numOfPixels > 0.2
+//       ) {
+//         const prevOverflowColor = lastOverflowColor;
+//         lastOverflowColor = [
+//           randomRangeInt(0, 255),
+//           randomRangeInt(0, 255),
+//           randomRangeInt(0, 255),
+//           255,
+//         ];
+//         renderers.push(
+//           new JuliaSetRenderer({
+//             juliaSet: new JuliaSet({
+//               c: [randomRange(-0.712, -0.5), randomRange(-0.712, -0.5)],
+//               R: randomRange(80, 100),
+//               midPoint: [0, 0],
+//               maxIterations: initialIterationNumber,
+//               screenSize: [width, height],
+//               scale: 1,
+//             }),
+//             maxIterations: initialIterationNumber,
+//             screenSize: [width, height],
+//             colorConverter: createIterationsColorConverterFn(
+//               [
+//                 prevOverflowColor,
+//                 [
+//                   randomRangeInt(0, 255),
+//                   randomRangeInt(0, 255),
+//                   randomRangeInt(0, 255),
+//                   255,
+//                 ],
+//               ],
+//               lastOverflowColor
+//             ),
+//           })
+//         );
+//         rendererContexts.push({
+//           maxCoords: undefined,
+//         });
+//       }
 
-      if (i === 0 && renderer.renderedNumber < 10) {
-        renderers.shift();
-        rendererContexts.shift();
-      }
-    });
+//       if (i === 0 && renderer.renderedNumber < 10) {
+//         renderers.shift();
+//         rendererContexts.shift();
+//       }
+//     });
 
-    requestAnimationFrame(rawRender);
-  };
+//     requestAnimationFrame(rawRender);
+//   };
 
-  requestAnimationFrame(rawRender);
-};
+//   requestAnimationFrame(rawRender);
+// };
 
-const render = async (
-  context: CanvasRenderingContext2D,
-  renderers: JuliaSetRenderer[]
-) => {
-  const pairs = splitToPairs(renderers[0].screenSize[0], workers.length);
-  const width = renderers[0].screenSize[0];
-  const height = renderers[0].screenSize[1];
+// const render = async (
+//   context: CanvasRenderingContext2D,
+//   renderers: JuliaSetRenderer[]
+// ) => {
+//   const pairs = splitToPairs(renderers[0].screenSize[0], workers.length);
+//   const width = renderers[0].screenSize[0];
+//   const height = renderers[0].screenSize[1];
 
-  const intensities = await Promise.all(
-    pairs.map((pair) =>
-      workers.request({
-        type: "calculate_fractal_points",
-        request: {
-          xStart: pair[0],
-          xEnd: pair[1],
-          juliaSetParams: {
-            c: renderers[0].juliaSet.c,
-            maxIterations: renderers[0].juliaSet.maxIterations,
-            midPoint: renderers[0].juliaSet.midPoint,
-            R: renderers[0].juliaSet.R,
-            scale: renderers[0].juliaSet.scale,
-            screenSize: renderers[0].juliaSet.screenSize,
-          },
-        },
-      })
-    )
-  );
+//   const intensities = await Promise.all(
+//     pairs.map((pair) =>
+//       workers.request({
+//         type: "calculate_fractal_points",
+//         request: {
+//           xStart: pair[0],
+//           xEnd: pair[1],
+//           juliaSetParams: {
+//             c: renderers[0].juliaSet.c,
+//             maxIterations: renderers[0].juliaSet.maxIterations,
+//             midPoint: renderers[0].juliaSet.midPoint,
+//             R: renderers[0].juliaSet.R,
+//             scale: renderers[0].juliaSet.scale,
+//             screenSize: renderers[0].juliaSet.screenSize,
+//           },
+//         },
+//       })
+//     )
+//   );
 
-  var canvasData = new ImageData(width, height);
+//   var canvasData = new ImageData(width, height);
 
-  renderers[0].clearIntensity();
+//   renderers[0].clearIntensity();
 
-  pairs.forEach((pair, index) => {
-    const data = intensities[index].response.iterations;
+//   pairs.forEach((pair, index) => {
+//     const data = intensities[index].response.iterations;
 
-    for (let x = pair[0], xi = 0; x < pair[1]; x++, xi++) {
-      for (let y = 0; y < height; y++) {
-        let { color, overflowed } = { color: [0, 0, 0, 0], overflowed: true };
+//     for (let x = pair[0], xi = 0; x < pair[1]; x++, xi++) {
+//       for (let y = 0; y < height; y++) {
+//         let { color, overflowed } = { color: [0, 0, 0, 0], overflowed: true };
         
-        color = renderers[0].colorConverter(data[xi][y], renderers[0].maxIterations, [x, y]);
+//         color = renderers[0].colorConverter(data[xi][y], renderers[0].maxIterations, [x, y]);
 
-        const index = (x + y * width) * 4;
+//         const index = (x + y * width) * 4;
 
-        canvasData.data[index] = color[0];
-        canvasData.data[index + 1] = color[1];
-        canvasData.data[index + 2] = color[2];
-        canvasData.data[index + 3] = color[3];
-      }
-    }
-  });
+//         canvasData.data[index] = color[0];
+//         canvasData.data[index + 1] = color[1];
+//         canvasData.data[index + 2] = color[2];
+//         canvasData.data[index + 3] = color[3];
+//       }
+//     }
+//   });
 
-  // for (let x = 0; x <= width; x++) {
-  //   for (let y = 0; y <= height; y++) {
-  //     let { color, overflowed } = { color: [0, 0, 0, 0], overflowed: true };
+//   // for (let x = 0; x <= width; x++) {
+//   //   for (let y = 0; y <= height; y++) {
+//   //     let { color, overflowed } = { color: [0, 0, 0, 0], overflowed: true };
 
-  //     renderers.some((renderer) => {
-  //       ({ color, overflowed } = renderer.getPixelColor([x, y]));
-  //       return !overflowed;
-  //     });
+//   //     renderers.some((renderer) => {
+//   //       ({ color, overflowed } = renderer.getPixelColor([x, y]));
+//   //       return !overflowed;
+//   //     });
 
-  //     const index = (x + y * width) * 4;
+//   //     const index = (x + y * width) * 4;
 
-  //     canvasData.data[index] = color[0];
-  //     canvasData.data[index + 1] = color[1];
-  //     canvasData.data[index + 2] = color[2];
-  //     canvasData.data[index + 3] = color[3];
-  //   }
-  // }
+//   //     canvasData.data[index] = color[0];
+//   //     canvasData.data[index + 1] = color[1];
+//   //     canvasData.data[index + 2] = color[2];
+//   //     canvasData.data[index + 3] = color[3];
+//   //   }
+//   // }
 
-  context.putImageData(canvasData, 0, 0);
-};
+//   context.putImageData(canvasData, 0, 0);
+// };
 
-const render2 = async (
-  context: CanvasRenderingContext2D,
-  renderers: JuliaSetRenderer[]
-) => {
+// const render2 = async (
+//   context: CanvasRenderingContext2D,
+//   renderers: JuliaSetRenderer[]
+// ) => {
   
 
-  var canvasData = context.getImageData(0, 0, width, height);
-  renderers[0].clearIntensity();
+//   var canvasData = context.getImageData(0, 0, width, height);
+//   renderers[0].clearIntensity();
 
-  for (let x = 0; x <= width; x++) {
-    for (let y = 0; y <= height; y++) {
-      let { color, overflowed } = { color: [0, 0, 0, 0], overflowed: true };
+//   for (let x = 0; x <= width; x++) {
+//     for (let y = 0; y <= height; y++) {
+//       let { color, overflowed } = { color: [0, 0, 0, 0], overflowed: true };
 
-      renderers.some((renderer) => {
-        ({ color, overflowed } = renderer.getPixelColor([x, y]));
-        return !overflowed;
-      });
+//       renderers.some((renderer) => {
+//         ({ color, overflowed } = renderer.getPixelColor([x, y]));
+//         return !overflowed;
+//       });
 
-      const index = (x + y * width) * 4;
+//       const index = (x + y * width) * 4;
 
-      canvasData.data[index] = color[0];
-      canvasData.data[index + 1] = color[1];
-      canvasData.data[index + 2] = color[2];
-      canvasData.data[index + 3] = color[3];
-    }
-  }
+//       canvasData.data[index] = color[0];
+//       canvasData.data[index + 1] = color[1];
+//       canvasData.data[index + 2] = color[2];
+//       canvasData.data[index + 3] = color[3];
+//     }
+//   }
 
-  context.putImageData(canvasData, 0, 0);
-};
+//   context.putImageData(canvasData, 0, 0);
+// };
 
-const splitToPairs = (
-  numberToSplit: number,
-  numberOfSplits: number
-): [number, number][] => {
-  let chunkSize = numberToSplit / numberOfSplits;
+// const splitToPairs = (
+//   numberToSplit: number,
+//   numberOfSplits: number
+// ): [number, number][] => {
+//   let chunkSize = numberToSplit / numberOfSplits;
 
-  if (chunkSize < 1) {
-    return [];
-  }
+//   if (chunkSize < 1) {
+//     return [];
+//   }
 
-  chunkSize = Math.floor(chunkSize);
+//   chunkSize = Math.floor(chunkSize);
 
-  const splits: [number, number][] = [];
+//   const splits: [number, number][] = [];
 
-  for (let i = 0; i < numberOfSplits; i++) {
-    splits.push([i * chunkSize, (i + 1) * chunkSize]);
-  }
+//   for (let i = 0; i < numberOfSplits; i++) {
+//     splits.push([i * chunkSize, (i + 1) * chunkSize]);
+//   }
 
-  splits[numberOfSplits - 1][1] += numberToSplit % numberOfSplits;
+//   splits[numberOfSplits - 1][1] += numberToSplit % numberOfSplits;
 
-  return splits;
-};
+//   return splits;
+// };
 
 function createShader(gl: WebGLRenderingContext, type: WebGLRenderingContext['VERTEX_SHADER'] | WebGLRenderingContext['FRAGMENT_SHADER'], source: string) {
-  var shader = gl.createShader(type);
+  const shader = gl.createShader(type);
 
   if (!shader) {
     return;
@@ -522,7 +522,7 @@ function createShader(gl: WebGLRenderingContext, type: WebGLRenderingContext['VE
 
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
   if (success) {
     return shader;
   }
@@ -532,7 +532,7 @@ function createShader(gl: WebGLRenderingContext, type: WebGLRenderingContext['VE
 }
 
 function createProgram(gl: WebGLRenderingContext, vertexShader: WebGLShader | undefined, fragmentShader: WebGLShader | undefined) {
-  var program = gl.createProgram();
+  const program = gl.createProgram();
 
   if (!program) {
     return;
@@ -545,7 +545,7 @@ function createProgram(gl: WebGLRenderingContext, vertexShader: WebGLShader | un
   }
 
   gl.linkProgram(program);
-  var success = gl.getProgramParameter(program, gl.LINK_STATUS);
+  const success = gl.getProgramParameter(program, gl.LINK_STATUS);
   if (success) {
     return program;
   }

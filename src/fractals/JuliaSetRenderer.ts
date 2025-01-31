@@ -131,7 +131,7 @@ export class JuliaSet {
 
     let zxSqr = Math.pow(zx, 2);
     let zySqr = Math.pow(zy, 2);
-    let RSqr = Math.pow(this.R, 2);
+    const RSqr = Math.pow(this.R, 2);
 
     while (zxSqr + zySqr < RSqr && iteration < this.maxIterations) {
       zy = 2 * zx * zy + cy;
