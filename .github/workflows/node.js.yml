@@ -30,4 +30,10 @@ jobs:
     - run: npm run validate
     - run: npm run build --if-present
     - run: npm test --if-present
-    - run: docker run hello-world
+    - run: docker run \
+            -p 5173:5173 \
+            --detach \
+            --env TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            --env REPO="kiborrdis/fractals" \
+            --env PACKAGE="" \
+            deployer1
