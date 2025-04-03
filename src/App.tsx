@@ -129,7 +129,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>It's working</h1>
+      <h1>Its working</h1>
       <div className="card">
         <canvas
           ref={(el) => (ref.current = el)}
