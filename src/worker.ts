@@ -5,7 +5,7 @@ import {
   WorkerRequest,
 } from "./messages/types";
 
-console.log("hello1");
+console.log("hello2");
 
 onmessage = (e) => {
   const request = e.data as WorkerRequest;
