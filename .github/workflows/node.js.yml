@@ -6,27 +6,23 @@ name: Node.js CI
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    runs-on: [self-hosted]
 
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+    - run: node -v
+    - run: npm -v
     - run: npm ci
+    - run: id
+    - run: ls -l /var/run/docker.sock
+    - run: ls -i /var/run/docker.sock
+    - run: whoami
     - run: npm run validate
     - run: npm run build --if-present
     - run: npm test --if-present
+    - run: docker container rm --force fractalprod
+    - run: docker run --detach -p 5173:5173   --env TOKEN=${{ secrets.GITHUB_TOKEN }}   --env REPO="kiborrdis/fractals" --env PACKAGE="" --name fractalprod deployer1
