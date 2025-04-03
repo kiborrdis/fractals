@@ -26,4 +26,5 @@ jobs:
     - run: npm run validate
     - run: npm run build --if-present
     - run: npm test --if-present
-    - run: docker run --detach -p 5173:5173   --env TOKEN=${{ secrets.GITHUB_TOKEN }}   --env REPO="kiborrdis/fractals"   --env PACKAGE=""   deployer1
+    - run: docker container rm --force fractalprod
+    - run: docker run --detach -p 5173:5173   --env TOKEN=${{ secrets.GITHUB_TOKEN }}   --env REPO="kiborrdis/fractals" --env PACKAGE="" --name fractalprod deployer1
