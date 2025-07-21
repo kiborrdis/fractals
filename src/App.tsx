@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
 import { createFractalVisualizer } from "./fractals/fractals";
 import {
   GenericWorkerRequest,
@@ -101,60 +98,98 @@ class WorkerRequestsManager {
 export const workers = new WorkerRequestsManager();
 
 function App() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [[width, height], setSize] = useState([800, 600]);
+
   const ref = useRef<HTMLCanvasElement | null>(null);
   const loopRef = useRef<{
     run: () => void;
     stop: () => void;
+    running: boolean;
   }>();
-  const [run, setRun] = useState(true);
 
   useEffect(() => {
     if (!ref.current) {
       return;
     }
-    loopRef.current = createFractalVisualizer(ref.current, [800, 600]);
+    loopRef.current = createFractalVisualizer(ref.current, [width, height]);
 
     return () => {
       loopRef.current?.stop();
     };
-  }, []);
+  }, [width, height]);
+
+  useEffect(() => {
+    const obs = new ResizeObserver((entries) => {
+      if (containerRef.current) {
+        const entry = entries[0];
+        if (entry) {
+          setSize((prev) => {
+            if (
+              prev[0] === entry.contentRect.width &&
+              prev[1] === entry.contentRect.height
+            ) {
+              return prev;
+            }
+            return [entry.contentRect.width, entry.contentRect.height];
+          });
+        }
+      }
+    });
+
+    if (containerRef.current) {
+      obs.observe(containerRef.current);
+    }
+
+    return () => {
+      obs.disconnect();
+    };
+  });
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Its working</h1>
-      <div className="card">
-        <canvas
-          ref={(el) => (ref.current = el)}
-          style={{ width: 800, height: 600 }}
-          width={800}
-          height={600}
-        />
-        <button
-          onClick={() => {
-            if (run) {
-              loopRef.current?.stop();
-              setRun(false);
-            } else {
-              loopRef.current?.run();
-              setRun(true);
+    <div
+      onDoubleClick={() => {
+        if (!loopRef.current) {
+          return;
+        }
+
+        if (loopRef.current.running) {
+          loopRef.current.stop();
+        } else {
+          loopRef.current.run();
+        }
+      }}
+      ref={(el) => {
+        if (el) {
+          setSize((prev) => {
+            if (prev[0] === el.clientWidth && prev[1] === el.clientHeight) {
+              return prev;
             }
-          }}
-        >
-          {run ? "Pause" : "Play"}
-        </button>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+            return [el.clientWidth, el.clientHeight];
+          });
+        }
+
+        containerRef.current = el;
+      }}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <canvas
+        ref={(el) => (ref.current = el)}
+        style={{ width, height }}
+        width={width}
+        height={height}
+      />
+    </div>
   );
 }
 

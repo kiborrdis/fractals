@@ -28,18 +28,23 @@ export const createRenderLoop = ({
     requestAnimationFrame(performLoopIteration);
   }
 
-  return {
+  const res = {
+    running: true,
     stop: () => {
       if (running) {
         running = false;
+        res.running = false;
       }
     },
     run: () => {
       if (!running) {
         lastRender = Date.now();
         running = true;
+        res.running = true;
         requestAnimationFrame(performLoopIteration);
       }
     },
   };
+
+  return res;
 };
