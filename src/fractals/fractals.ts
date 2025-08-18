@@ -238,7 +238,7 @@ export const createFractalVisualizer = (
   const uniqnessMod1 = (Math.random() - 0.5) * 300;
 
   const uniqnessMod2 = (Math.random() - 0.5) * 300;
-  const startSep = randomRange(1.5, 3);
+  const startSep = randomRange(1.5, 12);
   const loop = createRenderLoop({
     loopIterationCallback: async ({ timeSinceStart }) => {
       const originalTimeSinceStart = timeSinceStart;

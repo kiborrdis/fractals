@@ -1,5 +1,5 @@
 precision highp float;
-
+const float PI = 3.141592653589793238462;
 uniform vec2 u_resolution;
 uniform vec2 u_fractal_c;
 uniform float u_fractal_r;
@@ -27,16 +27,32 @@ vec3 palette(float t) {
 }
 
   void main() {
-    float cy = u_fractal_c.x;
-    float cx = u_fractal_c.y;
-    float r = u_fractal_r;
+    float slowTime = u_time / 50000.0;
+    vec2 base = vec2(cos(slowTime), sin(slowTime));
+    base = vec2(0.707106781186548, 0.707106781186548);
 
     float sep = u_sep;
     vec2 centeredCoord = gl_FragCoord.xy * 2.0 - u_resolution;
 
+    vec2 normCentCoord = abs((centeredCoord / (u_resolution)));
+
     vec2 uv = centeredCoord / u_resolution.x;
-    vec2 preparedCoord = mod(centeredCoord, u_resolution.x / sep) - u_resolution.x / (sep * 2.0);
+    //sep = abs(sin(slowTime / 1.3) * 1.0) + 1.0;
+    vec2 preparedCoord = mod(centeredCoord - u_resolution.x / (sep * 2.0), u_resolution.x / sep) - u_resolution.x / (sep * 2.0);
+
+    //preparedCoord = centeredCoord;
     vec2 coord = abs(preparedCoord/ u_resolution.y);
+
+    vec2 normailizedCentrCoord = coord / length(coord);
+    float angle = acos(base.x * normailizedCentrCoord.x + base.y * normailizedCentrCoord.y) * (180.0 / PI);
+    float sepAng = abs(sin(slowTime) * 45.0) + 45.0;
+    sepAng = 15.0;
+    float part = abs(mod(angle, sepAng) - (sepAng/2.0)) / (180.0 / PI);
+
+    vec2 nCrd = vec2(sin(part), cos(part)) * length(coord);
+
+    coord = nCrd;
+
 
     vec3 palColor = palette(length(uv) + u_time / 1000.0);
 
@@ -45,6 +61,10 @@ vec3 palette(float t) {
     // coord = fract(coord*2.0) - 0.5;
    
     vec2 frcoords = (u_fractal_r_range_end - u_fractal_r_range_start) * coord+0.5 + u_fractal_r_range_start;
+        
+    float cy = u_fractal_c.x + 0.018 * abs(normCentCoord.x);
+    float cx = u_fractal_c.y + 0.018 * abs(normCentCoord.y);
+    float r = u_fractal_r + 0.018 * length(normCentCoord);
 
     float zx = frcoords.x;
     float zy = frcoords.y;
@@ -99,4 +119,6 @@ vec3 palette(float t) {
         vec3 resultColor = ((0.9 + 0.1*(1.0- colorInt))*color + (0.0 + 0.1 * colorInt )*palColor);
         gl_FragColor = vec4(resultColor,1.0);
     }
+
+    //gl_FragColor = vec4(normCentCoord.x * 1.0, normCentCoord.y * 1.0, 0.0, 1.0);
   }
