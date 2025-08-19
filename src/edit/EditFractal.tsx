@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { ActionIcon, Group, Paper, Stack, Tabs } from "@mantine/core";
-import { FractalParams, FractalParamsBuildRules } from "../fractals/types";
+import { FractalParams, FractalParamsBuildRules, RangeNumberRule, RuleType } from "../fractals/types";
 import { FaPlay } from "react-icons/fa";
 import { useStateWithQueryPersistence } from "../useStateWithQueryPersistence";
 import { DisplayFractal } from "../DisplayFractal";
 import { makeRulesBasedOnParams } from "../ruleConversion";
 import { ShapeParams } from "./ShapeParams";
 import { ColorParams } from "./ColorParams";
+import { PeriodGraph } from "./PeriodGraph";
 
 const initialFractalParams: FractalParams = {
   invert: false,
@@ -36,11 +37,12 @@ export function EditFractal() {
   const [play, setPlay] = useState(false);
   const [params, setParams] =
     useStateWithQueryPersistence<FractalParamsBuildRules>("s", defaultRules);
+  const [time, setTime] = useState(0);
 
   return (
     <>
-      <DisplayFractal params={params} play={play} />
-
+      <DisplayFractal params={params} play={play} onRender={setTime} />
+      <PeriodGraph rangeRules={findAllRangeRules(params)} time={time} />
       <Paper
         w={400}
         style={{
@@ -83,4 +85,18 @@ export function EditFractal() {
       </Paper>
     </>
   );
+}
+
+
+const findAllRangeRules = (
+  rules: FractalParamsBuildRules
+): RangeNumberRule[] => {
+  return Object.values(rules).reduce((acc, value) => {
+    if (Array.isArray(value)) {
+      acc.push(...value.filter((v) => v.t === RuleType.RangeNumber));
+    } else if (value.t === RuleType.RangeNumber) {
+      acc.push(value);
+    }
+    return acc;
+  }, [] as RangeNumberRule[]);
 }

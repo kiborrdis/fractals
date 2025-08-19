@@ -2,16 +2,12 @@
 import { randomRange } from "./utils";
 import { createRenderLoop } from "./renderLoop";
 import {
-  ConstBooleanRule,
-  ConvertToBuildResult,
-  FractalParams,
   FractalParamsBuildRules,
-  NumberBuildRule,
-  RuleType,
   Vector2,
   Vector3,
 } from "./types";
 import { ShaderFractal } from "./shader/ShaderFractal";
+import { makeFractalParamsFromRules } from "../ruleConversion";
 
 export const createFractalVisualizer = (
   canvas: HTMLCanvasElement,
@@ -92,62 +88,11 @@ export const createFractalVisualizer = (
   return loop;
 };
 
-const makeScalarFromRule = (
-  rule: NumberBuildRule | ConstBooleanRule,
-  time: number = 0
-): number | boolean => {
-  if (rule.t === RuleType.ConstBoolean) {
-    return rule.value;
-  }
-
-  if (rule.t === RuleType.StaticNumber) {
-    return rule.value;
-  }
-
-  if (rule.t === RuleType.RangeNumber) {
-    const [start, end] = rule.range;
-
-    return (
-      start +
-      (end - start) / 2 +
-      ((end - start) / 2) *
-        Math.sin(time / ((rule.cycleSeconds * 1000) / Math.PI))
-    );
-  }
-
-  return 0;
-};
-
-const makeArrayFromRules = <V extends NumberBuildRule[]>(
-  rules: V,
-  time: number = 0
-): ConvertToBuildResult<V> => {
-  return rules.map((rule) =>
-    makeScalarFromRule(rule, time)
-  ) as ConvertToBuildResult<V>;
-};
-
-export const makeFractalParamsFromRules = (
-  rules: FractalParamsBuildRules,
-  time: number = 0
-): FractalParams => {
-  return Object.entries(rules).reduce((acc, [key, value]) => {
-    if (Array.isArray(value)) {
-      // @ts-expect-error TODO research, maybe it can be done properly now
-      acc[key as keyof FractalParams] = makeArrayFromRules(value, time);
-      return acc;
-    }
-
-    // @ts-expect-error TODO research, maybe it can be done properly now
-    acc[key] = makeScalarFromRule(value, time);
-    return acc;
-  }, {} as FractalParams);
-};
-
 export const createStaticFractalVisualizer = (
   canvas: HTMLCanvasElement,
   canvasSize: Vector2,
-  initialFractalParams: FractalParamsBuildRules
+  initialFractalParams: FractalParamsBuildRules,
+  renderCallback?: (time: number) => void,
 ) => {
   let fractalParamsRules: FractalParamsBuildRules = {
     ...initialFractalParams,
@@ -163,6 +108,10 @@ export const createStaticFractalVisualizer = (
         ...makeFractalParamsFromRules(fractalParamsRules, timeSinceStart),
         time: timeSinceStart,
       });
+
+      if (renderCallback) {
+        renderCallback(timeSinceStart);
+      }
     },
   });
 

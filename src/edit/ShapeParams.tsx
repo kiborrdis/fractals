@@ -2,7 +2,7 @@ import { Stack } from "@mantine/core";
 import { BooleanRuleEdit } from "./BooleanRuleEdit";
 import { FractalParamsBuildRules } from "../fractals/types";
 import { NumberRuleEdit } from "./NumberRuleEdit";
-import { Vector2RuleEdit } from "./Vector2RuleEdit";
+import { Vector2RuleEdit, Vector2RulePolarEdit } from "./Vector2RuleEdit";
 
 export function ShapeParams({
   params,
@@ -30,6 +30,15 @@ export function ShapeParams({
           setParams((prev) => ({
             ...prev,
             invert: value,
+          }));
+        }}
+      />
+      <Vector2RulePolarEdit
+        value={params.c}
+        onChange={(value) => {
+          setParams((prev) => ({
+            ...prev,
+            c: value,
           }));
         }}
       />

@@ -9,9 +9,11 @@ import { DisplayCanvas } from "./DisplayCanvas/DisplayCanvas";
 export const DisplayFractal = ({
   params,
   play,
+  onRender
 }: {
   params: FractalParamsBuildRules;
   play: boolean;
+  onRender?: (time: number) => void;
 }) => {
   const [[width, height], setSize] = useState([800, 600]);
 
@@ -25,7 +27,8 @@ export const DisplayFractal = ({
     const newVisualizer = createStaticFractalVisualizer(
       canvas,
       [width, height],
-      params
+      params,
+      onRender
     );
     fractalRef.current = newVisualizer;
 
@@ -36,7 +39,7 @@ export const DisplayFractal = ({
     return () => {
       newVisualizer.loop.stop();
     };
-  }, [canvas]);
+  }, [canvas, onRender]);
 
   useEffect(() => {
     if (fractalRef.current) {
