@@ -159,7 +159,6 @@ export const createStaticFractalVisualizer = (
 
   const loop = createRenderLoop({
     loopIterationCallback: async ({ timeSinceStart }) => {
-      console.log("??");
       shaderFractal.render({
         ...makeFractalParamsFromRules(fractalParamsRules, timeSinceStart),
         time: timeSinceStart,
