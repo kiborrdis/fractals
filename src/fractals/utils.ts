@@ -1,4 +1,4 @@
-import { RGBAVector, Vector2 } from "./fractals";
+import { RGBAVector, Vector2 } from "./types";
 
 export const distance = (a: Vector2, b: Vector2): number =>
   Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));

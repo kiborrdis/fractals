@@ -13,7 +13,7 @@ export const createRenderLoop = ({
   let timeSinceStart = 0;
   const performLoopIteration = async () => {
     const currentTime = Date.now();
-    const timeDelta = currentTime - lastRender;
+    const timeDelta = (currentTime - lastRender);
     lastRender = currentTime;
     timeSinceStart += timeDelta;
 

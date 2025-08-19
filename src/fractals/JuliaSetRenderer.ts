@@ -1,4 +1,4 @@
-import { Vector2, RGBAVector } from "./fractals";
+import { Vector2, RGBAVector } from "./types";
 import { convertScreenCoordToSpace } from "./utils";
 
 export class JuliaSetRenderer {
