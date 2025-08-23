@@ -6,6 +6,8 @@ export type RGBAVector = Vector4;
 export type FractalParams = {
   invert: boolean;
   mirror: boolean;
+  hexMirroringFactor: number;
+  hexMirroringPerDistChange: Vector2;
   colorStart: Vector3;
   colorEnd: Vector3;
   colorOverflow: Vector3;
@@ -45,6 +47,7 @@ export type RangeNumberRule = {
   t: RuleType.RangeNumber;
   range: Vector2;
   cycleSeconds: number;
+  phaseSeconds: number;
 };
 
 export type NumberBuildRule = StaticNumberRule | RangeNumberRule;

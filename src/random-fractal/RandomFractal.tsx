@@ -42,6 +42,8 @@ const longTime = 240;
 
 
 const randomParams: FractalParamsBuildRules = {
+  hexMirroringFactor: makeRuleFromNumber(randomRange(0, 0.6)),
+  hexMirroringPerDistChange: makeRuleFromArray([0, 0] as const),
   invert: makeRuleFromBoolean(Math.random() < 0.5),
   mirror: makeRuleFromBoolean(true),
   colorStart: makeRuleFromArray([

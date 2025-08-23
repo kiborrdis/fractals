@@ -61,8 +61,10 @@ export const createFractalVisualizer = (
           Math.sin(timeSinceStart / (1412 + uniqnessMod2)) * 0.02,
       ];
       shaderFractal.render({
+        hexMirroringFactor: 0.0,
         invert: false,
         mirror: true,
+        hexMirroringPerDistChange: [0, 0],
         colorStart,
         colorEnd,
         colorOverflow,
@@ -120,7 +122,7 @@ export const createStaticFractalVisualizer = (
       ...newParams,
     };
 
-    shaderFractal.render(makeFractalParamsFromRules(fractalParamsRules));
+    shaderFractal.render(makeFractalParamsFromRules(fractalParamsRules, loop.getCurrentTime()));
   };
 
   return {

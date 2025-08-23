@@ -4,6 +4,8 @@ export const makeRulesBasedOnParams = (
   params: FractalParams
 ): FractalParamsBuildRules => {
   const rules: FractalParamsBuildRules = {
+    hexMirroringFactor: makeRuleFromNumber(params.hexMirroringFactor),
+    hexMirroringPerDistChange: makeRuleFromArray(params.hexMirroringPerDistChange),
     invert: makeRuleFromBoolean(params.invert),
     mirror: makeRuleFromBoolean(params.mirror),
     colorStart: makeRuleFromArray(params.colorStart),
@@ -50,14 +52,18 @@ export const makeRuleFromArray = <V extends number[]>(value: V): ConvertToRule<V
 
 export const rangeRule = (
   range: [number, number],
-  cycleSeconds: number
+  cycleSeconds: number,
+  phaseSeconds: number = 0
 ): RangeNumberRule => {
   return {
     t: RuleType.RangeNumber,
     range,
     cycleSeconds,
+    phaseSeconds,
   };
-};const makeScalarFromRule = (
+};
+
+const makeScalarFromRule = (
   rule: NumberBuildRule | ConstBooleanRule,
   time: number = 0
 ): number | boolean => {
@@ -75,6 +81,7 @@ export const rangeRule = (
 
   return 0;
 };
+
 export const makeNumberFromRangeRule = (
   rule: RangeNumberRule,
   time: number = 0
@@ -85,9 +92,10 @@ export const makeNumberFromRangeRule = (
     start +
     (end - start) / 2 +
     ((end - start) / 2) *
-    Math.sin(time / ((rule.cycleSeconds * 1000) / Math.PI))
+    Math.sin((time + rule.phaseSeconds * 1000  ) / ((rule.cycleSeconds * 1000) / Math.PI) )
   );
 };
+
 const makeArrayFromRules = <V extends NumberBuildRule[]>(
   rules: V,
   time: number = 0
@@ -100,7 +108,7 @@ export const makeFractalParamsFromRules = (
   rules: FractalParamsBuildRules,
   time: number = 0
 ): FractalParams => {
-  return Object.entries(rules).reduce((acc, [key, value]) => {
+  const params = Object.entries(rules).reduce((acc, [key, value]) => {
     if (Array.isArray(value)) {
       // @ts-expect-error TODO research, maybe it can be done properly now
       acc[key as keyof FractalParams] = makeArrayFromRules(value, time);
@@ -111,5 +119,14 @@ export const makeFractalParamsFromRules = (
     acc[key] = makeScalarFromRule(value, time);
     return acc;
   }, {} as FractalParams);
+
+  if (!params.mirror) {
+    params.splitNumber = 0.5;
+    params.angularSplitNumber = 181;
+    params.linearSplitPerDistChange = [0, 0];
+    params.radialSplitPerDistChange = [0, 0];
+  }
+
+  return params;
 };
 

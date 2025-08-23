@@ -5,6 +5,7 @@ import {
 } from "./fractals/fractals";
 import { FractalParamsBuildRules } from "./fractals/types";
 import { DisplayCanvas } from "./DisplayCanvas/DisplayCanvas";
+import { throttle } from "./utils";
 
 export const DisplayFractal = ({
   params,
@@ -24,11 +25,13 @@ export const DisplayFractal = ({
     if (!canvas) {
       return;
     }
+    const throttledOnRender = onRender ? throttle(onRender, 250) : undefined;
+
     const newVisualizer = createStaticFractalVisualizer(
       canvas,
       [width, height],
       params,
-      onRender
+      throttledOnRender
     );
     fractalRef.current = newVisualizer;
 
@@ -72,3 +75,4 @@ export const DisplayFractal = ({
     />
   );
 };
+

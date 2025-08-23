@@ -132,6 +132,7 @@ export const Graph = ({
       {cursorX !== null && cursorX !== undefined && (
         <div
           style={{
+            transition: 'left 0.25s linear',
             position: 'absolute',
             top: 0,
             left: `${cursorX}px`,

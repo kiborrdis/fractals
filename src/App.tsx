@@ -1,5 +1,6 @@
 import { EditFractal } from "./edit/EditFractal";
 import { RandomFractal } from "./random-fractal/RandomFractal";
+import { Simulation } from "./sim/Simulation";
 import { ViewFractal } from "./view/ViewFractal";
 
 function App() {
@@ -10,6 +11,8 @@ function App() {
     return <EditFractal />;
   } else if (path === "/view") {
     return <ViewFractal />;
+  } else if (path === "/sim") {
+    return <Simulation />;
   }
 
   return <RandomFractal />;

@@ -30,6 +30,7 @@ export const createRenderLoop = ({
 
   const res = {
     running: true,
+    getCurrentTime: () => timeSinceStart,
     stop: () => {
       if (running) {
         running = false;

@@ -10,6 +10,8 @@ import { ColorParams } from "./ColorParams";
 import { PeriodGraph } from "./PeriodGraph";
 
 const initialFractalParams: FractalParams = {
+  hexMirroringFactor: 0.0,
+  hexMirroringPerDistChange: [0, 0],
   invert: false,
   mirror: false,
   colorStart: [0.7803959025681232, 0.8286006045344724, 0.8742375132153735],

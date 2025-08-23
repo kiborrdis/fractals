@@ -5,7 +5,7 @@ export const prepareCanvasToRender = (
   {
     context,
     pos_vertex_attr_array,
-    resolution_u2f,
+    uniforms: { resolution_u2f },
     shaderProgram,
     positionBuffer,
   }: FractalCanvasParams,

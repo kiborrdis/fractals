@@ -108,18 +108,18 @@ vec3 palette(float t) {
     iterationSmooth = float(iteration) - 1.0*min(sqrt(x/2.1), 1.0);
       //iterationSmooth = float(iteration) - 2.0*min(exp(x*4.0-4.0), 1.0);
     // iterationSmooth = float(iteration);
-    if (iteration == maxIteration - 1) {
-        vec3 resultColor = 0.8*u_color_end + 0.2*palColorEnd ;
+    // if (iteration == maxIteration - 1) {
+    //     vec3 resultColor = 0.8*u_color_end + 0.2*palColorEnd ;
 
-        gl_FragColor = vec4(resultColor, 1.0) * (1.0-length(uv));
-    } else {
+    //     gl_FragColor = vec4(resultColor, 1.0) * (1.0-length(uv));
+    // } else {
         float colorInt = iterationSmooth / float(maxIteration);
         //vec3 color = mix(u_color_start, u_color_start, log(colorInt));
         vec3 color = (u_color_end - u_color_start) * colorInt + u_color_start;
 
         vec3 resultColor = ((0.9 + 0.1*(1.0- colorInt))*color + (0.0 + 0.1 * colorInt )*palColor);
         gl_FragColor = vec4(resultColor,1.0);
-    }
+    // }
 
     //gl_FragColor = vec4(normCentCoord.x * 1.0, normCentCoord.y * 1.0, 0.0, 1.0);
   }

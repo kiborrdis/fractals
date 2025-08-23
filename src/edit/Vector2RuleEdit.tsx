@@ -1,4 +1,12 @@
-import { AngleSlider, NumberInput, Stack, Text } from "@mantine/core";
+import {
+  AngleSlider,
+  Box,
+  Group,
+  NumberInput,
+  Paper,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { NumberBuildRule, RuleType, Vector2 } from "../fractals/types";
 import { NumberRuleEdit } from "./NumberRuleEdit";
 
@@ -23,25 +31,32 @@ export const Vector2RuleEdit = ({
 }) => {
   return (
     <Stack>
-      {label && <Text size="sm">{label}</Text>}
-      <Stack>
-        {value.map((v, i) => (
-          <NumberRuleEdit
-            key={i}
-            label={sublabels ? sublabels[i] : String(i)}
-            max={max}
-            min={min}
-            minRange={minRange}
-            step={step}
-            value={v}
-            onChange={(newValue) => {
-              const newValues = [...value];
-              newValues[i] = newValue;
-              onChange(newValues as [NumberBuildRule, NumberBuildRule]);
-            }}
-          />
-        ))}
-      </Stack>
+      {label && (
+        <Text size="md" fw={500}>
+          {label}
+        </Text>
+      )}
+      <Paper withBorder p="xs">
+        <Group gap={"xs"} align="flex-start">
+          {value.map((v, i) => (
+            <Box key={i} style={v.t === RuleType.RangeNumber ? { flexBasis: '100%' } : { flex: 1 }}>
+              <NumberRuleEdit
+                label={sublabels ? sublabels[i] : String(i)}
+                max={max}
+                min={min}
+                minRange={minRange}
+                step={step}
+                value={v}
+                onChange={(newValue) => {
+                  const newValues = [...value];
+                  newValues[i] = newValue;
+                  onChange(newValues as [NumberBuildRule, NumberBuildRule]);
+                }}
+              />
+            </Box>
+          ))}
+        </Group>
+      </Paper>
     </Stack>
   );
 };
