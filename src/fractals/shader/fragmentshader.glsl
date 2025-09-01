@@ -13,10 +13,6 @@ uniform float u_max_iterations;
 uniform vec2 u_fractal_r_range_start;
 uniform vec2 u_fractal_r_range_end;
 
-uniform vec3 u_color_start;
-uniform vec3 u_color_end;
-uniform vec3 u_color_overflow;
-
 uniform vec2 u_linear_split_per_dist_change;
 uniform vec2 u_radial_split_per_dist_change;
 
@@ -25,11 +21,40 @@ uniform vec2 u_cy_split_per_dist_change;
 uniform vec2 u_r_split_per_dist_change;
 uniform vec2 u_iterations_split_per_dist_change;
 
-uniform bool u_mirror;
+uniform int u_mirror_type; // 0 = off, 1 = square, 2 = hex
 uniform bool u_invert;
 
 uniform float u_hex_mirroring_factor;
 uniform vec2 U_hex_mirroring_dist_change;
+uniform sampler2D uSampler;
+uniform int u_sampler_wl;
+
+vec2 getTexCoord(vec2 pixelCoord, vec2 texDim) {
+  return (pixelCoord + 0.5) / texDim;
+}
+
+vec3 createGradient(float part) {
+  int numColors = u_sampler_wl;
+
+  if (numColors == 0) {
+    return vec3(1.0, 0.0, 1.0);
+  }
+
+  vec4 prevTexel = texture2D(uSampler, getTexCoord(vec2(0, 0), vec2(numColors, numColors)));
+  vec3 color = prevTexel.xyz;
+
+  for (int i = 1; i < 256; i++) {
+    if (i >= numColors) {
+      break;
+    }
+
+    vec4 texel = texture2D(uSampler, getTexCoord(vec2(i, 0), vec2(numColors, numColors)));
+    color = mix(color, texel.xyz, smoothstep(prevTexel.w, texel.w, part));
+    prevTexel = texel;
+  }
+
+  return color.xyz;
+}
 
 float sdCircle(vec2 p, float r) {
   return length(p) - r;
@@ -108,8 +133,50 @@ vec2 hexMirror(vec2 centeredCoord, float height) {
   return resultCoords;
 }
 
+vec2 complexMul(vec2 a, vec2 b) {
+  return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+}
+
+vec2 complexAdd(vec2 a, vec2 b) {
+  return vec2(a.x + b.x, a.y + b.y);
+}
+
+vec2 complexSub(vec2 a, vec2 b) {
+  return vec2(a.x - b.x, a.y - b.y);
+}
+
+vec2 complexDiv(vec2 c1, vec2 c2) {
+  float a = c1.x;
+  float b = c1.y;
+  float c = c2.x;
+  float d = c2.y;
+  return vec2((a * c + b * d) / (c * c + d * d), (b * c - a * d) / (c * c + d * d));
+}
+
+vec2 complexPow(vec2 a, float p) {
+  float len = pow(length(a), p);
+  vec2 norm = a / length(a);
+  float angle = acos(norm.x);
+
+  if (norm.y < 0.0) {
+    angle = 2.0 * PI - angle;
+  }
+
+  // if (norm.x < 0.0 && norm.y < 0.0) {
+  //   angle = 2.0 * PI - angle;
+  // }
+
+  return vec2(cos(angle * p) * len, sin(angle * p) * len);
+}
+
+// vec2 centeredCoord = gl_FragCoord.xy * 2.0 - u_resolution;
+// vec2 coord = preparedCoord / u_resolution.y;
+// vec2 fractStart = u_fractal_r_range_start;
+// vec2 fractEnd = u_fractal_r_range_end;
+// vec2 fractStartEndDelta = (fractEnd - fractStart) / 2.0;
+// vec2 fractalCoords = fractStartEndDelta * (coord)  + fractStart + fractStartEndDelta;
+
 void main() {
-  bool mirror = u_mirror;
   float slowTime = u_time / 50000.0;
   vec2 base = u_radial_split_angle_base_vector;
     //base = vec2(0.707106781186548, 0.707106781186548);
@@ -118,47 +185,42 @@ void main() {
   vec2 centeredCoord = gl_FragCoord.xy * 2.0 - u_resolution;
 
   vec2 normCentCoord = centeredCoord;
-
-  if (u_invert) {
-    normCentCoord = abs(1.0 - abs((centeredCoord / (u_resolution))));
-  } else {
-    normCentCoord = abs(abs((centeredCoord / (u_resolution))));
-  }
+  normCentCoord = abs((1.0 * float(u_invert)) + (1.0 + float(u_invert) * (-2.0)) * abs((centeredCoord / (u_resolution))));
 
   vec2 uv = centeredCoord / u_resolution.x;
-    //sep = abs(sin(slowTime / 1.3) * 1.0) + 1.0;
+  vec2 preparedCoord = centeredCoord;
+  vec2 coord = preparedCoord;
 
-    // Increase linear split based on the distance from the center
-  vec2 linearSplitPerDistChange = u_linear_split_per_dist_change;
-  sep = sep + linearSplitPerDistChange.x * abs(normCentCoord.x) + linearSplitPerDistChange.y * abs(normCentCoord.y);
-
-    // Perform linear split
-  vec2 preparedCoord = mod(centeredCoord - u_resolution.x / (sep * 2.0), u_resolution.x / sep) - u_resolution.x / (sep * 2.0);
-
-  if (u_hex_mirroring_factor != 0.0) {
-    float hexHeight = u_hex_mirroring_factor * u_resolution.x;
-
-    hexHeight = hexHeight + U_hex_mirroring_dist_change.x * abs(normCentCoord.x) + U_hex_mirroring_dist_change.y * abs(normCentCoord.y);  
-   
-    preparedCoord = hexMirror(preparedCoord, hexHeight);
-  }   
-
-    // Convert prepared coordinates to normalized coordinates
-  vec2 coord = preparedCoord / u_resolution.y;
-
-    // Mirror positive quadrant to the rest of quadrants
-  if (mirror) {
-    coord = abs(coord);
+  if (u_mirror_type == 0) {
+    coord = preparedCoord / u_resolution.y;
   }
 
-    // Perform radial split based on the angle
+  // Square mirroring
+  if (u_mirror_type == 1) {
+    vec2 linearSplitPerDistChange = u_linear_split_per_dist_change;
+    sep = sep + linearSplitPerDistChange.x * abs(normCentCoord.x) + linearSplitPerDistChange.y * abs(normCentCoord.y);
+    preparedCoord = mod(centeredCoord - sep / 2.0, sep) - sep / 2.0;
+
+    coord = abs(preparedCoord / u_resolution.y);
+  }
+
+  // Hexagonal mirroring
+  if (u_mirror_type == 2) { 
+    float hexHeight = u_hex_mirroring_factor;
+    hexHeight = hexHeight + U_hex_mirroring_dist_change.x * abs(normCentCoord.x) + U_hex_mirroring_dist_change.y * abs(normCentCoord.y);
+    preparedCoord = hexMirror(preparedCoord, hexHeight);
+
+    coord = preparedCoord / u_resolution.y;
+  }   
+
+  // Perform radial split based on the angle
   vec2 normailizedCentrCoord = coord / length(coord);
   float angle = acos(base.x * normailizedCentrCoord.x + base.y * normailizedCentrCoord.y) * (180.0 / PI);
   float sepAng = u_radial_split;
 
   vec2 radialSplitPerDistChange = u_radial_split_per_dist_change;
 
-    // Increase radial split based on the distance from the center
+  // Increase radial split based on the distance from the center
   sepAng = sepAng + radialSplitPerDistChange.x * abs(normCentCoord.x) + radialSplitPerDistChange.y * abs(normCentCoord.y);
 
   float part = abs(mod(angle, sepAng) - (sepAng / 2.0)) / (180.0 / PI);
@@ -173,9 +235,13 @@ void main() {
 
     // coord = fract(coord*2.0) - 0.5;
 
-    // Transform the coordinates to the particular part of fractal space
-  vec2 fractalCoords = (u_fractal_r_range_end - u_fractal_r_range_start) * coord + 0.5 + u_fractal_r_range_start;
-
+  // Transform the coordinates to the particular part of fractal space
+  vec2 fractStart = u_fractal_r_range_start;
+  vec2 fractEnd = u_fractal_r_range_end;
+  vec2 fractStartEndDelta = (fractEnd - fractStart) / 2.0;
+  vec2 fractalCoords = fractStartEndDelta * (coord) + fractStart + fractStartEndDelta;
+  gl_FragColor = vec4((coord + 1.0) / 2.0, 0.0, 1.0);
+  // return;
   float cy = u_fractal_c.x;
   float cx = u_fractal_c.y;
   float r = u_fractal_r;
@@ -196,6 +262,9 @@ void main() {
 
   float zx = fractalCoords.x;
   float zy = fractalCoords.y;
+  vec2 z = vec2(zx, zy);
+  vec2 c = vec2(cx, cy);
+
   float zxPrev = zx;
   float zyPrev = zy;
   float xSqrd = pow(fractalCoords.x, 2.0);
@@ -207,46 +276,29 @@ void main() {
     if (xSqrd + ySqrd >= Rsqrd || maxIteration <= iter) {
       break;
     }
-    zy = 2.0 * zx * zy + cy;
-    zx = xSqrd - ySqrd + cx;
 
-    xSqrd = pow(zx, 2.0);
-    ySqrd = pow(zy, 2.0);
+    //@FORMULA_PLACEHOLDER@
+    // z = complexMul(z, z);
+    // z = complexAdd(z, c);
+
+    xSqrd = pow(z.x, 2.0);
+    ySqrd = pow(z.y, 2.0);
     iteration = iter;
   }
-  if (iteration < 2) {
-    gl_FragColor = vec4(u_color_start, 1.0);
-      //return;
-  }
+
   float abs_z = xSqrd + ySqrd;
   float x = sqrt(abs_z) - u_fractal_r;
 
-  if (x > 3.0) {
-    gl_FragColor = vec4(1.0, 0, 0, 1.0);
-      //return;
-  }
-  float iterationSmooth = 0.0;
-  iterationSmooth = float(iteration);
-
-  iterationSmooth = float(iteration) + 1.0 - log(log(abs_z)) / log(2.0);
+  float iterationSmooth = float(iteration);
     //iterationSmooth = float(iteration) - 1.0*clamp(x/2.0,0.0,1.0);
 
-  iterationSmooth = float(iteration) - 1.0 * min(sqrt(x / 2.1), 1.0);
-      //iterationSmooth = float(iteration) - 2.0*min(exp(x*4.0-4.0), 1.0);
-    // iterationSmooth = float(iteration);
-    // if (iteration == maxIteration - 1) {
-    //     vec3 resultColor = 0.8*u_color_end + 0.2*palColorEnd ;
+  // iterationSmooth = float(iteration) - 1.0 * min(sqrt(x / 2.1), 1.0);
 
-    //     gl_FragColor = vec4(resultColor, 1.0) * (1.0-length(uv)*0.5);
-    // } else {
   float colorInt = iterationSmooth / float(maxIteration);
-      //vec3 color = mix(u_color_start, u_color_start, log(colorInt));
-  vec3 color = (u_color_end - u_color_start) * colorInt + u_color_start;
+
+  vec3 color = createGradient(colorInt);
+
   float palPart = 0.1;
   vec3 resultColor = ((0.9 + palPart * (1.0 - colorInt)) * color + (0.0 + palPart * colorInt) * palColorEnd);
   gl_FragColor = vec4(resultColor, 1.0);
-    // }
-
-    //gl_FragColor = vec4(normCentCoord.x * 1.0, normCentCoord.y * 1.0, 0.0, 1.0);
 }
-

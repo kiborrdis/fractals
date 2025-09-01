@@ -196,11 +196,9 @@ vec2 hexMirror(vec2 centeredCoord, float height) {
 
   vec2 resultCoords = rotate(rotAngle, hexCoord);
 
-
   if (swap) {
     resultCoords.y = -resultCoords.y;
   }
-
 
   return resultCoords;
 }

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { RangeNumberRule, Vector2 } from "../fractals/types";
 import { Graph } from "./Graph/Graph";
 import { makeNumberFromRangeRule } from "../ruleConversion";
+import { useCurrentTime } from "./store/data/useCurrentTime";
 
 // Colors with great constast with black background in rgba with high alpha
 const colorsArray = [
@@ -29,11 +30,10 @@ const colorsArray = [
 
 export const PeriodGraph = ({
   rangeRules,
-  time,
 }: {
   rangeRules: RangeNumberRule[];
-  time: number;
 }) => {
+  const time = useCurrentTime();
   const [width, setWidth] = useState<number | null>(null);
 
   const period = useMemo(() => {
@@ -73,11 +73,9 @@ export const PeriodGraph = ({
         }
       }}
       style={{
-        position: "fixed",
-        left: 10,
-        bottom: 10,
-        width: "calc(100vw - 20px - 420px)",
         overflow: "hidden",
+        position: "relative",
+        height: 200,
       }}
     >
       <div

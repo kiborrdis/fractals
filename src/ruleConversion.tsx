@@ -1,37 +1,52 @@
-import { FractalParams, FractalParamsBuildRules, ConstBooleanRule, RuleType, StaticNumberRule, ConvertToRule, RangeNumberRule, ConvertToBuildResult, NumberBuildRule } from "./fractals/types";
+import {
+  ConstBooleanRule,
+  RuleType,
+  StaticNumberRule,
+  ConvertToRule,
+  RangeNumberRule,
+  ConvertToBuildResult,
+  NumberBuildRule,
+  FractalDynamicParamsBuildRules,
+  FractalDynamicParams,
+  FractalParams,
+  FractalParamsBuildRules,
+} from "./fractals/types";
 
-export const makeRulesBasedOnParams = (
-  params: FractalParams
-): FractalParamsBuildRules => {
+export const makeRulesBasedOnParams = ({
+  dynamic: params,
+  ...rest
+}: FractalParams): FractalParamsBuildRules => {
   const rules: FractalParamsBuildRules = {
-    hexMirroringFactor: makeRuleFromNumber(params.hexMirroringFactor),
-    hexMirroringPerDistChange: makeRuleFromArray(params.hexMirroringPerDistChange),
-    invert: makeRuleFromBoolean(params.invert),
-    mirror: makeRuleFromBoolean(params.mirror),
-    colorStart: makeRuleFromArray(params.colorStart),
-    colorEnd: makeRuleFromArray(params.colorEnd),
-    colorOverflow: makeRuleFromArray(params.colorOverflow),
-    splitNumber: makeRuleFromNumber(params.splitNumber),
-    time: makeRuleFromNumber(params.time),
-    c: makeRuleFromArray(params.c),
-    r: makeRuleFromNumber(params.r),
-    rRangeStart: makeRuleFromArray(params.rRangeStart),
-    rRangeEnd: makeRuleFromArray(params.rRangeEnd),
-    maxIterations: makeRuleFromNumber(params.maxIterations),
-    linearSplitPerDistChange: makeRuleFromArray(
-      params.linearSplitPerDistChange
-    ),
-    radialSplitPerDistChange: makeRuleFromArray(
-      params.radialSplitPerDistChange
-    ),
-    cxSplitPerDistChange: makeRuleFromArray(params.cxSplitPerDistChange),
-    cySplitPerDistChange: makeRuleFromArray(params.cySplitPerDistChange),
-    rSplitPerDistChange: makeRuleFromArray(params.rSplitPerDistChange),
-    iterationsSplitPerDistChange: makeRuleFromArray(
-      params.iterationsSplitPerDistChange
-    ),
-    angularSplitNumber: makeRuleFromNumber(params.angularSplitNumber),
+    ...rest,
+    dynamic: {
+      hexMirroringFactor: makeRuleFromNumber(params.hexMirroringFactor),
+      hexMirroringPerDistChange: makeRuleFromArray(
+        params.hexMirroringPerDistChange
+      ),
+      invert: makeRuleFromBoolean(params.invert),
+      linearMirroringFactor: makeRuleFromNumber(params.linearMirroringFactor),
+      time: makeRuleFromNumber(params.time),
+      c: makeRuleFromArray(params.c),
+      r: makeRuleFromNumber(params.r),
+      rlVisibleRange: makeRuleFromArray(params.rlVisibleRange),
+      imVisibleRange: makeRuleFromArray(params.imVisibleRange),
+      maxIterations: makeRuleFromNumber(params.maxIterations),
+      linearMirroringPerDistChange: makeRuleFromArray(
+        params.linearMirroringPerDistChange
+      ),
+      radialMirroringPerDistChange: makeRuleFromArray(
+        params.radialMirroringPerDistChange
+      ),
+      cxPerDistChange: makeRuleFromArray(params.cxPerDistChange),
+      cyPerDistChange: makeRuleFromArray(params.cyPerDistChange),
+      rPerDistChange: makeRuleFromArray(params.rPerDistChange),
+      iterationsPerDistChange: makeRuleFromArray(
+        params.iterationsPerDistChange
+      ),
+      radialMirroringAngle: makeRuleFromNumber(params.radialMirroringAngle),
+    },
   };
+
   return rules;
 };
 export const makeRuleFromBoolean = (value: boolean): ConstBooleanRule => {
@@ -46,7 +61,9 @@ export const makeRuleFromNumber = (value: number): StaticNumberRule => {
     value,
   };
 };
-export const makeRuleFromArray = <V extends number[]>(value: V): ConvertToRule<V> => {
+export const makeRuleFromArray = <V extends number[]>(
+  value: V
+): ConvertToRule<V> => {
   return value.map(makeRuleFromNumber) as ConvertToRule<V>;
 };
 
@@ -92,15 +109,19 @@ export const makeNumberFromRangeRule = (
     start +
     (end - start) / 2 +
     ((end - start) / 2) *
-    Math.sin((time + rule.phaseSeconds * 1000  ) / ((rule.cycleSeconds * 1000) / Math.PI) )
+      Math.sin(
+        (time + rule.phaseSeconds * 1000) /
+          ((rule.cycleSeconds * 1000) / Math.PI)
+      )
   );
 };
 
-const makeArrayFromRules = <V extends NumberBuildRule[]>(
+export const makeArrayFromRules = <V extends NumberBuildRule[]>(
   rules: V,
   time: number = 0
 ): ConvertToBuildResult<V> => {
-  return rules.map((rule) => makeScalarFromRule(rule, time)
+  return rules.map((rule) =>
+    makeScalarFromRule(rule, time)
   ) as ConvertToBuildResult<V>;
 };
 
@@ -108,25 +129,27 @@ export const makeFractalParamsFromRules = (
   rules: FractalParamsBuildRules,
   time: number = 0
 ): FractalParams => {
+  return {
+    ...rules,
+    dynamic: makeFractalDynamicParamsFromRules(rules.dynamic, time),
+  };
+};
+
+const makeFractalDynamicParamsFromRules = (
+  rules: FractalDynamicParamsBuildRules,
+  time: number = 0
+): FractalDynamicParams => {
   const params = Object.entries(rules).reduce((acc, [key, value]) => {
     if (Array.isArray(value)) {
       // @ts-expect-error TODO research, maybe it can be done properly now
-      acc[key as keyof FractalParams] = makeArrayFromRules(value, time);
+      acc[key as keyof FractalDynamicParams] = makeArrayFromRules(value, time);
       return acc;
     }
 
     // @ts-expect-error TODO research, maybe it can be done properly now
     acc[key] = makeScalarFromRule(value, time);
     return acc;
-  }, {} as FractalParams);
-
-  if (!params.mirror) {
-    params.splitNumber = 0.5;
-    params.angularSplitNumber = 181;
-    params.linearSplitPerDistChange = [0, 0];
-    params.radialSplitPerDistChange = [0, 0];
-  }
+  }, {} as FractalDynamicParams);
 
   return params;
 };
-

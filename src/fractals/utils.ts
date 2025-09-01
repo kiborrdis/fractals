@@ -1,3 +1,4 @@
+import { divide, mul, sum } from "../vectorOperations";
 import { RGBAVector, Vector2 } from "./types";
 
 export const distance = (a: Vector2, b: Vector2): number =>
@@ -58,4 +59,28 @@ export const createIterationsColorConverterFn = (
     colorMap[maxIterations][iterations] = result;
     return result as RGBAVector;
   };
+};
+
+
+export const transformToFractalCoord = (
+  pointInContainer: Vector2,
+  containerSize: Vector2,
+  containerRLRange: Vector2,
+  containerIMRange: Vector2
+): Vector2 => {
+  const transformedPoint: Vector2 = [...pointInContainer];
+  transformedPoint[1] = containerSize[1] - transformedPoint[1];
+
+  const centerCoord = sum(mul(transformedPoint, 2), mul(containerSize, -1));
+  const coord = divide(centerCoord, containerSize[1]);
+
+  const fractStart: Vector2 = [containerRLRange[0], containerIMRange[0]];
+  const fractEnd: Vector2 = [containerRLRange[1], containerIMRange[1]];
+
+  const fractStartEndDelta = divide(sum(fractEnd, mul(fractStart, -1)), 2);
+
+  return sum(
+    sum(mul(fractStartEndDelta, coord), fractStart),
+    fractStartEndDelta
+  );
 };

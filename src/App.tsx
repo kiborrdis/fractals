@@ -5,7 +5,6 @@ import { ViewFractal } from "./view/ViewFractal";
 
 function App() {
   const path = window.location.pathname;
-  console.log(path);
 
   if (path === "/edit") {
     return <EditFractal />;

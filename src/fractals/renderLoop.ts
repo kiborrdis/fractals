@@ -11,11 +11,13 @@ export const createRenderLoop = ({
   let running = true;
   let lastRender = Date.now();
   let timeSinceStart = 0;
+  let timeMultiplier = 1.0;
+
   const performLoopIteration = async () => {
     const currentTime = Date.now();
     const timeDelta = (currentTime - lastRender);
     lastRender = currentTime;
-    timeSinceStart += timeDelta;
+    timeSinceStart += timeDelta * timeMultiplier;
 
     await loopIterationCallback({ timeDelta, timeSinceStart });
 
@@ -45,6 +47,9 @@ export const createRenderLoop = ({
         requestAnimationFrame(performLoopIteration);
       }
     },
+    setTimemultiplier: (newTimeMultiplier: number) => {
+      timeMultiplier = newTimeMultiplier;
+    }
   };
 
   return res;

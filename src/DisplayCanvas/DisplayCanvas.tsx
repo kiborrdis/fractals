@@ -7,8 +7,8 @@ export const DisplayCanvas = React.memo(React.forwardRef(function (
     height,
     onSizeChange,
   }: {
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     onSizeChange?: (size: [number, number]) => void;
   },
   ref: React.Ref<HTMLCanvasElement>

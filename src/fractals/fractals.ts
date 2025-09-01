@@ -1,96 +1,13 @@
-// import { JuliaSet, JuliaSetRenderer } from "./JuliaSetRenderer";
-import { randomRange } from "./utils";
 import { createRenderLoop } from "./renderLoop";
 import {
   FractalParamsBuildRules,
   Vector2,
-  Vector3,
 } from "./types";
 import { ShaderFractal } from "./shader/ShaderFractal";
 import { makeFractalParamsFromRules } from "../ruleConversion";
 
 export const createFractalVisualizer = (
-  canvas: HTMLCanvasElement,
-  canvasSize: Vector2
-) => {
-  const shaderFractal = new ShaderFractal(canvas, canvasSize);
-
-  const colorStart: Vector3 = [Math.random(), Math.random(), Math.random()];
-  const colorEnd: Vector3 = [Math.random(), Math.random(), Math.random()];
-  const colorOverflow: Vector3 = [Math.random(), Math.random(), Math.random()];
-
-  // const fractalC = [-0.55, -0.595];
-  // const fractalR = 2;
-
-  // const fractalC = [-0.5, -0.595];
-  const fractalC = [-0.54, -0.55];
-
-  const fractalR = 3;
-  const rangeSize = randomRange(0.2, 0.6);
-  const fractalRRangeStart = [-rangeSize, -rangeSize];
-  const fractalRRangeEnd = [rangeSize, rangeSize];
-
-  const uniqnessMod = (Math.random() - 0.5) * 300;
-
-  const uniqnessMod1 = (Math.random() - 0.5) * 300;
-
-  const uniqnessMod2 = (Math.random() - 0.5) * 300;
-  const startSep = randomRange(0.5, 12);
-
-  const loop = createRenderLoop({
-    loopIterationCallback: async ({ timeSinceStart }) => {
-      const originalTimeSinceStart = timeSinceStart;
-      timeSinceStart = timeSinceStart / 50;
-
-      const iterationFractalC: Vector2 = [
-        fractalC[0] + Math.cos(timeSinceStart / (1131 + uniqnessMod)) * 0.03,
-        fractalC[1] + Math.sin(timeSinceStart / (1000 + uniqnessMod1)) * 0.03,
-      ];
-      const iterationFractalR = fractalR;
-
-      const iterationFractalRRangeStart: Vector2 = [
-        fractalRRangeStart[0] +
-          Math.cos(timeSinceStart / (1131 + uniqnessMod2)) * 0.02,
-        fractalRRangeStart[1] +
-          Math.sin(timeSinceStart / (1030 + uniqnessMod)) * 0.02,
-      ];
-      const iterationFractalRRangeEnd: Vector2 = [
-        fractalRRangeEnd[0] +
-          Math.cos(timeSinceStart / (1000 + uniqnessMod1)) * 0.02,
-        fractalRRangeEnd[1] +
-          Math.sin(timeSinceStart / (1412 + uniqnessMod2)) * 0.02,
-      ];
-      shaderFractal.render({
-        hexMirroringFactor: 0.0,
-        invert: false,
-        mirror: true,
-        hexMirroringPerDistChange: [0, 0],
-        colorStart,
-        colorEnd,
-        colorOverflow,
-        splitNumber:
-          startSep + Math.sin(timeSinceStart / 10000) * (startSep - 1.0),
-        time: originalTimeSinceStart,
-        c: iterationFractalC,
-        r: iterationFractalR,
-        rRangeStart: iterationFractalRRangeStart,
-        rRangeEnd: iterationFractalRRangeEnd,
-        maxIterations: 100,
-        angularSplitNumber: 181,
-        linearSplitPerDistChange: [0, 0],
-        radialSplitPerDistChange: [0, 0],
-        cxSplitPerDistChange: [0, 0],
-        cySplitPerDistChange: [0, 0],
-        rSplitPerDistChange: [0, 0],
-        iterationsSplitPerDistChange: [0, 0],
-      });
-    },
-  });
-
-  return loop;
-};
-
-export const createStaticFractalVisualizer = (
+  formula: string,
   canvas: HTMLCanvasElement,
   canvasSize: Vector2,
   initialFractalParams: FractalParamsBuildRules,
@@ -100,7 +17,7 @@ export const createStaticFractalVisualizer = (
     ...initialFractalParams,
   };
 
-  const shaderFractal = new ShaderFractal(canvas, canvasSize);
+  const shaderFractal = new ShaderFractal(formula, canvas, canvasSize);
   const params = makeFractalParamsFromRules(fractalParamsRules);
   shaderFractal.render(params);
 
@@ -108,7 +25,6 @@ export const createStaticFractalVisualizer = (
     loopIterationCallback: async ({ timeSinceStart }) => {
       shaderFractal.render({
         ...makeFractalParamsFromRules(fractalParamsRules, timeSinceStart),
-        time: timeSinceStart,
       });
 
       if (renderCallback) {
@@ -135,5 +51,5 @@ export const createStaticFractalVisualizer = (
 };
 
 export type StaticFractalVisualizerControls = ReturnType<
-  typeof createStaticFractalVisualizer
+  typeof createFractalVisualizer
 >;

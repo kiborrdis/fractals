@@ -1,13 +1,17 @@
 import { FractalCanvasParams } from "./initFractalCanvas";
 import { FractalParams } from "../types";
+import { loadTexture } from "./texture";
+
+const mirroringTypeToInt = {
+  off: 0,
+  square: 1,
+  hex: 2,
+};
 
 export const prepareFractalUniforms = (
   {
     context,
     uniforms: {
-      colorEnd_u3f,
-      colorStart_u3f,
-      colorOverflow_u3f,
       fractalC_u2f,
       fractalR_u1f,
       linearSplit_u1f,
@@ -27,38 +31,36 @@ export const prepareFractalUniforms = (
       invertLocation_u1i,
       hexMirroringDistChange_u2f,
       hexMirroringFactor_u1f,
+      sampler2D_tex,
+      sampler2D_wl_i1f,
     },
   }: FractalCanvasParams,
   {
-    colorStart,
-    colorEnd,
-    colorOverflow,
-    splitNumber,
-    time,
-    c,
-    r,
-    rRangeStart,
-    rRangeEnd,
-    invert,
-    mirror = true, // Default to true if not provided
-    maxIterations,
-    linearSplitPerDistChange = [0, 0],
-    radialSplitPerDistChange = [0, 0],
-    cxSplitPerDistChange = [0, 0],
-    cySplitPerDistChange = [0, 0],
-    rSplitPerDistChange = [0, 0],
-    iterationsSplitPerDistChange = [0, 0],
-    hexMirroringFactor,
-    hexMirroringPerDistChange,
-    angularSplitNumber,
+    gradient,
+    mirroringType,
+    dynamic: {
+      linearMirroringFactor,
+      time,
+      c,
+      r,
+      imVisibleRange,
+      rlVisibleRange,
+      invert,
+      maxIterations,
+      linearMirroringPerDistChange = [0, 0],
+      radialMirroringPerDistChange = [0, 0],
+      cxPerDistChange = [0, 0],
+      cyPerDistChange = [0, 0],
+      rPerDistChange = [0, 0],
+      iterationsPerDistChange = [0, 0],
+      hexMirroringFactor,
+      hexMirroringPerDistChange,
+      radialMirroringAngle,
+    },
   }: FractalParams
 ) => {
-  context.uniform3f(colorStart_u3f, ...colorStart);
-  context.uniform3f(colorEnd_u3f, ...colorEnd);
-  context.uniform3f(colorOverflow_u3f, ...colorOverflow);
-
-  context.uniform1f(linearSplit_u1f, splitNumber);
-  context.uniform1f(radialSplit_u1f, angularSplitNumber);
+  context.uniform1f(linearSplit_u1f, linearMirroringFactor);
+  context.uniform1f(radialSplit_u1f, radialMirroringAngle);
   context.uniform2f(radialSplitAngleBaseVector_u2f, ...[1, 0]);
 
   context.uniform1f(maxIterations_u1f, maxIterations);
@@ -67,23 +69,42 @@ export const prepareFractalUniforms = (
   context.uniform1f(fractalR_u1f, r);
   context.uniform2f(fractalC_u2f, ...c);
 
-  context.uniform2f(fractalRRangeStart_u2f, ...rRangeStart);
-  context.uniform2f(fractalRRangeEnd_u2f, ...rRangeEnd);
+  context.uniform2f(
+    fractalRRangeStart_u2f,
+    rlVisibleRange[0],
+    imVisibleRange[0]
+  );
+  context.uniform2f(fractalRRangeEnd_u2f, rlVisibleRange[1], imVisibleRange[1]);
 
-  context.uniform1i(mirror_u1i, mirror ? 1 : 0);
+  context.uniform1i(mirror_u1i, mirroringTypeToInt[mirroringType]);
 
-  context.uniform2f(linearSplitPerDistChange_u2f, ...linearSplitPerDistChange);
-  context.uniform2f(radialSplitPerDistChange_u2f, ...radialSplitPerDistChange);
-  context.uniform2f(cxSplitPerDistChange_u2f, ...cxSplitPerDistChange);
-  context.uniform2f(cySplitPerDistChange_u2f, ...cySplitPerDistChange);
-  context.uniform2f(rSplitPerDistChange_u2f, ...rSplitPerDistChange);
+  context.uniform2f(
+    linearSplitPerDistChange_u2f,
+    ...linearMirroringPerDistChange
+  );
+  context.uniform2f(
+    radialSplitPerDistChange_u2f,
+    ...radialMirroringPerDistChange
+  );
+  context.uniform2f(cxSplitPerDistChange_u2f, ...cxPerDistChange);
+  context.uniform2f(cySplitPerDistChange_u2f, ...cyPerDistChange);
+  context.uniform2f(rSplitPerDistChange_u2f, ...rPerDistChange);
   context.uniform2f(
     iterationsSplitPerDistChange_u2f,
-    ...iterationsSplitPerDistChange
+    ...iterationsPerDistChange
   );
   context.uniform1i(invertLocation_u1i, invert ? 1 : 0);
   context.uniform1f(hexMirroringFactor_u1f, hexMirroringFactor);
   context.uniform2f(hexMirroringDistChange_u2f, ...hexMirroringPerDistChange);
+
+  context.activeTexture(context.TEXTURE0);
+
+  // Bind the texture to texture unit 0
+  context.bindTexture(context.TEXTURE_2D, loadTexture(context, gradient));
+
+  // Tell the shader we bound the texture to texture unit 0
+  context.uniform1i(sampler2D_tex, 0);
+  context.uniform1i(sampler2D_wl_i1f, gradient.length);
 };
 
 export function setupUniformLocations(
@@ -93,16 +114,6 @@ export function setupUniformLocations(
   const resolution_u2f = context.getUniformLocation(
     shaderProgram,
     "u_resolution"
-  );
-
-  const colorStart_u3f = context.getUniformLocation(
-    shaderProgram,
-    "u_color_start"
-  );
-  const colorEnd_u3f = context.getUniformLocation(shaderProgram, "u_color_end");
-  const colorOverflow_u3f = context.getUniformLocation(
-    shaderProgram,
-    "u_color_overflow"
   );
 
   const fractalC_u2f = context.getUniformLocation(shaderProgram, "u_fractal_c");
@@ -118,7 +129,7 @@ export function setupUniformLocations(
     shaderProgram,
     "u_fractal_r_range_end"
   );
-  const mirror_u1i = context.getUniformLocation(shaderProgram, "u_mirror");
+  const mirror_u1i = context.getUniformLocation(shaderProgram, "u_mirror_type");
 
   const linearSplitPerDistChange_u2f = context.getUniformLocation(
     shaderProgram,
@@ -178,9 +189,6 @@ export function setupUniformLocations(
   );
   return {
     resolution_u2f,
-    colorStart_u3f,
-    colorEnd_u3f,
-    colorOverflow_u3f,
     fractalC_u2f,
     fractalR_u1f,
     linearSplit_u1f,
@@ -200,5 +208,7 @@ export function setupUniformLocations(
     invertLocation_u1i,
     hexMirroringFactor_u1f,
     hexMirroringDistChange_u2f,
+    sampler2D_wl_i1f: context.getUniformLocation(shaderProgram, "u_sampler_wl"),
+    sampler2D_tex: context.getUniformLocation(shaderProgram, "uSampler"),
   };
 }

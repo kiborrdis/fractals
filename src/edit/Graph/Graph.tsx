@@ -43,7 +43,7 @@ export const Graph = ({
         zoomLevel
       });
     }
-  }, [data, dataOffset, max, height, zoomLevel]);
+  }, [data, dataOffset, max, height, zoomLevel, width]);
 
   // Calculate highlighted ranges styles
   const getHighlightedRangesStyles = () => {
@@ -132,7 +132,6 @@ export const Graph = ({
       {cursorX !== null && cursorX !== undefined && (
         <div
           style={{
-            transition: 'left 0.25s linear',
             position: 'absolute',
             top: 0,
             left: `${cursorX}px`,

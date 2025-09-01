@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  createStaticFractalVisualizer,
+  createFractalVisualizer,
   StaticFractalVisualizerControls,
 } from "./fractals/fractals";
 import { FractalParamsBuildRules } from "./fractals/types";
@@ -10,24 +10,32 @@ import { throttle } from "./utils";
 export const DisplayFractal = ({
   params,
   play,
+  formula = 'z*z + c',
+  timeMultiplier = 1,
   onRender
 }: {
   params: FractalParamsBuildRules;
   play: boolean;
+  formula?: string;
+  timeMultiplier?: number;
   onRender?: (time: number) => void;
 }) => {
-  const [[width, height], setSize] = useState([800, 600]);
-
+  const [[width, height], setSize] = useState([0, 0]);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const fractalRef = useRef<StaticFractalVisualizerControls | null>(null);
+
+  if (fractalRef.current) {
+    fractalRef.current.loop.setTimemultiplier(timeMultiplier);
+  }
 
   useEffect(() => {
     if (!canvas) {
       return;
     }
-    const throttledOnRender = onRender ? throttle(onRender, 250) : undefined;
+    const throttledOnRender = onRender ? throttle(onRender, 50) : undefined;
 
-    const newVisualizer = createStaticFractalVisualizer(
+    const newVisualizer = createFractalVisualizer(
+      formula,
       canvas,
       [width, height],
       params,
@@ -42,7 +50,9 @@ export const DisplayFractal = ({
     return () => {
       newVisualizer.loop.stop();
     };
-  }, [canvas, onRender]);
+  // This is intentional, only recreate visualizer if new canvas element or formula
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvas, formula, onRender]);
 
   useEffect(() => {
     if (fractalRef.current) {
@@ -69,8 +79,8 @@ export const DisplayFractal = ({
   return (
     <DisplayCanvas
       ref={setCanvas}
-      width={width}
-      height={height}
+      width={width === 0 ? undefined : width}
+      height={height === 0 ? undefined : height}
       onSizeChange={setSize}
     />
   );
