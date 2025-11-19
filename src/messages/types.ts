@@ -1,4 +1,4 @@
-import type { JuliaSetParams } from "../fractals/JuliaSetRenderer";
+import type { JuliaSetParams } from "../features/fractals/JuliaSetRenderer";
 
 export type GenericWorkerRequest<T extends string, D> = {
     type: T,

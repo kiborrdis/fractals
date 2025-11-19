@@ -1,4 +1,4 @@
-import { JuliaSet } from "./fractals/JuliaSetRenderer";
+import { JuliaSet } from "./features/fractals/JuliaSetRenderer";
 import {
   CalculateFractalPointsRequest,
   CalculateFractalPointsResponse,

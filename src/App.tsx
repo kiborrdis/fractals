@@ -1,7 +1,7 @@
-import { EditFractal } from "./edit/EditFractal";
-import { RandomFractal } from "./random-fractal/RandomFractal";
-import { Simulation } from "./sim/Simulation";
-import { ViewFractal } from "./view/ViewFractal";
+import { EditFractal } from "@/pages/edit/EditFractal";
+import { RandomFractal } from "@/pages/random-fractal/RandomFractal";
+import { ViewFractal } from "@/pages/view/ViewFractal";
+import { Simulation } from "@/pages/sim/Simulation";
 
 function App() {
   const path = window.location.pathname;
