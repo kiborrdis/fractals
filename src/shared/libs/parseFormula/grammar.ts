@@ -8,14 +8,6 @@ type ConvertTupleTypeWithMap<
   [I in keyof T]: T[I] extends K ? M[T[I]] : undefined;
 };
 
-type ExtractTypesFromTupleOptionals<
-  K extends string | number | symbol,
-  T extends [K, ...K[]] | [],
-  M extends { [key in K]: any }
-> = {
-  [I in keyof T]: T[I] extends K ? M[T[I]] : undefined;
-};
-
 export class GrammarParser<G extends Grammar<any, any, any, any>> {
   constructor(private grammar: G, private indentRegex: RegExp = /\s/) {}
 
@@ -33,7 +25,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     ruleName: string,
     index: number,
     cache: { [key: string]: { [index: number]: [any, number] | null } }
-  ): [any, number] | null {
+  ): [unknown, number] | null {
     if (!cache[ruleName]) {
       cache[ruleName] = {};
     }
@@ -58,8 +50,8 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     str: string,
     ruleName: string,
     index: number,
-    cache: { [key: string]: { [index: number]: [any, number] | null } }
-  ): [any, number] | null {
+    cache: { [key: string]: { [index: number]: [unknown, number] | null } }
+  ): [unknown, number] | null {
     const rule = this.grammar.rulesDefinition[ruleName];
     const ruleTransforms = this.grammar.transformsDefinition[ruleName];
 
@@ -87,9 +79,9 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
   private parseTerminal(
     str: string,
     matcher: (str: string, index: number) => [string, number] | null,
-    transform: (arg: string, r: readonly [number, number]) => any,
+    transform: (arg: string, r: readonly [number, number]) => unknown,
     index: number
-  ): [any, number] | null {
+  ): [unknown, number] | null {
     const matchResult = matcher(str, index);
 
     if (matchResult) {
@@ -102,12 +94,12 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
   private parseNonTerminal(
     str: string,
     definition: [string, ...string[]] | [],
-    transform: (...args: any[]) => any,
+    transform: (...args: unknown[]) => unknown,
     index: number,
-    cache: { [key: string]: { [index: number]: [any, number] | null } }
-  ): [any, number] | null {
+    cache: { [key: string]: { [index: number]: [unknown, number] | null } }
+  ): [unknown, number] | null {
     let currentIndex = index;
-    const args: any[] = [];
+    const args: unknown[] = [];
 
     for (let i = 0; i < definition.length; i++) {
       const subRuleName = definition[i];
@@ -132,12 +124,11 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
   private parseOrRule(
     str: string,
     definitions: ([string, ...string[]] | [])[],
-    transforms: ((...args: any[]) => any)[],
+    transforms: ((...args: unknown[]) => unknown)[],
     index: number,
-    cache: { [key: string]: { [index: number]: [any, number] | null } }
-  ): [any, number] | null {
-    const orArgs: any[] = [];
-
+    cache: { [key: string]: { [index: number]: [unknown, number] | null } }
+  ): [unknown, number] | null {
+    const orArgs: unknown[] = [];
     // Try each sub-rule in order until one matches
     for (let i = 0; i < definitions.length; i++) {
       const result = this.parseNonTerminal(
@@ -179,7 +170,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     const lastIndex = this.skipIndent(str, this.lastIndex);
 
     if (result && lastIndex === str.length) {
-      return [result[0], { lastIndex: lastIndex }];
+      return [result[0] as (G extends Grammar<any, any, infer T, infer R> ? T[R] : null), { lastIndex: lastIndex }];
     }
 
     return [null, { lastIndex: this.lastIndex }];
@@ -200,7 +191,7 @@ export class Grammar<
       | ["or", ([string, ...string[]] | [])[]];
   } = {};
   private transforms: {
-    [l: string]: [(...args: any[]) => any];
+    [l: string]: ((...args: any[]) => any)[];
   } = {};
 
   get rulesDefinition() {
@@ -288,10 +279,11 @@ export class Grammar<
   addTerminal<NR extends string, NTr = string>(
     name: NR,
     matcher: (str: string, index: number) => [string, number] | null,
-    transform: (str: string, r: readonly [number, number]) => NTr = (s) => s as any
+    transform: (str: string, r: readonly [number, number]) => NTr = (s) => s as NTr
   ): Grammar<Rules | NR, Variants | NTr, Trnsf & { [K in NR]: NTr }> {
     this.rules[name] = ["term", matcher];
     this.transforms[name] = [transform];
+    this.transforms[name].push(transform);
 
     return this as Grammar<
       Rules | NR,
@@ -339,7 +331,7 @@ export class Grammar<
     definition: NDef,
     transform: (
       ...args: NoInfer<
-        ExtractTypesFromTupleOptionals<
+        ConvertTupleTypeWithMap<
           Rules | NR,
           NDef,
           Trnsf & { [K in NR]: unknown }
@@ -366,7 +358,7 @@ export class Grammar<
     const orRule = this.rules[name];
 
     if (orRule[0] !== "or") {
-      throw new Error("Internal error: Expected 'or' rule type.");
+      throw new Error("Expected 'or' rule type.");
     }
 
     orRule[1].push(definition);

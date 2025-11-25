@@ -3,9 +3,9 @@ import {
   CalcNodeFuncCall,
   CalcNodeNumber,
   CalcNodeOperation,
-  CalcNodeType,
   CalcNodeVariable,
-} from "@/shared/libs/parseFormula";
+  CalcNodeType,
+} from "@/shared/libs/calcGraph";
 
 type PossibleCalcNode =
   | CalcNodeNumber
@@ -15,9 +15,9 @@ type PossibleCalcNode =
 type PossibleCalcNodeArray = PossibleCalcNode[];
 
 export const formulaGrammar = new Grammar()
-  .addTerminal("oBracket", regex(/\(/), (v) => v)
-  .addTerminal("cBracket", regex(/\)/), (v) => v)
-  .addTerminal("comma", regex(/,/), (v) => v)
+  .addTerminal("oBracket", regex(/\(/))
+  .addTerminal("cBracket", regex(/\)/))
+  .addTerminal("comma", regex(/,/))
   .addTerminal(
     "addOperator",
     regex(/[-+]/),
@@ -80,7 +80,6 @@ export const formulaGrammar = new Grammar()
   .addRuleVariant("operand", ["variableOperand"], (v) => v)
   .addRuleVariant("operand", ["numberOperand"], (v) => v)
 
-  // Pow rule with variants
   .addRule(
     "pow",
     ["operand", "powOperator", "pow"],
@@ -116,18 +115,20 @@ export const formulaGrammar = new Grammar()
     })
   )
   .addRuleVariant("add", ["mul"], (mul) => mul)
-  
+
   .addRule(
     "funcParams",
     ["add", "comma", "funcParams"],
     (add, _comma, rest) => [add, ...rest]
   )
   .addRuleVariant("funcParams", ["add"], (add) => [add])
+
   .addRule(
     "expression",
     ["oBracket", "add", "cBracket"],
     (_1, add, _2) => add
   )
+
   .addRule(
     "func_call",
     ["variableOperand", "oBracket", "funcParams", "cBracket"],

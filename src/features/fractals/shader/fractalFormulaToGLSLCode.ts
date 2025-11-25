@@ -2,7 +2,7 @@ import {
   CalcNode,
   CalcNodeType,
   forEachNodeChild,
-} from "@/shared/libs/parseFormula";
+} from "@/shared/libs/calcGraph";
 import { parseFormula, validateFormula } from "../formula/parseFormula";
 import { calcTypesOfNodes } from "../formula/trackTypes";
 import { CalcNodeResultTypeMap } from "../formula/types";

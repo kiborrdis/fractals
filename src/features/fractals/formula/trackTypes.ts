@@ -1,4 +1,4 @@
-import { CalcNode, CalcNodeType, forEachNodeChild } from "@/shared/libs/parseFormula";
+import { CalcNode, CalcNodeType, forEachNodeChild } from "@/shared/libs/calcGraph";
 import { CalcNodeResultType, CalcNodeResultTypeMap } from "./types";
 import { funcNameToSignature, varNameToType } from "./fnAndVarDescr";
 

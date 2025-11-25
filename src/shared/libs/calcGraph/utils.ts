@@ -1,16 +1,15 @@
-import { CalcNode, CalcNodeType, ErrAtCalcNode } from "./CalcNode";
+import { CalcNode, CalcNodeType } from "./CalcNode";
 
 export const forEachNodeChild = (
   node: CalcNode,
   cb: (node: CalcNode) => void,
   options: {
-    parentAfterChildren?: boolean,
+    parentAfterChildren?: boolean;
   } = {}
 ) => {
   if (!options.parentAfterChildren) {
     cb(node);
   }
-
 
   if (node.t === CalcNodeType.Operation) {
     forEachNodeChild(node.c[0], cb, options);
@@ -25,21 +24,3 @@ export const forEachNodeChild = (
     cb(node);
   }
 };
-
-export function skipSpaces(formula: string, startIndex: number): number {
-  while (/\s/.test(formula[startIndex])) {
-    startIndex += 1;
-  }
-
-  return startIndex;
-}
-
-export class ParseFormulaError extends Error {
-  constructor(public errorAt?: ErrAtCalcNode, public tree?: CalcNode) {
-    super();
-  }
-
-  toString() {
-    return JSON.stringify(this.errorAt, undefined, 2);
-  }
-}

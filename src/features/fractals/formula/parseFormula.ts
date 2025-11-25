@@ -1,7 +1,8 @@
-import { CalcNode, CalcNodeError, CalcNodeNumber, CalcNodeType, forEachNodeChild, GrammarParser, ParseFormulaError, skipSpaces } from "@/shared/libs/parseFormula";
+import { CalcNode, CalcNodeError, CalcNodeNumber, CalcNodeType, forEachNodeChild } from "@/shared/libs/calcGraph";
 import { funcNameToSignature, varNameToType } from "./fnAndVarDescr";
-import { rootRule } from "./rules";
 import { formulaGrammar } from "./grammar";
+import { ParseFormulaError } from "./error";
+import { GrammarParser } from "@/shared/libs/parseFormula";
 
 export const parseFormula = (formula: string) => {
   if (formula.trim() === "") {
@@ -12,7 +13,7 @@ export const parseFormula = (formula: string) => {
     } as CalcNodeNumber;
   }
   const parser = new GrammarParser(formulaGrammar);
-  const [node, matchContext] = parser.parse(formula);
+  const [node] = parser.parse(formula);
 
   const errors: CalcNodeError[] = [];
 
@@ -26,10 +27,8 @@ export const parseFormula = (formula: string) => {
 
   if (
     !node ||
-    errors.length > 0 ||
-    skipSpaces(formula, matchContext.lastIndex) !== formula.length
+    errors.length > 0
   ) {
-    console.log('node', node, matchContext);
     throw new ParseFormulaError(undefined, node ?? undefined);
   }
 

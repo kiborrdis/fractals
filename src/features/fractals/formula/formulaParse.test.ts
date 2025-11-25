@@ -1,6 +1,6 @@
 import { expect, test, describe } from "vitest";
 import { parseFormula } from "./parseFormula";
-import { CalcNode, CalcNodeType } from "@/shared/libs/parseFormula";
+import { CalcNode, CalcNodeType } from "@/shared/libs/calcGraph";
 
 describe("parseFormula", () => {
   test("parses funcCall", () => {

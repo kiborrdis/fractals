@@ -1,6 +1,3 @@
-// command to start test with vitest
-// npx vitest src/shared/libs/parseFormula/test.test.ts --watch
-
 import { describe, expect, it } from "vitest";
 import { Grammar, GrammarParser, regex } from "./grammar";
 
@@ -9,7 +6,7 @@ describe("GrammarBuilder", () => {
     const grammar = new Grammar()
       .addTerminal("add", regex(/[+-]/))
       .addTerminal("num", regex(/\d+/), (str) => parseInt(str, 10))
-      .addRule("expr", ["num", "add", "num"], (a, _, c) => a + (c as number))
+      .addRule("expr", ["num", "add", "num"], (a, _, c) => a + c)
       .setRootRule("expr");
     const parser = new GrammarParser(grammar);
 
@@ -19,9 +16,10 @@ describe("GrammarBuilder", () => {
 
   it("parses nested expressions", () => {
     const grammar = new Grammar()
+      .addRecursiveRule<'expr', number>()
       .addTerminal("add", regex(/[+-]/))
       .addTerminal("num", regex(/\d+/), (str) => parseInt(str, 10))
-      .addRule("expr", ["num", "add", "expr"], (a, _, c) => a + (c as number))
+      .addRule("expr", ["num", "add", "expr"], (a, _, c) => a + c)
       .addRuleVariant("expr", ["num"], (a) => a)
       .setRootRule("expr");
     const parser = new GrammarParser(grammar);
