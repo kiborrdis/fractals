@@ -15,6 +15,7 @@ import {
   HighlightedRangeItem,
 } from "../Graph/HighlightedRangeItem";
 import { useDrag } from "@/shared/hooks/useDrag";
+import { TimelineNumberRuleItem } from "./TimelineTool";
 
 const calcPercent = (event: React.MouseEvent<HTMLElement>, width: number) => {
   const rect = event.currentTarget.getBoundingClientRect();
@@ -26,7 +27,7 @@ const GRAPH_HEIGHT = 150;
 
 export const TimelineGraph = ({
   newStepModeActive,
-  editIndex,
+  editingId,
   selectedEditStep,
   rules,
   visibleTo,
@@ -39,14 +40,11 @@ export const TimelineGraph = ({
   onStepCreateEnd,
 }: {
   newStepModeActive?: boolean;
-  editIndex?: number;
+  editingId?: string | null;
   selectedEditStep?: number;
   visibleTo: number;
   displayTime?: number;
-  rules: {
-    color: string;
-    rule: RangeNumberRule | PatchNumberRule | StepNumberRule;
-  }[];
+  rules: TimelineNumberRuleItem[];
   onClick?: (time: number) => void;
   onStepCreateEnd?: () => void;
   onStepSelect: (index: number) => void;
@@ -104,12 +102,12 @@ export const TimelineGraph = ({
   }, [width, rules, period]);
   const msPerPixel = width ? period / width : 0;
   const highlightedRanges: HighlightedRange[] = [];
-  const editRange =
-    editIndex !== undefined ? rules[editIndex]?.rule : undefined;
+  const editRule =
+    editingId ? rules.find(rule => rule.id === editingId)?.rule : undefined;
 
-  if (width && editRange && editRange.t === RuleType.StepNumber) {
+  if (width && editRule && editRule.t === RuleType.StepNumber) {
     let startTime = 0;
-    editRange.transitions.map((t, idx) => {
+    editRule.transitions.map((t, idx) => {
       const endTime = startTime + t.len * 1000;
       const startX = startTime / msPerPixel;
       const endX = endTime / msPerPixel;
@@ -207,12 +205,12 @@ export const TimelineGraph = ({
             const perc = calcPercent(e, width);
 
             if (newStepModeActive) {
-              if (!editRange || editRange.t !== RuleType.StepNumber) {
+              if (!editRule || editRule.t !== RuleType.StepNumber) {
                 onStepCreateEnd?.();
                 setNewStepCoord(null);
                 return;
               }
-              const newRule = addNewStepToRule(editRange, perc * period);
+              const newRule = addNewStepToRule(editRule, perc * period);
 
               onChange?.(newRule);
               onStepCreateEnd?.();
@@ -281,17 +279,17 @@ export const TimelineGraph = ({
                 }}
               />
             ))}
-          {editRange &&
-            editRange.t === RuleType.StepNumber &&
+          {editRule &&
+            editRule.t === RuleType.StepNumber &&
             (() => {
               let start = 0;
-              return editRange.steps.map((s, i) => {
+              return editRule.steps.map((s, i) => {
                 const content = (
                   <Point
                     key={i}
                     onPositionChange={(pos) => {
                       const newRule = moveRuleStep(
-                        editRange,
+                        editRule,
                         i,
                         (pos[0] - leftRef.current) * msPerPixel,
                         (pos[1] - topRef.current) / GRAPH_HEIGHT
@@ -305,7 +303,7 @@ export const TimelineGraph = ({
                   />
                 );
 
-                start += editRange.transitions[i].len;
+                start += editRule.transitions[i].len;
 
                 return content;
               });

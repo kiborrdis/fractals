@@ -240,8 +240,8 @@ export const animationFns: {
   ) => number;
 } = {
   linear: (t) => t,
-  t: (t) => Math.pow(t, 2),
-  easeInSine: (t) => 1 - Math.cos((t * Math.PI) / 2),
+  t: (t) => Math.pow(t, 2) * Math.sin((Math.PI*17*t) / 2),
+  easeInSine: (t) => 1 - Math.pow(1 - t, 2) * Math.cos((Math.PI*17*t) / 2),
   easeOutSine: (t) => Math.sin((t * Math.PI) / 2),
   easeInOutSine: (t) => -((Math.cos(Math.PI * t) - 1) / 2),
   easeInOutElastic: (t) => {

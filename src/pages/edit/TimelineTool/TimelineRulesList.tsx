@@ -1,6 +1,6 @@
 import { Stack, Group, Text, ActionIcon, Tooltip } from "@mantine/core";
 import { FiEye, FiEyeOff, FiEdit2 } from "react-icons/fi";
-import { DynamicNumberRuleEntry } from "./TimelineTool";
+import { TimelineNumberRuleItem } from "./TimelineTool";
 
 export const TimelineRulesList = ({
   numberRules,
@@ -9,7 +9,7 @@ export const TimelineRulesList = ({
   onRuleActivityChange,
   onRuleEditChange,
 }: {
-  numberRules: DynamicNumberRuleEntry[];
+  numberRules: TimelineNumberRuleItem[];
   activeRangesIds: Record<string, boolean>;
   editingRangeId: string | null;
   onRuleActivityChange: (id: string, newVal: boolean) => void;

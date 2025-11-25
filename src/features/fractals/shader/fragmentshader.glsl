@@ -194,6 +194,7 @@ float vectorAngle(vec2 v) {
 }
 
 vec2 complexPow(vec2 a, float p) {
+
   float len = pow(length(a), p);
   // vec2 norm = a / length(a);
   // float angle = acos(norm.x);
@@ -263,7 +264,7 @@ float generateFractalIntensity(vec2 point) {
 
   // Perform radial split based on the angle
   vec2 normailizedCentrCoord = coord / length(coord);
-  float angle = acos(base.x * normailizedCentrCoord.x + base.y * normailizedCentrCoord.y) * (180.0 / PI);
+  float angle = atan(normailizedCentrCoord.y, normailizedCentrCoord.x) * (180.0 / PI);
   float sepAng = u_radial_split;
 
   vec2 radialSplitPerDistChange = u_radial_split_per_dist_change;

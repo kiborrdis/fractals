@@ -44,38 +44,36 @@ export const TimelineTool = () => {
   const [activeRangesIds, setActiveRangesIds] = useState<
     Record<string, boolean>
   >({});
+  const [editingRuleId, setEditingRuleId] = useState<
+    string | null
+  >(null);
+
   const time = useCurrentTime();
-  const [editingRangeId, setEditingRangeId] = useState<string | null>(null);
+
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   const [newStep, setNewStep] = useState<boolean>(false);
   const [previewValueOnHover, setPreviewValueOnHover] = useState<boolean>(true);
 
+  
   const {
     dynamicParamOverride,
     initialLoopStateChange,
     dynamicRuleChangeByRoute,
   } = useActions();
   const dynamicNumberRules = useDynamicNumberRules();
-
-  const editingRule = editingRangeId
-    ? dynamicNumberRules.find((r) => r.route.join(".") === editingRangeId)
-    : null;
+  const editingRule =  dynamicNumberRules.find(({ id }) => id === editingRuleId);
 
   const activeRules: typeof dynamicNumberRules = useMemo(() => {
     const arr: typeof dynamicNumberRules = [];
 
-    if (editingRule) {
-      arr.push({ ...editingRule, color: "green" });
-    }
-
     dynamicNumberRules.forEach((rule) => {
-      const ruleId = rule.route.join(".");
-      if (activeRangesIds[ruleId] && editingRangeId !== ruleId) {
+      if (activeRangesIds[rule.id]) {
         arr.push(rule);
       }
     });
+
     return arr;
-  }, [activeRangesIds, dynamicNumberRules, editingRule, editingRangeId]);
+  }, [activeRangesIds, dynamicNumberRules]);
 
   const [lockToPeriod, setLockToPeriod] = useState(true);
   const [visibleTo, setVisibleTo] = useState(0);
@@ -155,13 +153,13 @@ export const TimelineTool = () => {
         <Box w="150px">
           <TimelineRulesList
             activeRangesIds={activeRangesIds}
-            editingRangeId={editingRangeId}
+            editingRangeId={editingRuleId}
             numberRules={dynamicNumberRules}
             onRuleActivityChange={(id, newVal) =>
               setActiveRangesIds((old) => ({ ...old, [id]: newVal }))
             }
             onRuleEditChange={(id) =>
-              setEditingRangeId((old) => (old === id ? null : id))
+              setEditingRuleId((old) => (old === id ? null : id))
             }
           />
         </Box>
@@ -182,7 +180,7 @@ export const TimelineTool = () => {
             onStepCreateEnd={() => setNewStep(false)}
             newStepModeActive={newStep}
             visibleTo={visibleTo}
-            editIndex={editingRangeId !== null ? 0 : undefined}
+            editingId={editingRuleId}
             selectedEditStep={editingStepIndex ?? undefined}
             rules={activeRules}
             onClick={(t) => {
@@ -221,16 +219,17 @@ export const TimelineTool = () => {
   );
 };
 
-export type DynamicNumberRuleEntry = {
+export type TimelineNumberRuleItem = {
+  id: string;
   name: string;
   route: string[];
   color: string;
   rule: RangeNumberRule | PatchNumberRule | StepNumberRule;
 };
 
-const useDynamicNumberRules = (): DynamicNumberRuleEntry[] => {
+const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
   const fractal = useFractalRules();
-  return Object.entries(fractal.dynamic).reduce<DynamicNumberRuleEntry[]>(
+  return Object.entries(fractal.dynamic).reduce<TimelineNumberRuleItem[]>(
     (memo, [key, rule]) => {
       if (
         "t" in rule &&
@@ -240,6 +239,7 @@ const useDynamicNumberRules = (): DynamicNumberRuleEntry[] => {
       ) {
         const route = [key];
         memo.push({
+          id: route.join('.'),
           route: route,
           name: getDynamicParamLabel(route),
           color: colorsArray[memo.length % colorsArray.length],
@@ -254,6 +254,7 @@ const useDynamicNumberRules = (): DynamicNumberRuleEntry[] => {
           ) {
             const route = [key, String(i)]
             memo.push({
+              id: route.join('.'),
               route: route,
               name: getDynamicParamLabel(route),
               color: colorsArray[memo.length % colorsArray.length],
@@ -268,7 +269,7 @@ const useDynamicNumberRules = (): DynamicNumberRuleEntry[] => {
   );
 };
 
-function calcPeriod(rules: DynamicNumberRuleEntry[]): number {
+function calcPeriod(rules: TimelineNumberRuleItem[]): number {
   if (!rules[0]) {
     return 0;
   }

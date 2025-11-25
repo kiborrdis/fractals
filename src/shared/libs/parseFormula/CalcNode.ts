@@ -27,7 +27,7 @@ export type CalcNodeNumber = {
   /**
    * @description index range of number token in original string
    */
-  r: [number, number];
+  r: readonly [number, number];
 };
 
 export type CalcNodeFuncCall = {
@@ -44,7 +44,7 @@ export type CalcNodeFuncCall = {
   /**
    * @description Range of function name
    */
-  r: [number, number];
+  r: readonly [number, number];
 };
 
 export type CalcNodeVariable = {
@@ -58,7 +58,7 @@ export type CalcNodeVariable = {
   /**
    * @description Range of variable name
    */
-  r: [number, number];
+  r: readonly [number, number];
 };
 
 export type CalcNodeOperation = {
@@ -75,7 +75,7 @@ export type CalcNodeOperation = {
   /**
    * @description Range of operation in the original string
    */
-  r: [number, number];
+  r: readonly [number, number];
 };
 
 export type CalcNodeError = {
