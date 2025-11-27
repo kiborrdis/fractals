@@ -185,10 +185,6 @@ export const TimelineGraph = ({
           height={GRAPH_HEIGHT}
           max={1.1}
           data={data}
-          highlightedRanges={highlightedRanges}
-          onRangeClick={(id) => {
-            onStepSelect(Number(id));
-          }}
         />
       )}
 

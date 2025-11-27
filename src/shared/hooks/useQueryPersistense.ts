@@ -35,7 +35,6 @@ export const useStateWithQueryPersistence = <T>(
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      console.log("save");
       const params = new URLSearchParams(window.location.search);
       params.set(key, stringify(state));
       window.history.replaceState({}, "", `?${params.toString()}`);
@@ -58,7 +57,7 @@ export const useQueryPersistentValue = <T>(
   const { parse = defaultParse, stringify = defaultStringify } = options || {};
 
   const valueRef = useRef<T | null>(null);
-  const timeoutId = useRef<null | number>(null);
+  const timeoutId = useRef<null | unknown>(null);
 
   if (valueRef.current === null) {
     const queryValue = new URLSearchParams(window.location.search).get(key);
@@ -67,7 +66,7 @@ export const useQueryPersistentValue = <T>(
 
   useEffect(() => () => {
     if (timeoutId.current) {
-      clearTimeout(timeoutId.current);
+      clearTimeout(timeoutId.current as any);
     }
   }, []);
 

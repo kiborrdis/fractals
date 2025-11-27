@@ -3,6 +3,7 @@ import fragment from "./fragmentshader.glsl?raw";
 import { useEffect, useState } from "react";
 import { Vector2 } from "@/features/fractals/types";
 import { createProgram, createShader } from "@/shared/libs/webgl";
+import { DisplayCanvas } from "@/shared/ui/DisplayCanvas/DisplayCanvas";
 
 const toTriangleMatrix: Vector2[] = [
   [0.6641741461862876, -0.7475778912847248], // 1, 0
@@ -67,9 +68,9 @@ export const Simulation = () => {
       {texts.map((t) => (
         <Test key={t} text={t} />
       ))}
+      <DisplayCanvas width={600} height={600} ref={setCanvas} />
     </>
   );
-  // return <DisplayCanvas width={600} height={600} ref={setCanvas} />;
 };
 
 const Test = ({ text }: { text: string }) => {

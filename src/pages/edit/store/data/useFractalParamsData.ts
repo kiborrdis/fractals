@@ -33,7 +33,6 @@ const mergeDeep = (
   source: unknown,
   transform?: (value: unknown) => unknown
 ): unknown => {
-  // Handle null/undefined cases
   if (source === null || source === undefined) return target;
   if (target === null || target === undefined)
     return transform ? transform(source) : source;
@@ -53,7 +52,6 @@ const mergeDeep = (
     return result;
   }
 
-  // Handle objects
   if (
     typeof target === "object" &&
     typeof source === "object" &&
@@ -64,11 +62,25 @@ const mergeDeep = (
 
     for (const key in source) {
       if (Object.prototype.hasOwnProperty.call(source, key)) {
-        if (source[key] !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (key in source && (source as any)[key] !== undefined) {
           if (key in result) {
-            result[key] = mergeDeep(result[key], source[key], transform);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (result as any)[key] = mergeDeep(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (result as any)[key],
+
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (source as any)[key],
+              transform
+            );
           } else {
-            result[key] = transform ? transform(source[key]) : source[key];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (result as any)[key] = transform
+              ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                transform((source as any)[key])
+              : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (source as any)[key];
           }
         }
       }

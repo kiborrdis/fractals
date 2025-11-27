@@ -109,25 +109,8 @@ export const GradientInput = ({
   );
 };
 
-const rgbToHex = (r: number, g: number, b: number) => {
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-};
-
 const rgbaToRgbaString = (r: number, g: number, b: number, a: number) => {
   return `rgba(${r}, ${g}, ${b}, ${a})`;
-};
-
-const toHex = (c: number) => {
-  const hex = c.toString(16);
-  return hex.length === 1 ? "0" + hex : hex;
-};
-
-const hexToNormalizedRgb = (hex: string) => {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-  return [r, g, b] as [number, number, number];
 };
 
 const rgbaStringToNormalizedRgba = (str: string) => {

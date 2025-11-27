@@ -15,8 +15,6 @@ import {
   DisplayFractal,
   FractalParamsBuildRules,
   getDefaultFractalRules,
-  RangeNumberRule,
-  RuleType,
   Vector2,
 } from "@/features/fractals";
 import { useQueryPersistentValue } from "@/shared/hooks/useQueryPersistense";

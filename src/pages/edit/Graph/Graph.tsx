@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { render } from "./render";
-import { HighlightedRange, HighlightedRangeItem } from "./HighlightedRangeItem";
 
 const calcPercent = (event: React.MouseEvent<HTMLElement>, width: number) => {
   const rect = event.currentTarget.getBoundingClientRect();
@@ -16,13 +15,8 @@ export const Graph = ({
   dataOffset,
   max,
   zoomLevel = 1,
-  highlightedRanges = [],
-  onRangeClick,
-  onRangeResize,
-  onMove,
   onMouseUp,
   onMouseDown,
-  onMouseLeave,
   onClick,
 }: {
   data: [number[], string][];
@@ -32,13 +26,8 @@ export const Graph = ({
   cursorX?: number | null;
   dataOffset?: number;
   zoomLevel?: number;
-  highlightedRanges?: Array<HighlightedRange>;
-  onRangeResize?: (newWidth: number, rangeI: number, rangeId?: string) => void;
-  onRangeClick?: (rangeId: string) => void;
-  onMove?: (xPercent: number) => void;
   onMouseUp?: (xPercent: number) => void;
   onMouseDown?: (xPercent: number) => void;
-  onMouseLeave?: () => void;
   onClick?: (xPercent: number) => void;
 }) => {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -55,25 +44,6 @@ export const Graph = ({
       });
     }
   }, [data, dataOffset, max, height, zoomLevel, width]);
-
-  // Calculate highlighted ranges pixel positions
-  const getHighlightedRangePositions = () => {
-    if (!highlightedRanges.length || !data.length) return [];
-
-    const effectiveWidth = Math.floor(width / zoomLevel);
-    const startIndex = Math.max(
-      0,
-      data.length - effectiveWidth + (dataOffset || 0)
-    );
-
-    return highlightedRanges.map((range, index) => {
-      const pixelStart = (range.start - startIndex) * zoomLevel;
-      const pixelEnd = (range.end - startIndex) * zoomLevel;
-      return { range, index, pixelStart, pixelEnd };
-    });
-  };
-
-  const rangePositions = getHighlightedRangePositions();
 
   return (
     <div
