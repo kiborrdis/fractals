@@ -23,7 +23,7 @@ export const getDefaultFractalRules = () => {
 
     dynamic: {
       hexMirroringFactor: 0.0,
-      hexMirroringPerDistChange: [0, 0],
+      hexMirroringPerDistChange: 0,
       linearMirroringFactor: 2000,
       time: 0,
       c: [-1, 1],
@@ -31,12 +31,12 @@ export const getDefaultFractalRules = () => {
       rlVisibleRange: [-1, 1],
       imVisibleRange: [-1, 1],
       maxIterations: 100,
-      linearMirroringPerDistChange: [0, 0],
-      radialMirroringPerDistChange: [0, 0],
-      cxPerDistChange: [0, 0],
-      cyPerDistChange: [0, 0],
-      rPerDistChange: [0, 0],
-      iterationsPerDistChange: [0, 0],
+      linearMirroringPerDistChange: 0,
+      radialMirroringPerDistChange: 0,
+      cxPerDistChange: 0,
+      cyPerDistChange: 0,
+      rPerDistChange: 0,
+      iterationsPerDistChange: 0,
       radialMirroringAngle: 181,
     },
   };

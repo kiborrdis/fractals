@@ -16,7 +16,7 @@ export type FractalParams = {
 
 export type FractalDynamicParams = {
   hexMirroringFactor: number;
-  hexMirroringPerDistChange: Vector2;
+  hexMirroringPerDistChange: number;
   linearMirroringFactor: number;
   radialMirroringAngle: number;
   time: number;
@@ -25,12 +25,12 @@ export type FractalDynamicParams = {
   rlVisibleRange: Vector2;
   imVisibleRange: Vector2;
   maxIterations: number;
-  linearMirroringPerDistChange: Vector2;
-  radialMirroringPerDistChange: Vector2;
-  cxPerDistChange: Vector2;
-  cyPerDistChange: Vector2;
-  rPerDistChange: Vector2;
-  iterationsPerDistChange: Vector2;
+  linearMirroringPerDistChange: number;
+  radialMirroringPerDistChange: number;
+  cxPerDistChange: number;
+  cyPerDistChange: number;
+  rPerDistChange: number;
+  iterationsPerDistChange: number;
 };
 
 export type GradientStop = [

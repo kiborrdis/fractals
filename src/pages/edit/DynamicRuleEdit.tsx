@@ -1,15 +1,11 @@
-import {
-  FractalDynamicParamsBuildRules,
-} from "@/features/fractals/types";
+import { FractalDynamicParamsBuildRules } from "@/features/fractals/types";
 import { useDynamicRule } from "./store/data/useDynamicRule";
 import { NumberRuleEdit } from "./NumberRuleEdit";
 import { Vector2RuleEdit } from "./Vector2RuleEdit";
 import { ReactNode } from "react";
 import { NumberBuildRule } from "@/shared/libs/numberRule";
 
-type RuleValue =
-  | NumberBuildRule
-  | [NumberBuildRule, NumberBuildRule];
+type RuleValue = NumberBuildRule | [NumberBuildRule, NumberBuildRule];
 
 type RuleRenderProps<K extends keyof FractalDynamicParamsBuildRules> = {
   name: K;
@@ -30,7 +26,7 @@ const ruleConfigs: RuleRenderers = {
     <NumberRuleEdit
       label="Hex Mirroring Factor"
       min={0}
-      max={2000.0}
+      max={2000}
       step={1}
       minRange={10}
       {...props}
@@ -38,12 +34,12 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   hexMirroringPerDistChange: (props) => (
-    <Vector2RuleEdit
-      sublabels={["Per X", "Per Y"]}
-      min={-0.8}
-      max={0.8}
-      step={0.001}
-      minRange={0.001}
+    <NumberRuleEdit
+      label="Hex Mirroring Per Dist Change"
+      min={-2000}
+      max={2000}
+      step={1}
+      minRange={10}
       {...props}
     />
   ),
@@ -60,12 +56,12 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   linearMirroringPerDistChange: (props) => (
-    <Vector2RuleEdit
-      sublabels={["Per X", "Per Y"]}
-      min={-0.8}
-      max={0.8}
-      step={0.001}
-      minRange={0.001}
+    <NumberRuleEdit
+      label="Linear Mirroring Per Dist Change"
+      min={-2000}
+      max={2000}
+      step={1}
+      minRange={1}
       {...props}
     />
   ),
@@ -82,12 +78,12 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   radialMirroringPerDistChange: (props) => (
-    <Vector2RuleEdit
-      sublabels={["Per X", "Per Y"]}
-      min={-0.8}
-      max={0.8}
-      step={0.001}
-      minRange={0.001}
+    <NumberRuleEdit
+      label="Radial Mirroring Per Dist Change"
+      min={-180}
+      max={180}
+      step={0.1}
+      minRange={1}
       {...props}
     />
   ),
@@ -159,10 +155,10 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   cxPerDistChange: (props) => (
-    <Vector2RuleEdit
-      sublabels={["Per X", "Per Y"]}
-      min={-0.8}
-      max={0.8}
+    <NumberRuleEdit
+      label="Cx Per Dist Change"
+      min={-3}
+      max={3}
       step={0.001}
       minRange={0.001}
       {...props}
@@ -170,10 +166,10 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   cyPerDistChange: (props) => (
-    <Vector2RuleEdit
-      sublabels={["Per X", "Per Y"]}
-      min={-0.8}
-      max={0.8}
+    <NumberRuleEdit
+      label="Cy Per Dist Change"
+      min={-3}
+      max={3}
       step={0.001}
       minRange={0.001}
       {...props}
@@ -181,19 +177,19 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   rPerDistChange: (props) => (
-    <Vector2RuleEdit
-      sublabels={["Per X", "Per Y"]}
-      min={-10}
-      max={10}
-      step={0.001}
-      minRange={0.001}
+    <NumberRuleEdit
+      label="R Per Dist Change"
+      min={-50}
+      max={50}
+      step={0.1}
+      minRange={1}
       {...props}
     />
   ),
 
   iterationsPerDistChange: (props) => (
-    <Vector2RuleEdit
-      sublabels={["Per X", "Per Y"]}
+    <NumberRuleEdit
+      label="Iterations Per Dist Change"
       min={-100}
       max={500}
       step={1}

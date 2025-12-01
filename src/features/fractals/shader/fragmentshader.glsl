@@ -14,19 +14,19 @@ uniform float u_max_iterations;
 uniform vec2 u_fractal_r_range_start;
 uniform vec2 u_fractal_r_range_end;
 
-uniform vec2 u_linear_split_per_dist_change;
-uniform vec2 u_radial_split_per_dist_change;
+uniform float u_linear_split_per_dist_change;
+uniform float u_radial_split_per_dist_change;
 
-uniform vec2 u_cx_split_per_dist_change;
-uniform vec2 u_cy_split_per_dist_change;
-uniform vec2 u_r_split_per_dist_change;
-uniform vec2 u_iterations_split_per_dist_change;
+uniform float u_cx_split_per_dist_change;
+uniform float u_cy_split_per_dist_change;
+uniform float u_r_split_per_dist_change;
+uniform float u_iterations_split_per_dist_change;
 
 uniform int u_mirror_type; // 0 = off, 1 = square, 2 = hex
 uniform bool u_invert;
 
 uniform float u_hex_mirroring_factor;
-uniform vec2 U_hex_mirroring_dist_change;
+uniform float u_hex_mirroring_dist_change;
 uniform sampler2D uSampler;
 uniform int u_sampler_wl;
 
@@ -235,6 +235,7 @@ float generateFractalIntensity(vec2 point) {
   vec2 centeredCoord = point * 2.0 - u_resolution;
   vec2 normCentCoord = centeredCoord;
   normCentCoord = abs((1.0 * float(u_invert)) + (1.0 + float(u_invert) * (-2.0)) * abs((centeredCoord / (u_resolution))));
+  float normLenFromCenter = length(normCentCoord);
 
   vec2 uv = centeredCoord / u_resolution.x;
   vec2 preparedCoord = centeredCoord;
@@ -246,8 +247,7 @@ float generateFractalIntensity(vec2 point) {
 
   // Square mirroring
   if (u_mirror_type == 1) {
-    vec2 linearSplitPerDistChange = u_linear_split_per_dist_change;
-    sep = sep + linearSplitPerDistChange.x * abs(normCentCoord.x) + linearSplitPerDistChange.y * abs(normCentCoord.y);
+    sep = sep + u_linear_split_per_dist_change * normLenFromCenter;
     preparedCoord = mod(centeredCoord - sep / 2.0, sep) - sep / 2.0;
 
     coord = abs(preparedCoord / u_resolution.y);
@@ -256,7 +256,7 @@ float generateFractalIntensity(vec2 point) {
   // Hexagonal mirroring
   if (u_mirror_type == 2) {
     float hexHeight = u_hex_mirroring_factor;
-    hexHeight = hexHeight + U_hex_mirroring_dist_change.x * abs(normCentCoord.x) + U_hex_mirroring_dist_change.y * abs(normCentCoord.y);
+    hexHeight = hexHeight + u_hex_mirroring_dist_change * normLenFromCenter;
     preparedCoord = hexMirror(preparedCoord, hexHeight);
 
     coord = preparedCoord / u_resolution.y;
@@ -267,10 +267,8 @@ float generateFractalIntensity(vec2 point) {
   float angle = atan(normailizedCentrCoord.y, normailizedCentrCoord.x) * (180.0 / PI);
   float sepAng = u_radial_split;
 
-  vec2 radialSplitPerDistChange = u_radial_split_per_dist_change;
-
   // Increase radial split based on the distance from the center
-  sepAng = sepAng + radialSplitPerDistChange.x * abs(normCentCoord.x) + radialSplitPerDistChange.y * abs(normCentCoord.y);
+  sepAng = sepAng + u_radial_split_per_dist_change * normLenFromCenter;
 
   float part = abs(mod(angle, sepAng) - (sepAng / 2.0)) / (180.0 / PI);
   vec2 nCrd = vec2(sin(part), cos(part)) * length(coord);
@@ -295,18 +293,13 @@ float generateFractalIntensity(vec2 point) {
   float r = u_fractal_r;
   int maxIteration = int(u_max_iterations);
 
-  vec2 cxPerDistChange = u_cx_split_per_dist_change;
-  vec2 cyPerDistChange = u_cy_split_per_dist_change;
-  vec2 rPerDistChange = u_r_split_per_dist_change;
-  vec2 iterationsPerDistChange = u_iterations_split_per_dist_change;
+  // Modify the fractal coordinates based on the distance from center split
+  cy = u_fractal_c.x + u_cx_split_per_dist_change * normLenFromCenter;
+  cx = u_fractal_c.y + u_cy_split_per_dist_change * normLenFromCenter;
+  r = u_fractal_r + u_r_split_per_dist_change * normLenFromCenter;
 
-    // Modify the fractal coordinates based on the distance from center split
-  cy = u_fractal_c.x + cxPerDistChange.x * abs(normCentCoord.x) + cxPerDistChange.y * abs(normCentCoord.y);
-  cx = u_fractal_c.y + cyPerDistChange.x * abs(normCentCoord.x) + cyPerDistChange.y * abs(normCentCoord.y);
-  r = u_fractal_r + rPerDistChange.x * abs(normCentCoord.x) + rPerDistChange.y * abs(normCentCoord.y);
-
-    // Increase max iterations based on the distance from the center
-  maxIteration = maxIteration + int(iterationsPerDistChange.x * abs(normCentCoord.x) + iterationsPerDistChange.y * abs(normCentCoord.y));
+  // Increase max iterations based on the distance from the center
+  maxIteration = maxIteration + int(u_iterations_split_per_dist_change * normLenFromCenter);
 
   // float zx = cx;
   // float zy = cy;

@@ -103,6 +103,7 @@ export const ShapeParams = React.memo(() => {
             label="Hex mirroring"
           >
             <DynamicRuleEdit name="hexMirroringFactor" />
+            <DynamicRuleEdit name="hexMirroringPerDistChange" />
           </SettingsCollapsibleSection>
 
           <SettingsCollapsibleSection

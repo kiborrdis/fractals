@@ -48,12 +48,12 @@ export const prepareFractalUniforms = (
       imVisibleRange,
       rlVisibleRange,
       maxIterations,
-      linearMirroringPerDistChange = [0, 0],
-      radialMirroringPerDistChange = [0, 0],
-      cxPerDistChange = [0, 0],
-      cyPerDistChange = [0, 0],
-      rPerDistChange = [0, 0],
-      iterationsPerDistChange = [0, 0],
+      linearMirroringPerDistChange = 0,
+      radialMirroringPerDistChange = 0,
+      cxPerDistChange = 0,
+      cyPerDistChange = 0,
+      rPerDistChange = 0,
+      iterationsPerDistChange = 0,
       hexMirroringFactor,
       hexMirroringPerDistChange,
       radialMirroringAngle,
@@ -80,25 +80,24 @@ export const prepareFractalUniforms = (
 
   context.uniform1i(mirror_u1i, mirroringTypeToInt[mirroringType]);
 
-  context.uniform2f(
+  context.uniform1f(
     linearSplitPerDistChange_u2f,
-    ...linearMirroringPerDistChange
+    linearMirroringPerDistChange
   );
-  context.uniform2f(
+  context.uniform1f(
     radialSplitPerDistChange_u2f,
-    ...radialMirroringPerDistChange
+    radialMirroringPerDistChange
   );
-  context.uniform2f(cxSplitPerDistChange_u2f, ...cxPerDistChange);
-  context.uniform2f(cySplitPerDistChange_u2f, ...cyPerDistChange);
-  context.uniform2f(rSplitPerDistChange_u2f, ...rPerDistChange);
-  context.uniform2f(
+  context.uniform1f(cxSplitPerDistChange_u2f, cxPerDistChange);
+  context.uniform1f(cySplitPerDistChange_u2f, cyPerDistChange);
+  context.uniform1f(rSplitPerDistChange_u2f, rPerDistChange);
+  context.uniform1f(
     iterationsSplitPerDistChange_u2f,
-    ...iterationsPerDistChange
+    iterationsPerDistChange
   );
   context.uniform1i(invertLocation_u1i, invert ? 1 : 0);
   context.uniform1f(hexMirroringFactor_u1f,  hexMirroringFactor);
-  context.uniform2f(hexMirroringDistChange_u2f, ...hexMirroringPerDistChange);
-
+  context.uniform1f(hexMirroringDistChange_u2f, hexMirroringPerDistChange);
   context.activeTexture(context.TEXTURE0);
 
   // Bind the texture to texture unit 0
@@ -187,7 +186,7 @@ export function setupUniformLocations(
 
   const hexMirroringDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "U_hex_mirroring_dist_change"
+    "u_hex_mirroring_dist_change"
   );
   return {
     resolution_u2f,

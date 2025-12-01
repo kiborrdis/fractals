@@ -7,7 +7,7 @@ import {
 import { useState } from "react";
 import { FullViewport } from "@/shared/ui/FullViewport/FullViewport";
 import { Vector2 } from "@/shared/libs/vectors";
-import { makeRuleFromArray, makeRuleFromNumber, rangeRule } from "@/shared/libs/numberRule";
+import { makeRuleFromNumber, rangeRule } from "@/shared/libs/numberRule";
 
 const rangeSize = randomRange(-1, 1);
 const fractalRRangeStart: Vector2 = [-rangeSize, -rangeSize];
@@ -61,7 +61,7 @@ const randomParams: FractalParamsBuildRules = {
   invert: Math.random() > 0.5,
   dynamic: {
     hexMirroringFactor: makeRuleFromNumber(randomRange(100, 2000)),
-    hexMirroringPerDistChange: makeRuleFromArray([0, 0] as const),
+    hexMirroringPerDistChange: makeRuleFromNumber(0),
     linearMirroringFactor: rangeRule(
       [
         Math.max(linearSplit - linearSplit, 0.5),
@@ -105,20 +105,14 @@ const randomParams: FractalParamsBuildRules = {
       [50, 250],
       shortTime + Math.random() * (shortTime / 10)
     ),
-    linearMirroringPerDistChange: makeRuleFromArray([
-      linearSplitPerD,
-      0,
-    ] as const),
+    linearMirroringPerDistChange: makeRuleFromNumber(linearSplitPerD),
     radialMirroringAngle: makeRuleFromNumber(radialSplit),
 
-    radialMirroringPerDistChange: makeRuleFromArray([
-      0,
-      radialSplitPerD,
-    ] as const),
-    cxPerDistChange: makeRuleFromArray([cxPerDist, cxPerDist] as const),
-    cyPerDistChange: makeRuleFromArray([cyPerDist, cyPerDist] as const),
-    rPerDistChange: makeRuleFromArray([0, 0] as const),
-    iterationsPerDistChange: makeRuleFromArray([0, 0] as const),
+    radialMirroringPerDistChange: makeRuleFromNumber(radialSplitPerD),
+    cxPerDistChange: makeRuleFromNumber(cxPerDist),
+    cyPerDistChange: makeRuleFromNumber(cyPerDist),
+    rPerDistChange: makeRuleFromNumber(0),
+    iterationsPerDistChange: makeRuleFromNumber(0),
   },
 };
 
