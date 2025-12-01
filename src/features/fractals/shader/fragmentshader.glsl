@@ -288,14 +288,14 @@ float generateFractalIntensity(vec2 point) {
   vec2 fractStartEndDelta = (fractEnd - fractStart) / 2.0;
   vec2 fractalCoords = fractStartEndDelta * (coord) + fractStart + fractStartEndDelta;
 
-  float cy = u_fractal_c.x;
-  float cx = u_fractal_c.y;
+  float cx = u_fractal_c.x;
+  float cy = u_fractal_c.y;
   float r = u_fractal_r;
   int maxIteration = int(u_max_iterations);
 
   // Modify the fractal coordinates based on the distance from center split
-  cy = u_fractal_c.x + u_cx_split_per_dist_change * normLenFromCenter;
-  cx = u_fractal_c.y + u_cy_split_per_dist_change * normLenFromCenter;
+  cx = u_fractal_c.x + u_cx_split_per_dist_change * normLenFromCenter;
+  cy = u_fractal_c.y + u_cy_split_per_dist_change * normLenFromCenter;
   r = u_fractal_r + u_r_split_per_dist_change * normLenFromCenter;
 
   // Increase max iterations based on the distance from the center
