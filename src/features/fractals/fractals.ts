@@ -1,10 +1,10 @@
 import { createRenderLoop } from "./renderLoop";
 import {
   FractalParamsBuildRules,
-  Vector2,
 } from "./types";
 import { ShaderFractal } from "./shader/ShaderFractal";
 import { makeFractalParamsFromRules } from "./ruleConversion";
+import { Vector2 } from "@/shared/libs/vectors";
 
 export const createFractalVisualizer = (
   formula: string,

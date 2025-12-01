@@ -1,4 +1,4 @@
-import { Vector2 } from "../../../features/fractals/types";
+import { Vector2 } from "./types";
 
 export function sum(a: number, b: number): number;
 export function sum(a: Vector2, b: Vector2): Vector2;

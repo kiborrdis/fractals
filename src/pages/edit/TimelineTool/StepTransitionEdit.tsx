@@ -1,4 +1,4 @@
-import { StepTransition, StepTransitionFnType, animationFns } from "@/features/fractals";
+import { animationFns, StepTransition, StepTransitionFnType } from "@/shared/libs/numberRule";
 import { EditorNumberInput } from "@/shared/ui/EditorNumberInput";
 import { Paper, Stack, Text, Group, Select } from "@mantine/core";
 

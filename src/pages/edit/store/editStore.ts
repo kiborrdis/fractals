@@ -4,12 +4,10 @@ import {
   FractalDynamicParamsBuildRules,
   FractalParams,
   FractalParamsBuildRules,
-  RuleType,
-  Vector2,
-  makeArrayFromRules,
   transformToFractalCoord,
 } from "@/features/fractals";
-import { sum } from "@/shared/libs/vectors";
+import { sum, Vector2 } from "@/shared/libs/vectors";
+import { makeArrayFromRules, RuleType } from "@/shared/libs/numberRule";
 
 type DeepPartial<T> = T extends object
   ? {
@@ -105,6 +103,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             value: FractalDynamicParamsBuildRules[keyof FractalDynamicParamsBuildRules]
           ) => {
             set((prev) => {
+               // eslint-disable-next-line @typescript-eslint/no-explicit-any
                let target: any = prev.fractal.dynamic;
 
               for (let i = 0; i < route.length - 1; i++) {
@@ -135,6 +134,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
                 prev.fractalOverrides.dynamic = {};
               }
               const overrides = prev.fractalOverrides.dynamic;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               let target: any = overrides;
 
               for (let i = 0; i < route.length - 1; i++) {

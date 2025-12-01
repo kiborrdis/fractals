@@ -1,4 +1,4 @@
-import { NumberBuildRule, RuleType, changeRulePeriod, StepNumberRule } from "@/features/fractals";
+import { changeRulePeriod, NumberBuildRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
 import { EditorNumberInput } from "@/shared/ui/EditorNumberInput";
 import { Group, Text, Input, ActionIcon, Button } from "@mantine/core";
 import { FiCrosshair } from "react-icons/fi";

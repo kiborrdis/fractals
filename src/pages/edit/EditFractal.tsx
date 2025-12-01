@@ -15,7 +15,6 @@ import {
   DisplayFractal,
   FractalParamsBuildRules,
   getDefaultFractalRules,
-  Vector2,
 } from "@/features/fractals";
 import { useQueryPersistentValue } from "@/shared/hooks/useQueryPersistense";
 import { ShapeParams } from "./ShapeParams";
@@ -30,6 +29,7 @@ import {
 } from "./store/data/useFractalParamsData";
 import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
+import { Vector2 } from "@/shared/libs/vectors";
 
 const defaultRules = getDefaultFractalRules();
 

@@ -1,14 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  PatchNumberRule,
-  RangeNumberRule,
-  RuleType,
-  StepNumberRule,
-  Vector2,
-  addNewStepToRule,
-  makeNumberFromRangeRule,
-  moveRuleStep,
-} from "@/features/fractals";
 import { Graph } from "../Graph/Graph";
 import {
   HighlightedRange,
@@ -16,6 +6,8 @@ import {
 } from "../Graph/HighlightedRangeItem";
 import { useDrag } from "@/shared/hooks/useDrag";
 import { TimelineNumberRuleItem } from "./TimelineTool";
+import { addNewStepToRule, makeNumberFromRangeRule, moveRuleStep, RangeNumberRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
+import { Vector2 } from "@/shared/libs/vectors";
 
 const calcPercent = (event: React.MouseEvent<HTMLElement>, width: number) => {
   const rect = event.currentTarget.getBoundingClientRect();
@@ -48,7 +40,7 @@ export const TimelineGraph = ({
   onClick?: (time: number) => void;
   onStepCreateEnd?: () => void;
   onStepSelect: (index: number) => void;
-  onChange?: (rule: RangeNumberRule | PatchNumberRule | StepNumberRule) => void;
+  onChange?: (rule: RangeNumberRule | StepNumberRule) => void;
   onDynamicParamOverride: (vals: number[]) => void;
   onDynamicParamOverrideReset: () => void;
 }) => {
@@ -67,26 +59,6 @@ export const TimelineGraph = ({
     for (let i = 0; i < rules.length; i++) {
       const rule = rules[i].rule;
       const ruleToCalc = { ...rule, range: [-1, 1] as Vector2 };
-
-      if (ruleToCalc.t === RuleType.PatchNumber) {
-        const max = ruleToCalc.patches.reduce(
-          (m, p) => Math.max(m, p.range[0], p.range[1]),
-          -Infinity
-        );
-
-        const min = ruleToCalc.patches.reduce(
-          (m, p) => Math.min(m, p.range[0], p.range[1]),
-          Infinity
-        );
-        const delta = max - min;
-        ruleToCalc.patches = ruleToCalc.patches.map((p) => ({
-          ...p,
-          range: [
-            ((p.range[0] - min) / delta - 0.5) * 2,
-            ((p.range[1] - min) / delta - 0.5) * 2,
-          ],
-        }));
-      }
 
       const msPerPixel = period / width;
 

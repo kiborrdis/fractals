@@ -1,4 +1,5 @@
-import { makeRulesBasedOnParams, rangeRule } from "./ruleConversion";
+import { rangeRule } from "@/shared/libs/numberRule";
+import { makeRulesBasedOnParams } from "./ruleConversion";
 import {
   FractalParams,
   FractalParamsBuildRules,
@@ -16,12 +17,13 @@ export const getDefaultFractalRules = () => {
       [0.7350157728706624, 1, 0.9372549019607843, 0.8392156862745098, 1],
     ],
 
+    invert: false,
+
     mirroringType: "off",
 
     dynamic: {
       hexMirroringFactor: 0.0,
       hexMirroringPerDistChange: [0, 0],
-      invert: false,
       linearMirroringFactor: 2000,
       time: 0,
       c: [-1, 1],

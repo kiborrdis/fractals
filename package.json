@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
+    "test:validate": "vitest --run",
     "lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
-    "validate": "npm run lint",
+    "validate": "yarn lint && yarn typecheck && yarn test:validate",
     "preview": "vite preview"
   },
   "dependencies": {

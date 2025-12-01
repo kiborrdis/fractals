@@ -1,6 +1,6 @@
 import { memo, useCallback } from "react";
-import { NumberBuildRule } from "@/features/fractals";
 import { NumberRuleEdit } from "./NumberRuleEdit";
+import { NumberBuildRule } from "@/shared/libs/numberRule";
 
 export const Vector2RuleEdit = memo(({
   name,

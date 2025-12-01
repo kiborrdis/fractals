@@ -62,7 +62,7 @@ export const ShapeParams = React.memo(() => {
           <SettingsSection>
             <StaticRuleEdit name="formula" />
             
-            <DynamicRuleEdit name='invert' />
+            <StaticRuleEdit name='invert' />
           </SettingsSection>
           <SettingsCollapsibleSection id="C" label="C">
             <DynamicRuleEdit name="c" />

@@ -1,9 +1,5 @@
 import {
   getDynamicParamLabel,
-  PatchNumberRule,
-  RangeNumberRule,
-  RuleType,
-  StepNumberRule,
 } from "@/features/fractals";
 import { useEffect, useMemo, useState } from "react";
 import { useFractalRules } from "../store/data/useFractalParamsData";
@@ -16,6 +12,7 @@ import { useCurrentTime } from "../store/data/useCurrentTime";
 import { TimelineBaseRuleEdit } from "./TimelineBaseRuleEdit";
 import { TimelineRulesList } from "./TimelineRulesList";
 import { TimelineControls } from "./TimelineControls";
+import { RangeNumberRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
 
 export const colorsArray = [
   "rgba(255, 0, 0, 0.7)",
@@ -224,7 +221,7 @@ export type TimelineNumberRuleItem = {
   name: string;
   route: string[];
   color: string;
-  rule: RangeNumberRule | PatchNumberRule | StepNumberRule;
+  rule: RangeNumberRule | StepNumberRule;
 };
 
 const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
@@ -234,7 +231,6 @@ const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
       if (
         "t" in rule &&
         (rule.t === RuleType.RangeNumber ||
-          rule.t === RuleType.PatchNumber ||
           rule.t === RuleType.StepNumber)
       ) {
         const route = [key];
@@ -243,13 +239,12 @@ const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
           route: route,
           name: getDynamicParamLabel(route),
           color: colorsArray[memo.length % colorsArray.length],
-          rule: rule as RangeNumberRule | PatchNumberRule | StepNumberRule,
+          rule: rule as RangeNumberRule | StepNumberRule,
         });
       } else if (Array.isArray(rule)) {
         rule.forEach((aRule, i) => {
           if (
             aRule.t === RuleType.RangeNumber ||
-            aRule.t === RuleType.PatchNumber ||
             aRule.t === RuleType.StepNumber
           ) {
             const route = [key, String(i)]
@@ -258,7 +253,7 @@ const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
               route: route,
               name: getDynamicParamLabel(route),
               color: colorsArray[memo.length % colorsArray.length],
-              rule: aRule as RangeNumberRule | PatchNumberRule | StepNumberRule,
+              rule: aRule as RangeNumberRule | StepNumberRule,
             });
           }
         });
@@ -279,8 +274,6 @@ function calcPeriod(rules: TimelineNumberRuleItem[]): number {
 
     if (rule.t === RuleType.RangeNumber) {
       cycle = rule.cycleSeconds * 2;
-    } else if (rule.t === RuleType.PatchNumber) {
-      cycle = rule.patches.reduce((m, r) => m + r.len, 0);
     } else if (rule.t === RuleType.StepNumber) {
       cycle = rule.transitions.reduce((m, r) => m + r.len, 0);
     }

@@ -1,17 +1,13 @@
 import {
   FractalParamsBuildRules,
   GradientStop,
-  Vector2,
-  makeRuleFromArray,
-  makeRuleFromBoolean,
-  makeRuleFromNumber,
-  rangeRule,
   randomRange,
   DisplayFractal,
 } from "@/features/fractals";
 import { useState } from "react";
-import { defaultStringify } from "@/shared/hooks/useQueryPersistense";
 import { FullViewport } from "@/shared/ui/FullViewport/FullViewport";
+import { Vector2 } from "@/shared/libs/vectors";
+import { makeRuleFromArray, makeRuleFromNumber, rangeRule } from "@/shared/libs/numberRule";
 
 const rangeSize = randomRange(-1, 1);
 const fractalRRangeStart: Vector2 = [-rangeSize, -rangeSize];
@@ -62,10 +58,10 @@ const randomParams: FractalParamsBuildRules = {
   formula: formulas[Math.floor(Math.random() * formulas.length)],
   gradient: stops,
   mirroringType: pickedMirroringType,
+  invert: Math.random() > 0.5,
   dynamic: {
     hexMirroringFactor: makeRuleFromNumber(randomRange(100, 2000)),
     hexMirroringPerDistChange: makeRuleFromArray([0, 0] as const),
-    invert: makeRuleFromBoolean(Math.random() < 0.5),
     linearMirroringFactor: rangeRule(
       [
         Math.max(linearSplit - linearSplit, 0.5),
@@ -128,7 +124,7 @@ const randomParams: FractalParamsBuildRules = {
 
 export function RandomFractal() {
   const [params] = useState<FractalParamsBuildRules>(randomParams);
-  console.log("RandomFractal params", defaultStringify(params));
+
   return (
     <FullViewport>
       <DisplayFractal formula={params.formula} params={params} play />

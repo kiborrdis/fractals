@@ -39,6 +39,7 @@ export const prepareFractalUniforms = (
   {
     gradient,
     mirroringType,
+    invert,
     dynamic: {
       linearMirroringFactor,
       time,
@@ -46,7 +47,6 @@ export const prepareFractalUniforms = (
       r,
       imVisibleRange,
       rlVisibleRange,
-      invert,
       maxIterations,
       linearMirroringPerDistChange = [0, 0],
       radialMirroringPerDistChange = [0, 0],

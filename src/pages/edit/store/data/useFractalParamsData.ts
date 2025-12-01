@@ -1,8 +1,8 @@
 import {
   FractalParamsBuildRules,
-  makeRuleFromNumber,
 } from "@/features/fractals";
 import { useEditStore } from "../provider";
+import { makeRuleFromNumber } from "@/shared/libs/numberRule";
 
 export const useFractalRules = () => {
   const fractal = useEditStore((state) => state.fractal);

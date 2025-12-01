@@ -1,6 +1,5 @@
-import { Vector2 } from "../types";
+import { Vector2 } from "@/shared/libs/vectors";
 import { FractalCanvasParams } from "./initFractalCanvas";
-
 
 export const prepareCanvasToRender = (
   {

@@ -1,4 +1,5 @@
-import { FractalParams, Vector2 } from "../types";
+import { Vector2 } from "@/shared/libs/vectors";
+import { FractalParams } from "../types";
 import { FractalCanvasParams, initFractalCanvas } from "./initFractalCanvas";
 import { prepareCanvasToRender } from "./prepareCanvasToRender";
 import { prepareFractalUniforms } from "./prepareFractalUniforms";

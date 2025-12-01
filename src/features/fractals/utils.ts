@@ -1,5 +1,6 @@
+import { Vector2 } from "@/shared/libs/vectors";
 import { divide, mul, sum } from "../../shared/libs/vectors/vectorOperations";
-import { RGBAVector, Vector2 } from "./types";
+import { RGBAVector } from "./types";
 
 export const distance = (a: Vector2, b: Vector2): number =>
   Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
@@ -34,7 +35,6 @@ export const createIterationsColorConverterFn = (
   return (
     iterations: number,
     maxIterations: number,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _coords: Vector2
   ): RGBAVector => {
     if (iterations === -1) {

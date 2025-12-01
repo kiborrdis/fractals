@@ -1,4 +1,5 @@
-import { GradientStop, Vector2 } from "../types";
+import { Vector2 } from "@/shared/libs/vectors";
+import { GradientStop } from "../types";
 
 // Initialize a texture and load gradient data
 export function loadTexture(gl: WebGLRenderingContext, stops: GradientStop[]) {

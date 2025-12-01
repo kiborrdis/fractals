@@ -1,4 +1,5 @@
-import { FractalDynamicParams, Vector2 } from "./types";
+import { Vector2 } from "@/shared/libs/vectors";
+import { FractalDynamicParams } from "./types";
 
 const routeToLabelMap: {
   [K in keyof FractalDynamicParams]?: FractalDynamicParams[K] extends

@@ -1,9 +1,9 @@
 import vertex from "./vertexshader.glsl?raw";
 import fragment from "./fragmentshader.glsl?raw";
 import { useEffect, useState } from "react";
-import { Vector2 } from "@/features/fractals/types";
 import { createProgram, createShader } from "@/shared/libs/webgl";
 import { DisplayCanvas } from "@/shared/ui/DisplayCanvas/DisplayCanvas";
+import { Vector2 } from "@/shared/libs/vectors";
 
 const toTriangleMatrix: Vector2[] = [
   [0.6641741461862876, -0.7475778912847248], // 1, 0

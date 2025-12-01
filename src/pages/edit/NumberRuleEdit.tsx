@@ -1,13 +1,8 @@
-import { Stack, Group, ActionIcon, Tooltip, Button } from "@mantine/core";
+import { Stack, Group, ActionIcon, Tooltip } from "@mantine/core";
 import { memo, ReactNode, useCallback } from "react";
-import {
-  NumberBuildRule,
-  RuleType,
-  StepNumberRule,
-} from "@/features/fractals/types";
 import { EditorNumberInput } from "@/shared/ui/EditorNumberInput";
 import { TbMathMaxMin, TbLine } from "react-icons/tb";
-import { changeRulePeriod } from "@/features/fractals";
+import { changeRulePeriod, NumberBuildRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
 
 export const NumberRuleEdit = memo(
   ({
@@ -80,14 +75,6 @@ export const NumberRuleEdit = memo(
           max={max}
           step={step}
         />
-      );
-    }
-
-    if (value.t === RuleType.PatchNumber) {
-      content = (
-        <Button onClick={() => onChangeStaticValue((max - min) / 2 + min)}>
-          Reset
-        </Button>
       );
     }
 

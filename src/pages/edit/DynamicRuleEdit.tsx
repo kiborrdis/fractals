@@ -1,16 +1,13 @@
 import {
   FractalDynamicParamsBuildRules,
-  ConstBooleanRule,
-  NumberBuildRule,
 } from "@/features/fractals/types";
 import { useDynamicRule } from "./store/data/useDynamicRule";
-import { BooleanRuleEdit } from "./BooleanRuleEdit";
 import { NumberRuleEdit } from "./NumberRuleEdit";
 import { Vector2RuleEdit } from "./Vector2RuleEdit";
 import { ReactNode } from "react";
+import { NumberBuildRule } from "@/shared/libs/numberRule";
 
 type RuleValue =
-  | ConstBooleanRule
   | NumberBuildRule
   | [NumberBuildRule, NumberBuildRule];
 
@@ -29,14 +26,6 @@ type RuleRenderers = {
 };
 
 const ruleConfigs: RuleRenderers = {
-  invert: (props) => (
-    <BooleanRuleEdit
-      labels={["Invert On", "Invert Off"]}
-      value={props.value as ConstBooleanRule}
-      onChange={(newValue) => props.onChange(props.name, newValue)}
-    />
-  ),
-
   hexMirroringFactor: (props) => (
     <NumberRuleEdit
       label="Hex Mirroring Factor"

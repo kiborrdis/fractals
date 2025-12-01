@@ -2,7 +2,7 @@ import { FractalParamsBuildRules, GradientStop } from "@/features/fractals";
 import { useStaticRule } from "./store/data/useStaticRule";
 import { GradientInput } from "./GradientInput";
 import { ReactNode, useState } from "react";
-import { Button, NumberInput, SegmentedControl } from "@mantine/core";
+import { Button, Checkbox, NumberInput, SegmentedControl } from "@mantine/core";
 import { FormulaInput } from "./FormulaInput";
 import { randomRange } from "@/features/fractals/utils";
 
@@ -33,6 +33,10 @@ const ruleConfigs: RuleRenderers = {
       }
     />
   ),
+
+  invert: (props) => (<Checkbox label="Invert" checked={props.value} onChange={() => {
+    props.onChange(props.name, !props.value);
+  }} />),
 
   gradient: (props) => (
     <>
