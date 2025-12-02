@@ -1,17 +1,34 @@
-import { makeArrayFromRules, makeRuleFromArray, makeRuleFromNumber, makeScalarFromRule } from "@/shared/libs/numberRule";
+import {
+  makeArrayFromRules,
+  makeRuleFromArray,
+  makeRuleFromNumber,
+  makeScalarFromRule,
+} from "@/shared/libs/numberRule";
 import {
   FractalDynamicParamsBuildRules,
   FractalDynamicParams,
   FractalParams,
   FractalParamsBuildRules,
+  FractalCustomRules,
 } from "./types";
+import { isVector2 } from "@/shared/libs/vectors";
 
 export const makeRulesBasedOnParams = ({
   dynamic: params,
+  custom,
   ...rest
 }: FractalParams): FractalParamsBuildRules => {
   const rules: FractalParamsBuildRules = {
     ...rest,
+    custom: Object.entries(custom).reduce((acc, [key, value]) => {
+      if (typeof value === "number") {
+        acc[key] = makeRuleFromNumber(value);
+      } else if (isVector2(value)) {
+        acc[key] = makeRuleFromArray(value);
+      }
+
+      return acc;
+    }, {} as FractalCustomRules),
     dynamic: {
       hexMirroringFactor: makeRuleFromNumber(params.hexMirroringFactor),
       hexMirroringPerDistChange: makeRuleFromNumber(
@@ -49,8 +66,27 @@ export const makeFractalParamsFromRules = (
 ): FractalParams => {
   return {
     ...rules,
+    custom: makeCustomFractalParamsFromRules(rules.custom, time),
     dynamic: makeFractalDynamicParamsFromRules(rules.dynamic, time),
   };
+};
+
+const makeCustomFractalParamsFromRules = (
+  rules: FractalCustomRules,
+  time: number = 0
+): { [key: string]: number | [number, number] } => {
+  const params = Object.entries(rules).reduce((acc, [key, value]) => {
+    if (Array.isArray(value)) {
+      acc[key] = makeArrayFromRules(value, time);
+      return acc;
+    }
+
+    acc[key] = makeScalarFromRule(value, time);
+
+    return acc;
+  }, {} as { [key: string]: number | [number, number] });
+
+  return params;
 };
 
 const makeFractalDynamicParamsFromRules = (
@@ -59,14 +95,20 @@ const makeFractalDynamicParamsFromRules = (
 ): FractalDynamicParams => {
   const params = Object.entries(rules).reduce((acc, [key, value]) => {
     if (Array.isArray(value)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      acc[key as keyof FractalDynamicParams] = makeArrayFromRules(value, time) as any;
+      acc[key as keyof FractalDynamicParams] = makeArrayFromRules(
+        value,
+        time
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ) as any;
       return acc;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    acc[key as keyof FractalDynamicParams] = makeScalarFromRule(value, time) as any;
-    
+    acc[key as keyof FractalDynamicParams] = makeScalarFromRule(
+      value,
+      time
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ) as any;
+
     return acc;
   }, {} as FractalDynamicParams);
 

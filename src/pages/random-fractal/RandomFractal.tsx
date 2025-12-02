@@ -114,6 +114,7 @@ const randomParams: FractalParamsBuildRules = {
     rPerDistChange: makeRuleFromNumber(0),
     iterationsPerDistChange: makeRuleFromNumber(0),
   },
+  custom: {},
 };
 
 export function RandomFractal() {

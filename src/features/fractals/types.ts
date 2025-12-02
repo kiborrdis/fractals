@@ -12,6 +12,7 @@ export type FractalParams = {
   mirroringType: 'off' | 'hex' | 'square';
 
   dynamic: FractalDynamicParams;
+  custom: Record<string, number | Vector2>;
 }
 
 export type FractalDynamicParams = {
@@ -45,7 +46,10 @@ export type FractalDynamicParamsBuildRules = {
   [K in keyof FractalDynamicParams]: ConvertToRule<FractalDynamicParams[K]>;
 };
 
-export type FractalParamsBuildRules = Omit<FractalParams, 'dynamic'> & {
+export type FractalCustomRules = Record<string, ConvertToRule<number | Vector2>>;
+
+export type FractalParamsBuildRules = Omit<FractalParams, 'dynamic' | 'custom'> & {
   dynamic: FractalDynamicParamsBuildRules;
+  custom: FractalCustomRules;
 };
 

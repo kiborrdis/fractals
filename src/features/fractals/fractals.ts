@@ -18,8 +18,8 @@ export const createFractalVisualizer = (
     ...initialFractalParams,
   };
 
-  const shaderFractal = new ShaderFractal(formula, canvas, canvasSize);
   const params = makeFractalParamsFromRules(fractalParamsRules);
+  const shaderFractal = new ShaderFractal(formula, canvas, canvasSize, params);
   shaderFractal.render(params);
 
   const loop = createRenderLoop({

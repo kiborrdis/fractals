@@ -88,7 +88,6 @@ export const DisplayFractal = ({
     }
   }, [play]);
   useEffect(() => {
-    console.log('initialLoopState');
     if (fractalRef.current) {
       fractalRef.current.loop.setCurrentTime(initialLoopState.time);
     }

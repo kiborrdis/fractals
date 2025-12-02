@@ -13,12 +13,12 @@ type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
     onChange: (name: K, value: FractalParamsBuildRules[K]) => void;
   };
 
-type RuleRenderer<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> = (
+type RuleRenderer<K extends keyof Omit<FractalParamsBuildRules, "dynamic" | 'custom'>> = (
   props: RuleRenderProps<K>
 ) => ReactNode;
 
 type RuleRenderers = {
-  [K in keyof Omit<FractalParamsBuildRules, "dynamic">]: RuleRenderer<K>;
+  [K in keyof Omit<FractalParamsBuildRules, "dynamic" | 'custom'>]: RuleRenderer<K>;
 };
 
 const ruleConfigs: RuleRenderers = {
@@ -124,7 +124,7 @@ const GenerateGradient = ({
 export const StaticRuleEdit = ({
   name,
 }: {
-  name: keyof Omit<FractalParamsBuildRules, "dynamic">;
+  name: keyof Omit<FractalParamsBuildRules, "dynamic" | 'custom'>;
 }) => {
   const [rule, setRule] = useStaticRule(name);
 

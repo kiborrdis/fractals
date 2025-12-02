@@ -4,10 +4,12 @@ import fragment from "./fragmentshader.glsl?raw";
 import { setupUniformLocations } from "./prepareFractalUniforms";
 import { fractalFormulaToGLSLCode } from "./fractalFormulaToGLSLCode";
 import { createProgram, createShader } from "@/shared/libs/webgl";
+import { CalcNodeResultType } from "../formula/types";
 
 export const initFractalCanvas = (
   formula: string,
   canvas: HTMLCanvasElement,
+  customVars: Record<string, CalcNodeResultType> = {}
 ) => {
   const context = canvas.getContext("webgl", { antialias: true });
 
@@ -16,7 +18,7 @@ export const initFractalCanvas = (
   }
 
   context.flush();
-  const [glslCodeFormula, pow] = fractalFormulaToGLSLCode(formula);
+  const [glslCodeFormula, pow] = fractalFormulaToGLSLCode(formula, customVars);
 
   const powPlaceholder = pow >= 2 ? `powZ = ${pow}.0;` : "";
   const glslFormula = `z = ${glslCodeFormula};`;
@@ -27,6 +29,9 @@ export const initFractalCanvas = (
     fragment
       .replace("//@FORMULA_PLACEHOLDER@", glslFormula)
       .replace("//@FORMULA_POW_PLACEHOLDER@", powPlaceholder)
+      .replace("//@CUSTOM_VARS_DECLARATION_PLACEHOLDER@", Object.keys(customVars)
+        .map((varName) => `uniform ${customVars[varName] === 'vector2' ? 'vec2' : 'float'} u_cstm_${varName};`)
+        .join("\n"))
   );
 
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);

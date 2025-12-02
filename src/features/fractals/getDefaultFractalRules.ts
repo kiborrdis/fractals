@@ -39,6 +39,7 @@ export const getDefaultFractalRules = () => {
       iterationsPerDistChange: 0,
       radialMirroringAngle: 181,
     },
+    custom: {},
   };
   const buildRules = makeRulesBasedOnParams(initialFractalParams);
 
