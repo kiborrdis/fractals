@@ -4,10 +4,11 @@ import { funcNameToSignature, varNameToType } from "./fnAndVarDescr";
 
 export const calcTypesOfNodes = (
   calcNode: CalcNode,
+  customVars: Record<string, CalcNodeResultType> = {}
 ): CalcNodeResultTypeMap => {
   const map: CalcNodeResultTypeMap = new Map();
   forEachNodeChild(calcNode, (node) => {
-    const nodeType = getTypeForNode(node, map);
+    const nodeType = getTypeForNode(node, map, { ...customVars, ...varNameToType });
 
     map.set(node, nodeType);
   }, { parentAfterChildren: true });
@@ -15,12 +16,12 @@ export const calcTypesOfNodes = (
   return map;
 };
 
-const getTypeForNode = (node: CalcNode, map: CalcNodeResultTypeMap): CalcNodeResultType => {
+const getTypeForNode = (node: CalcNode, map: CalcNodeResultTypeMap, vars: Record<string, CalcNodeResultType>): CalcNodeResultType => {
   switch (node.t) {
     case CalcNodeType.Number:
       return "number";
     case CalcNodeType.Variable:
-      return varNameToType[node.v] ?? "error";
+      return vars[node.v] ?? "error";
     case CalcNodeType.FuncCall: {
       const signature = funcNameToSignature[node.n];
 

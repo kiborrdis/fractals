@@ -5,9 +5,9 @@ import {
 } from "@/shared/libs/calcGraph";
 import { parseFormula, validateFormula } from "../formula/parseFormula";
 import { calcTypesOfNodes } from "../formula/trackTypes";
-import { CalcNodeResultTypeMap } from "../formula/types";
+import { CalcNodeResultType, CalcNodeResultTypeMap } from "../formula/types";
 
-export const fractalFormulaToGLSLCode = (formula: string) => {
+export const fractalFormulaToGLSLCode = (formula: string, customVars: Record<string, CalcNodeResultType> = {}) => {
   let node: CalcNode | null;
   try {
     node = parseFormula(formula);
@@ -18,14 +18,13 @@ export const fractalFormulaToGLSLCode = (formula: string) => {
   if (!node) {
     throw new Error("fractalFormulaToGLSLCode: failed to parse formula");
   }
-
-  const [valid, msg] = validateFormula(node);
+  const [valid, msg] = validateFormula(node, customVars ? new Set(Object.keys(customVars)) : new Set());
 
   if (!valid) {
     throw new Error('fractalFormulaToGLSLCode: invalid formula "' + msg + '"');
   }
 
-  const typeMap = calcTypesOfNodes(node);
+  const typeMap = calcTypesOfNodes(node, customVars);
   const pow = getMaxZPower(node) || 0;
 
   if (typeMap.get(node) !== "vector2") {
@@ -46,7 +45,12 @@ export const fractalFormulaToGLSLCode = (formula: string) => {
       'fractalFormulaToGLSLCode: types for some nodes have not been calculated"'
     );
   }
-  const res = transformToGLSLCode(node, typeMap);
+  const res = transformToGLSLCode(node, typeMap, (varName: string) => {
+    if (customVars[varName]) {
+      return `u_cstm_${varName}`;
+    }
+    return varName;
+  });
 
   return [res, pow] as const;
 };
@@ -103,7 +107,8 @@ const getMaxZPower = (node: CalcNode): number | null  => {
 
 const transformToGLSLCode = (
   node: CalcNode,
-  map: CalcNodeResultTypeMap
+  map: CalcNodeResultTypeMap,
+  variableTransform = (varName: string) => varName
 ): string => {
   switch (node.t) {
     case CalcNodeType.Number:
@@ -111,7 +116,7 @@ const transformToGLSLCode = (
         ? String(node.v)
         : `${String(node.v)}.0`;
     case CalcNodeType.Variable:
-      return `${node.v}`;
+      return `${variableTransform(node.v)}`;
     case CalcNodeType.Operation: {
       const leftT = map.get(node.c[0])!;
       const rightT = map.get(node.c[1])!;
@@ -122,24 +127,26 @@ const transformToGLSLCode = (
       ) {
         return `${operationToFnMap[node.v]}(${transformToGLSLCode(
           node.c[0],
-          map
-        )}, ${transformToGLSLCode(node.c[1], map)})`;
+          map,
+          variableTransform
+        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
       }
 
       if (node.v === "^") {
         return `pow(${transformToGLSLCode(
           node.c[0],
-          map
-        )}, ${transformToGLSLCode(node.c[1], map)})`;
+          map,
+          variableTransform
+        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
       }
 
-      return `(${transformToGLSLCode(node.c[0], map)}${
+      return `(${transformToGLSLCode(node.c[0], map, variableTransform)}${
         node.v
-      }${transformToGLSLCode(node.c[1], map)})`;
+      }${transformToGLSLCode(node.c[1], map, variableTransform)})`;
     }
     case CalcNodeType.FuncCall:
       return `${fnNameToFnMap[node.n]}(${node.o
-        .map((n) => transformToGLSLCode(n, map))
+        .map((n) => transformToGLSLCode(n, map, variableTransform))
         .join(", ")})`;
     case CalcNodeType.Error:
       throw new Error("CalcNodeError met during GLSL code generation");

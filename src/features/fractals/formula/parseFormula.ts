@@ -38,17 +38,17 @@ export const parseFormula = (formula: string) => {
 const allowedVars = new Set(Object.keys(varNameToType));
 const allowedFns = new Set(Object.keys(funcNameToSignature));
 
-export const validateFormula = (node: CalcNode) => {
+export const validateFormula = (node: CalcNode, customVars: Set<string> = new Set()) => {
   let message = '';
   forEachNodeChild(node, node => {
     if (message) {
       return;
     }
 
-    if (node.t == CalcNodeType.Variable && !allowedVars.has(node.v)) {
-      message = `Unknown variable "${node.v}", only ${[...allowedVars].join(', ')} are allowed`;
+    if (node.t == CalcNodeType.Variable && !allowedVars.has(node.v) && !customVars.has(node.v)) {
+      message = `Unknown variable "${node.v}", only ${[...allowedVars, ...customVars].join(', ')} are allowed`;
     } else if (node.t == CalcNodeType.FuncCall && !allowedFns.has(node.n)) {
-      message = `Unknown variable "${node.n}", only ${[...allowedFns].join(', ')} are allowed`;
+      message = `Unknown variable "${node.n}", only ${[...allowedFns, ...customVars].join(', ')} are allowed`;
     }
   });
 

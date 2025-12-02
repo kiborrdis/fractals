@@ -30,6 +30,8 @@ uniform float u_hex_mirroring_dist_change;
 uniform sampler2D uSampler;
 uniform int u_sampler_wl;
 
+//@CUSTOM_VARS_DECLARATION_PLACEHOLDER@
+
 vec2 getTexCoord(vec2 pixelCoord, vec2 texDim) {
   return (pixelCoord + 0.5) / texDim;
 }

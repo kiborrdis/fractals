@@ -58,6 +58,7 @@ export const prepareFractalUniforms = (
       hexMirroringPerDistChange,
       radialMirroringAngle,
     },
+    custom,
   }: FractalParams
 ) => {
   context.useProgram(shaderProgram);
@@ -106,6 +107,19 @@ export const prepareFractalUniforms = (
   // Tell the shader we bound the texture to texture unit 0
   context.uniform1i(sampler2D_tex, 0);
   context.uniform1i(sampler2D_wl_i1f, gradient.length);
+
+  Object.keys(custom).forEach((key) => {
+    const uniformLocation = context.getUniformLocation(
+      shaderProgram,
+      `u_cstm_${key}`
+    );
+    const value = custom[key];
+    if (typeof value === "number") {
+      context.uniform1f(uniformLocation, value);
+    } else {
+      context.uniform2f(uniformLocation, ...value);
+    }
+  });
 };
 
 export function setupUniformLocations(

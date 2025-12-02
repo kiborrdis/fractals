@@ -12,7 +12,7 @@ import { useCurrentTime } from "../store/data/useCurrentTime";
 import { TimelineBaseRuleEdit } from "./TimelineBaseRuleEdit";
 import { TimelineRulesList } from "./TimelineRulesList";
 import { TimelineControls } from "./TimelineControls";
-import { RangeNumberRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
+import { NumberBuildRule, RangeNumberRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
 
 export const colorsArray = [
   "rgba(255, 0, 0, 0.7)",
@@ -54,9 +54,32 @@ export const TimelineTool = () => {
   
   const {
     dynamicParamOverride,
+    customParamOverride,
     initialLoopStateChange,
     dynamicRuleChangeByRoute,
+    customRuleChange,
   } = useActions();
+
+  const changeRule = (route: string[], newRule: NumberBuildRule) => {
+    if (route[0] === 'd') {
+      dynamicRuleChangeByRoute(route.slice(1), newRule);
+      return;
+    } else if (route[0] === 'c') {
+      customRuleChange(route.slice(1), newRule);
+      return;
+    }
+  }
+
+  const overrideRule = (route: string[], newValue: number | undefined) => {
+    if (route[0] === 'd') {
+      dynamicParamOverride(route.slice(1), newValue);
+      return;
+    } else if (route[0] === 'c') {
+      customParamOverride(route.slice(1), newValue);
+      return;
+    }
+  }
+
   const dynamicNumberRules = useDynamicNumberRules();
   const editingRule =  dynamicNumberRules.find(({ id }) => id === editingRuleId);
 
@@ -122,7 +145,7 @@ export const TimelineTool = () => {
                 r0.steps[(editingStepIndex + 1) % r0.steps.length] = end;
                 r0.transitions[editingStepIndex] = transition;
 
-                dynamicRuleChangeByRoute(editingRule.route, r0);
+                changeRule(editingRule.route, r0);
               }}
             />
           )}
@@ -138,7 +161,7 @@ export const TimelineTool = () => {
               }}
               onRuleChange={(newRule) => {
                 if (editingRule) {
-                  dynamicRuleChangeByRoute(editingRule.route, newRule);
+                  changeRule(editingRule.route, newRule);
                 }
               }}
             />
@@ -188,14 +211,14 @@ export const TimelineTool = () => {
             onDynamicParamOverrideReset={() => {
               if (previewValueOnHover) {
                 dynamicNumberRules.forEach((r) => {
-                  dynamicParamOverride(r.route, undefined);
+                  overrideRule(r.route, undefined);
                 });
               }
             }}
             onDynamicParamOverride={(v) => {
               if (previewValueOnHover) {
                 v.forEach((val, i) => {
-                  dynamicParamOverride(activeRules[i].route, val);
+                  overrideRule(activeRules[i].route, val);
                 });
               }
             }}
@@ -206,7 +229,7 @@ export const TimelineTool = () => {
             }}
             onChange={(newRule) => {
               if (editingRule) {
-                dynamicRuleChangeByRoute(editingRule.route, newRule);
+                changeRule(editingRule.route, newRule);
               }
             }}
           />
@@ -226,18 +249,18 @@ export type TimelineNumberRuleItem = {
 
 const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
   const fractal = useFractalRules();
-  return Object.entries(fractal.dynamic).reduce<TimelineNumberRuleItem[]>(
+  const dynamic =  Object.entries(fractal.dynamic).reduce<TimelineNumberRuleItem[]>(
     (memo, [key, rule]) => {
       if (
         "t" in rule &&
         (rule.t === RuleType.RangeNumber ||
           rule.t === RuleType.StepNumber)
       ) {
-        const route = [key];
+        const route = ['d', key];
         memo.push({
           id: route.join('.'),
           route: route,
-          name: getDynamicParamLabel(route),
+          name: getDynamicParamLabel(route.slice(1)),
           color: colorsArray[memo.length % colorsArray.length],
           rule: rule as RangeNumberRule | StepNumberRule,
         });
@@ -247,11 +270,11 @@ const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
             aRule.t === RuleType.RangeNumber ||
             aRule.t === RuleType.StepNumber
           ) {
-            const route = [key, String(i)]
+            const route = ['d', key, String(i)]
             memo.push({
               id: route.join('.'),
               route: route,
-              name: getDynamicParamLabel(route),
+              name: getDynamicParamLabel(route.slice(1)),
               color: colorsArray[memo.length % colorsArray.length],
               rule: aRule as RangeNumberRule | StepNumberRule,
             });
@@ -262,6 +285,45 @@ const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
     },
     []
   );
+
+  const custom =  Object.entries(fractal.custom).reduce<TimelineNumberRuleItem[]>(
+    (memo, [key, rule]) => {
+      if (
+        "t" in rule &&
+        (rule.t === RuleType.RangeNumber ||
+          rule.t === RuleType.StepNumber)
+      ) {
+        const route = ['c', key];
+        memo.push({
+          id: route.join('.'),
+          route: route,
+          name: getDynamicParamLabel(route.slice(1)),
+          color: colorsArray[(memo.length + dynamic.length) % colorsArray.length],
+          rule: rule as RangeNumberRule | StepNumberRule,
+        });
+      } else if (Array.isArray(rule)) {
+        rule.forEach((aRule, i) => {
+          if (
+            aRule.t === RuleType.RangeNumber ||
+            aRule.t === RuleType.StepNumber
+          ) {
+            const route = ['c', key, String(i)]
+            memo.push({
+              id: route.join('.'),
+              route: route,
+              name: getDynamicParamLabel(route.slice(1)),
+              color: colorsArray[(memo.length + dynamic.length) % colorsArray.length],
+              rule: aRule as RangeNumberRule | StepNumberRule,
+            });
+          }
+        });
+      }
+      return memo;
+    },
+    []
+  );
+
+  return [...dynamic, ...custom];
 };
 
 function calcPeriod(rules: TimelineNumberRuleItem[]): number {

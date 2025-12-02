@@ -1,13 +1,14 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
+  FractalCustomRules,
   FractalDynamicParamsBuildRules,
   FractalParams,
   FractalParamsBuildRules,
   transformToFractalCoord,
 } from "@/features/fractals";
 import { sum, Vector2 } from "@/shared/libs/vectors";
-import { makeArrayFromRules, RuleType } from "@/shared/libs/numberRule";
+import { makeArrayFromRules, NumberBuildRule, RuleType } from "@/shared/libs/numberRule";
 
 type DeepPartial<T> = T extends object
   ? {
@@ -20,8 +21,8 @@ export type EditStoreData = {
   fractalOverrides: DeepPartial<FractalParams>;
   play: boolean;
   initialLoopState: {
-    time: number,
-  },
+    time: number;
+  };
   timeMultiplier: string;
   selectAreaActive: boolean;
   currentTime: number;
@@ -37,6 +38,15 @@ export type EditStoreActions = {
     value: FractalDynamicParamsBuildRules[keyof FractalDynamicParamsBuildRules]
   ) => void;
 
+  customRuleChange:  (
+    route: string[],
+    value: NumberBuildRule | [NumberBuildRule, NumberBuildRule]
+  ) => void;
+
+  customVariableCreate: (name: string, type: "number" | "vector2") => void;
+  customVariableDelete: (name: string) => void;
+
+  customParamOverride: (route: string[], value: unknown) => void;
   dynamicParamOverride: (route: string[], value: unknown) => void;
 
   staticRuleChange: (
@@ -77,9 +87,55 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
           time: 0,
         },
         actions: {
+          customVariableCreate: (name: string, type: "number" | "vector2") => {
+            set((prev) => {
+              if (type === "number") {
+                prev.fractal.custom[name] = {
+                  t: RuleType.StaticNumber,
+                  value: 0,
+                };
+              } else if (type === "vector2") {
+                prev.fractal.custom[name] = [
+                  { t: RuleType.StaticNumber, value: 0 },
+                  { t: RuleType.StaticNumber, value: 0 },
+                ];
+              }
+            });
+          },
+
+          customVariableDelete: (name: string) => {
+            set((prev) => {
+              delete prev.fractal.custom[name];
+            });
+          },
+
           initialLoopStateChange: (time: number) => {
             set((prev) => {
               prev.initialLoopState = { time };
+            });
+          },
+
+          customRuleChange: (
+            route: string[],
+            value: NumberBuildRule | [NumberBuildRule, NumberBuildRule]
+          ) => {
+            set((prev) => {
+              const target: FractalCustomRules = prev.fractal.custom;
+
+              if (route.length === 1 && route[0] in target) {
+                target[route[0]] = value;
+                return;
+              }
+
+              if (route.length === 2 && route[0] in target) {
+                const vecRule = target[route[0]];
+
+                if (Array.isArray(vecRule)) {
+                  vecRule[Number(route[1])] = value as NumberBuildRule;
+                }
+
+                return;
+              }
             });
           },
 
@@ -103,8 +159,8 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             value: FractalDynamicParamsBuildRules[keyof FractalDynamicParamsBuildRules]
           ) => {
             set((prev) => {
-               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-               let target: any = prev.fractal.dynamic;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              let target: any = prev.fractal.dynamic;
 
               for (let i = 0; i < route.length - 1; i++) {
                 const part = route[i];
@@ -118,6 +174,37 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
                 } else {
                   if (target[part] === undefined) {
                     return;
+                  }
+
+                  target = target[part];
+                }
+              }
+
+              target[route[route.length - 1]] = value;
+            });
+          },
+
+          customParamOverride: (route: string[], value: unknown) => {
+            set((prev) => {
+              if (prev.fractalOverrides.custom === undefined) {
+                prev.fractalOverrides.custom = {};
+              }
+              const overrides = prev.fractalOverrides.custom;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              let target: any = overrides;
+
+              for (let i = 0; i < route.length - 1; i++) {
+                const part = route[i];
+
+                if (isNaN(Number(part))) {
+                  if (target[part] === undefined) {
+                    target[part] = [];
+                  }
+
+                  target = target[part];
+                } else {
+                  if (target[part] === undefined) {
+                    target[part] = {};
                   }
 
                   target = target[part];
@@ -241,13 +328,13 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             set((prev) => {
               prev.fractal.dynamic.rlVisibleRange.forEach((e) => {
                 if (e.t === RuleType.StaticNumber) {
-                  e.value *= factor
+                  e.value *= factor;
                 }
               });
 
               prev.fractal.dynamic.imVisibleRange.forEach((e) => {
                 if (e.t === RuleType.StaticNumber) {
-                  e.value *= factor
+                  e.value *= factor;
                 }
               });
             });

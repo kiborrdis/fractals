@@ -17,7 +17,6 @@ import {
   getDefaultFractalRules,
 } from "@/features/fractals";
 import { useQueryPersistentValue } from "@/shared/hooks/useQueryPersistense";
-import { ShapeParams } from "./ShapeParams";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { EditStoreProvider } from "./store/provider";
 import { createEditStore } from "./store/editStore";
@@ -30,6 +29,7 @@ import {
 import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
 import { Vector2 } from "@/shared/libs/vectors";
+import { ShapeParams2 } from "./ShapeParams2";
 
 const defaultRules = getDefaultFractalRules();
 
@@ -99,7 +99,7 @@ export function EditFractalLoaded() {
               </Stack>
             </Paper>
           </Box>
-          <ShapeParams />
+          <ShapeParams2 />
         </AppShellAside>
         <AppShellMain h="100vh">
           <Stack w="100%" h="100%" gap={0}>
