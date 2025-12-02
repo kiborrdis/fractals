@@ -1,10 +1,10 @@
 import { FractalParamsBuildRules, GradientStop } from "@/features/fractals";
 import { useStaticRule } from "./store/data/useStaticRule";
-import { GradientInput } from "./GradientInput";
 import { ReactNode, useState } from "react";
 import { Button, Checkbox, NumberInput, SegmentedControl } from "@mantine/core";
 import { FormulaInput } from "./FormulaInput";
 import { randomRange } from "@/features/fractals/utils";
+import { GradientInput } from "./GradientInput";
 
 type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
   {

@@ -1,7 +1,8 @@
-import { Stack, Button, ColorInput } from "@mantine/core";
+import { Stack, Button, ColorInput, Group, NumberInput } from "@mantine/core";
 import React from "react";
 import { GradientStop } from "@/features/fractals/types";
-import { useMove } from "@mantine/hooks";
+
+const MAX_POSITION = 1000;
 
 export const GradientInput = ({
   initialStops,
@@ -10,102 +11,90 @@ export const GradientInput = ({
   onChange: (stops: GradientStop[]) => void;
   initialStops: GradientStop[];
 }) => {
-  const [stops, rawSetStops] = React.useState<GradientStop[]>(initialStops);
-  const [selectedStop, setSelectedStop] = React.useState<number | null>(null);
+  const [stops, setStopsInternal] = React.useState<GradientStop[]>(
+    [...initialStops].sort((a, b) => a[0] - b[0])
+  );
 
   const setStops = (newStops: GradientStop[]) => {
-    rawSetStops(newStops);
-    onChange(newStops.sort((a, b) => a[0] - b[0]));
+    const sorted = [...newStops].sort((a, b) => a[0] - b[0]);
+    setStopsInternal(sorted);
+    onChange(sorted);
+  };
+
+  const handlePositionChange = (index: number, newPosition: number) => {
+    const newStops = [...stops];
+    newStops[index] = [newPosition, ...stops[index].slice(1)] as GradientStop;
+    setStopsInternal(newStops);
+  };
+
+  const handlePositionBlur = () => {
+    setStops(stops);
+  };
+
+  const handleColorChange = (index: number, color: string) => {
+    const rgba = rgbaStringToNormalizedRgba(color);
+    const newStops = [...stops];
+    newStops[index] = [stops[index][0], ...rgba];
+    setStops(newStops);
+  };
+
+  const handleDeleteStop = (index: number) => {
+    const newStops = [...stops];
+    newStops.splice(index, 1);
+    setStops(newStops);
+  };
+
+  const handleAddStop = () => {
+    const newStops = [...stops, [500, 1, 1, 1, 1] as GradientStop];
+    setStops(newStops);
   };
 
   return (
-    <div>
-      <div
-        style={{
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            height: 20,
-            background: `linear-gradient(to right, ${stops
-              .map(
-                (stop) =>
-                  `rgba(${stop[1] * 255}, ${stop[2] * 255}, ${stop[3] * 255}, ${
-                    stop[4]
-                  }) ${stop[0] * 100}%`
-              )
-              .join(", ")})`,
-            borderRadius: 4,
-            border: "1px solid #444",
-          }}
-        ></div>
-        {stops.map((stop, index) => (
-          <GradientPointHandle
-            key={index}
-            point={stop}
-            onClick={() => {
-              setSelectedStop(index);
-            }}
-            onPositionChange={(newPos) => {
-              const newStops = [...stops];
-              newStops[index] = [newPos, ...stop.slice(1)] as GradientStop;
-              setStops(newStops);
-            }}
+    <Stack gap="sm">
+      {stops.map((stop, index) => (
+        <Group key={index} gap="xs" wrap="nowrap">
+          <NumberInput
+            value={stop[0]}
+            onChange={(value) => handlePositionChange(index, Number(value) || 0)}
+            onBlur={handlePositionBlur}
+            min={0}
+            max={MAX_POSITION}
+            step={1}
+            style={{ flex: "0 0 100px" }}
+            size="xs"
           />
-        ))}
-      </div>
-      <Stack pt="md">
-        {selectedStop !== null && (
-          <div>
-            <ColorInput
-              format="rgba"
-              value={rgbaToRgbaString(
-                Math.round(stops[selectedStop][1] * 255),
-                Math.round(stops[selectedStop][2] * 255),
-                Math.round(stops[selectedStop][3] * 255),
-                stops[selectedStop][4]
-              )}
-              onChange={(hex) => {
-                const rgb = rgbaStringToNormalizedRgba(hex);
-                const newStops = [...stops];
-                newStops[selectedStop] = [
-                  newStops[selectedStop][0],
-                  ...rgb,
-                ];
-                setStops(newStops);
-              }}
-            />
-
-            <Button
-              size="xs"
-              variant="transparent"
-              onClick={() => {
-                const newStops = [...stops];
-                newStops.splice(selectedStop, 1);
-                setStops(newStops);
-                setSelectedStop(null);
-              }}
-              disabled={stops.length <= 2}
-            >
-              Remove Stop
-            </Button>
-          </div>
-        )}
-        <Button
-          size="xs"
-          variant="light"
-          onClick={() => {
-            const newStops = [...stops, [0.5, 1, 1, 1, 1] as GradientStop];
-            newStops.sort((a, b) => a[0] - b[0]);
-            setStops(newStops);
-          }}
-        >
-          Add Stop
-        </Button>
-      </Stack>
-    </div>
+          <ColorInput
+            format="rgba"
+            value={rgbaToRgbaString(
+              Math.round(stop[1] * 255),
+              Math.round(stop[2] * 255),
+              Math.round(stop[3] * 255),
+              stop[4]
+            )}
+            onChange={(color) => handleColorChange(index, color)}
+            style={{ flex: 1 }}
+            size="xs"
+          />
+          <Button
+            size="xs"
+            variant="light"
+            color="red"
+            onClick={() => handleDeleteStop(index)}
+            disabled={stops.length <= 2}
+          >
+            Delete
+          </Button>
+        </Group>
+      ))}
+      <Button
+        size="xs"
+        variant="light"
+        onClick={handleAddStop}
+        fullWidth
+      >
+        Add Stop
+      </Button>
+    </Stack>
   );
 };
 
@@ -124,64 +113,5 @@ const rgbaStringToNormalizedRgba = (str: string) => {
   const b = parseInt(parts[2]) / 255;
   const a = parseFloat(parts[3]);
 
-        console.log('str', str, parts, r,g,b,a);
-
-
   return [r, g, b, a] as [number, number, number, number];
-};
-
-const GradientPointHandle = ({
-  point,
-  onPositionChange,
-  onClick,
-}: {
-  point: GradientStop;
-  onClick?: () => void;
-  onPositionChange?: (newPos: number) => void;
-}) => {
-  const { ref } = useMove(({ x }) => {
-    if (onPositionChange) {
-      onPositionChange(Math.min(1, Math.max(0, x)));
-    }
-  });
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        width: "100%",
-        left: 0,
-        top: 0,
-        bottom: 0,
-        right: 0,
-      }}
-      ref={ref}
-    >
-      <div
-        style={{
-          position: "absolute",
-          left: `${point[0] * 100}%`,
-          transform: "translate(-50%, 100%)",
-          cursor: "pointer",
-          bottom: 0,
-        }}
-        onClick={() => {
-          if (onClick) {
-            onClick();
-          }
-        }}
-      >
-        <div
-          style={{
-            width: 10,
-            height: 10,
-            background: `rgba(${point[1] * 255}, ${point[2] * 255}, ${
-              point[3] * 255
-            }, ${point[4]})`,
-            borderRadius: "50%",
-          }}
-        ></div>
-      </div>
-    </div>
-  );
 };

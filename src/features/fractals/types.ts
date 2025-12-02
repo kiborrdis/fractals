@@ -35,7 +35,7 @@ export type FractalDynamicParams = {
 };
 
 export type GradientStop = [
-  number, // Position 0-1, following by r,g,b,a
+  number, // Position 0-10000, following by r,g,b,a
   number,
   number,
   number,

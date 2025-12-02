@@ -66,7 +66,6 @@ const makeEditableToTime = (rule: StepNumberRule, time: number): StepNumberRule 
     transitions = transitions.concat(rule.transitions);
     steps = steps.concat(rule.steps);
   }
-  console.log('transitoins', transitions)
 
   return {
     ...rule,

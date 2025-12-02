@@ -10,8 +10,8 @@ export function loadTexture(gl: WebGLRenderingContext, stops: GradientStop[]) {
         Math.round(s[2] * 255),
         Math.round(s[3] * 255),
         Math.round(s[4] * 255),
-        Math.round(s[0] * 255),
-        Math.round(0),
+        Math.floor(s[0] / 255),
+        Math.floor(s[0] % 255),
         Math.round(0),
         Math.round(0),
       ];

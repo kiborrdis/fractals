@@ -7,7 +7,7 @@ export const createRenderLoop = ({
   params,
   loopIterationCallback,
 }: {
-  params: { time: number; play: boolean; timeMultiplier: number },
+  params: { time: number; play: boolean; timeMultiplier: number };
   loopIterationCallback: (context: RenderLoopIterationContext) => Promise<void>;
 }) => {
   let running = params.play;
@@ -17,9 +17,11 @@ export const createRenderLoop = ({
 
   const performLoopIteration = async () => {
     const currentTime = Date.now();
-    const timeDelta = (currentTime - lastRender);
-    lastRender = currentTime;
+    const timeDelta = currentTime - lastRender;
+
     timeSinceStart += timeDelta * timeMultiplier;
+
+    lastRender = currentTime;
 
     await loopIterationCallback({ timeDelta, timeSinceStart });
 
@@ -36,7 +38,7 @@ export const createRenderLoop = ({
     running: true,
     setCurrentTime: (newTime: number) => {
       timeSinceStart = newTime;
-      loopIterationCallback({ timeDelta: 0, timeSinceStart })
+      loopIterationCallback({ timeDelta: 0, timeSinceStart });
     },
     getCurrentTime: () => timeSinceStart,
     stop: () => {
@@ -55,7 +57,7 @@ export const createRenderLoop = ({
     },
     setTimemultiplier: (newTimeMultiplier: number) => {
       timeMultiplier = newTimeMultiplier;
-    }
+    },
   };
 
   return res;
