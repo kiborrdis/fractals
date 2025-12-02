@@ -36,18 +36,23 @@ vec2 getTexCoord(vec2 pixelCoord, vec2 texDim) {
   return (pixelCoord + 0.5) / texDim;
 }
 
-vec3 createGradient(float part) {
+vec3 createGradient(float part, int maxIterations) {
   int numColors = u_sampler_wl * 2;
 
   if (numColors == 0) {
     return vec3(1.0, 0.0, 1.0);
   }
 
+  if (part >= 1.0) {
+    vec4 lastTexel = texture2D(uSampler, getTexCoord(vec2(numColors - 2, 0), vec2(numColors, numColors)));
+    return lastTexel.xyz;
+  }
+
   vec4 prevTexel = texture2D(uSampler, getTexCoord(vec2(0, 0), vec2(numColors, numColors)));
   vec4 prevPosTexel = texture2D(uSampler, getTexCoord(vec2(1, 0), vec2(numColors, numColors)));
 
   vec4 color = prevTexel;
-  float prevPos = prevPosTexel.x;
+  float prevPos = (prevPosTexel.x * 255.0 * 255.0 + prevPosTexel.y * 255.0) / float(maxIterations);
 
   for (int i = 2; i < 256; i += 2) {
     if (i >= numColors) {
@@ -55,9 +60,21 @@ vec3 createGradient(float part) {
     }
 
     vec4 texel = texture2D(uSampler, getTexCoord(vec2(i, 0), vec2(numColors, numColors)));
-    float curPos = texture2D(uSampler, getTexCoord(vec2(i + 1, 0), vec2(numColors, numColors))).x;
+    vec4 posTexel = texture2D(uSampler, getTexCoord(vec2(i + 1, 0), vec2(numColors, numColors)));
+    float curPosInt = (posTexel.x * 255.0 * 255.0 + posTexel.y * 255.0);
+    float curPos = curPosInt / float(maxIterations);
+
+    if(curPosInt > float(maxIterations)) {
+      curPos = 1.0;
+      texel = texture2D(uSampler, getTexCoord(vec2(numColors - 2, 0), vec2(numColors, numColors)));
+    }
 
     color = mix(color, texel, smoothstep(prevPos, curPos, part));
+
+    if (curPos >= 1.0) {
+      return color.xyz;
+    }
+
     prevPos = curPos;
   }
 
@@ -413,7 +430,7 @@ void main() {
   float colorInt = iterationSmooth / float(maxIteration);
 
   // vec3 color = createGradient(colorInt * colorInt);
-  vec3 color = createGradient(colorInt);
+  vec3 color = createGradient(colorInt, maxIteration);
 
   // float palPart = 0.1;
   // vec3 resultColor = ((0.9 + palPart * (1.0 - colorInt)) * color + (palPart * colorInt) * palColorEnd);

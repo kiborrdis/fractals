@@ -1,36 +1,11 @@
-import {
-  Accordion,
-  Button,
-  Group,
-  Stack,
-} from "@mantine/core";
+import { Button, Group, Stack, Tabs } from "@mantine/core";
 import React, { ReactNode } from "react";
 import { StaticRuleEdit } from "./StaticRuleEdit";
 import { DynamicRuleEdit } from "./DynamicRuleEdit";
 import { useActions } from "./store/data/useActions";
 import { useStaticRule } from "./store/data/useStaticRule";
 import { useSelectAreaActive } from "./store/data/useSelectAreaActive";
-
-const SettingsCollapsibleSection = ({
-  children,
-  label,
-  id,
-  disabled,
-}: {
-  label: string;
-  children: ReactNode;
-  id: string;
-  disabled?: boolean;
-}) => {
-  return (
-    <Accordion.Item key={id} value={id}>
-      <Accordion.Control disabled={disabled}>{label}</Accordion.Control>
-      <Accordion.Panel>
-        <Stack gap="md">{children}</Stack>
-      </Accordion.Panel>
-    </Accordion.Item>
-  );
-};
+import { CustomVariables } from "./CustomVariables";
 
 const SettingsSection = ({ children }: { children: ReactNode }) => {
   return (
@@ -40,89 +15,98 @@ const SettingsSection = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const filterListPerMirroringType = {
-  off: ["radial", "linear", "hex"],
-  square: ["hex"],
-  hex: ["linear"],
-};
-
 export const ShapeParams = React.memo(() => {
-    const [opened, setOpened] = React.useState<string[]>([]);
-    const { resetViewport, toggleAreaSelection, magnifyViewport } = useActions();
-    const [mirroringType] = useStaticRule('mirroringType');
-    const selectAreaActive = useSelectAreaActive();
+  const { resetViewport, toggleAreaSelection, magnifyViewport } = useActions();
+  const [mirroringType] = useStaticRule("mirroringType");
+  const selectAreaActive = useSelectAreaActive();
 
-    const realOpened = opened.filter(
-      (item) => !filterListPerMirroringType[mirroringType].includes(item)
-    );
+  return (
+    <Stack gap="sm">
+      <SettingsSection>
+        <StaticRuleEdit name="formula" />
 
-    return (
-      <Stack gap="sm">
-        <Accordion multiple value={realOpened} onChange={setOpened}>
+        <StaticRuleEdit name="invert" />
+      </SettingsSection>
+      <Tabs defaultValue="c">
+        <Tabs.List>
+          <Tabs.Tab size="xs" value="c">
+            C
+          </Tabs.Tab>
+          <Tabs.Tab size="xs" value="r">
+            R
+          </Tabs.Tab>
+          <Tabs.Tab size="xs" value="Iterations">
+            Iterations
+          </Tabs.Tab>
+          <Tabs.Tab size="xs" value="Mirroring">
+            Mirroring
+          </Tabs.Tab>
+          <Tabs.Tab size="xs" value="Viewport">
+            Viewport
+          </Tabs.Tab>
+          <Tabs.Tab size="xs" value="Coloring">
+            Coloring
+          </Tabs.Tab>
+          <Tabs.Tab size="xs" value="Custom">
+            Custom
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="c">
           <SettingsSection>
-            <StaticRuleEdit name="formula" />
-            
-            <StaticRuleEdit name='invert' />
-          </SettingsSection>
-          <SettingsCollapsibleSection id="C" label="C">
             <DynamicRuleEdit name="c" />
 
             <DynamicRuleEdit name="cxPerDistChange" />
 
             <DynamicRuleEdit name="cyPerDistChange" />
-          </SettingsCollapsibleSection>
-
-          <SettingsCollapsibleSection id="R" label="R">
+          </SettingsSection>
+        </Tabs.Panel>
+        <Tabs.Panel value="r">
+          <SettingsSection>
             <DynamicRuleEdit name="r" />
 
             <DynamicRuleEdit name="rPerDistChange" />
-          </SettingsCollapsibleSection>
-
-          <SettingsCollapsibleSection id="Iterations" label="Iterations">
+          </SettingsSection>
+        </Tabs.Panel>
+        <Tabs.Panel value="Iterations">
+          <SettingsSection>
             <DynamicRuleEdit name="maxIterations" />
 
             <DynamicRuleEdit name="iterationsPerDistChange" />
-          </SettingsCollapsibleSection>
+          </SettingsSection>
+        </Tabs.Panel>
 
+        <Tabs.Panel value="Mirroring">
           <SettingsSection>
             <StaticRuleEdit name="mirroringType" />
           </SettingsSection>
-          <SettingsCollapsibleSection
-            id="linear"
-            label="Linear mirroring"
-            disabled={mirroringType !== "square"}
-          >
-            <DynamicRuleEdit name="linearMirroringFactor" />
 
-            <DynamicRuleEdit name="linearMirroringPerDistChange" />
-          </SettingsCollapsibleSection>
+          {mirroringType === "square" && (
+            <SettingsSection>
+              <DynamicRuleEdit name="linearMirroringFactor" />
 
-          <SettingsCollapsibleSection
-            disabled={mirroringType !== "hex"}
-            id="hex"
-            label="Hex mirroring"
-          >
-            <DynamicRuleEdit name="hexMirroringFactor" />
-            <DynamicRuleEdit name="hexMirroringPerDistChange" />
-          </SettingsCollapsibleSection>
+              <DynamicRuleEdit name="linearMirroringPerDistChange" />
+            </SettingsSection>
+          )}
 
-          <SettingsCollapsibleSection
-            id="radial"
-            label="Radial mirroring"
-            disabled={mirroringType === "off"}
-          >
-            <DynamicRuleEdit name="radialMirroringAngle" />
+          {mirroringType === "square" && (
+            <SettingsSection>
+              <DynamicRuleEdit name="hexMirroringFactor" />
+              <DynamicRuleEdit name="hexMirroringPerDistChange" />
+            </SettingsSection>
+          )}
 
-            <DynamicRuleEdit name="radialMirroringPerDistChange" />
-          </SettingsCollapsibleSection>
+          {mirroringType !== "off" && (
+            <SettingsSection>
+              <DynamicRuleEdit name="radialMirroringAngle" />
 
-          <SettingsCollapsibleSection id="viewport" label="Viewport">
+              <DynamicRuleEdit name="radialMirroringPerDistChange" />
+            </SettingsSection>
+          )}
+        </Tabs.Panel>
+        <Tabs.Panel value="Viewport">
+          <SettingsSection>
             <Group>
-              <Button
-                size="xs"
-                variant="outline"
-                onClick={resetViewport}
-              >
+              <Button size="xs" variant="outline" onClick={resetViewport}>
                 Reset
               </Button>
               <Button
@@ -150,13 +134,20 @@ export const ShapeParams = React.memo(() => {
             </Group>
             <DynamicRuleEdit name="rlVisibleRange" />
             <DynamicRuleEdit name="imVisibleRange" />
-          </SettingsCollapsibleSection>
-          <SettingsCollapsibleSection id="colors" label="Colors">
+          </SettingsSection>
+        </Tabs.Panel>
+        <Tabs.Panel value="Coloring">
+          <SettingsSection>
             <StaticRuleEdit name="gradient" />
-          </SettingsCollapsibleSection>
-        </Accordion>
-      </Stack>
-    );
-  }
-);
+          </SettingsSection>
+        </Tabs.Panel>
+        <Tabs.Panel value="Custom">
+          <SettingsSection>
+            <CustomVariables />
+          </SettingsSection>
+        </Tabs.Panel>
+      </Tabs>
+    </Stack>
+  );
+});
 ShapeParams.displayName = "ShapeParams";

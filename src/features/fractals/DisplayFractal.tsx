@@ -4,7 +4,7 @@ import {
   StaticFractalVisualizerControls,
 } from "./fractals";
 import { FractalParamsBuildRules } from "./types";
-import { throttle } from "../../shared/libs/fn-modifiers/throttle";
+import { throttle } from "@/shared/libs/fn-modifiers/throttle";
 import { DisplayCanvas } from "@/shared/ui/DisplayCanvas/DisplayCanvas";
 
 const defaultInitialState = { time: 0 };
@@ -28,7 +28,8 @@ export const DisplayFractal = ({
   const [[width, height], setSize] = useState([0, 0]);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const fractalRef = useRef<StaticFractalVisualizerControls | null>(null);
-
+  const fractalRerenderRef = useRef<(params: FractalParamsBuildRules) => void | null>(null);
+  
   if (fractalRef.current) {
     fractalRef.current.loop.setTimemultiplier(timeMultiplier);
   }
@@ -52,6 +53,9 @@ export const DisplayFractal = ({
       throttledOnRender
     );
     fractalRef.current = newVisualizer;
+    fractalRerenderRef.current = throttle((params) => {
+      fractalRef.current?.updateParams(params);
+    }, 25);
 
     newVisualizer.loop.setTimemultiplier(timeMultiplier);
 
@@ -74,7 +78,7 @@ export const DisplayFractal = ({
 
   useEffect(() => {
     if (fractalRef.current) {
-      fractalRef.current.updateParams(params);
+      fractalRerenderRef.current?.(params);
     }
   }, [params]);
 

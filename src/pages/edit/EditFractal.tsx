@@ -29,7 +29,7 @@ import {
 import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
 import { Vector2 } from "@/shared/libs/vectors";
-import { ShapeParams2 } from "./ShapeParams2";
+import { ShapeParams } from "./ShapeParams";
 
 const defaultRules = getDefaultFractalRules();
 
@@ -99,7 +99,7 @@ export function EditFractalLoaded() {
               </Stack>
             </Paper>
           </Box>
-          <ShapeParams2 />
+          <ShapeParams />
         </AppShellAside>
         <AppShellMain h="100vh">
           <Stack w="100%" h="100%" gap={0}>
