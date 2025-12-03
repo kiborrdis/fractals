@@ -178,6 +178,22 @@ vec2 cmpl(float x, float y) {
   return vec2(x, y);
 }
 
+vec2 complexConjugate(vec2 i) {
+  return vec2(i.x, -i.y);
+}
+
+vec2 complexMirror(vec2 i) {
+  return vec2(i.y, i.x);
+}
+
+vec2 complexRotate(vec2 i, float ang) {
+  return vec2(cos(ang/PI) * i.x, sin(ang/PI) * i.y);
+}
+
+vec2 complexSinh(vec2 i) {
+  return vec2(sinh(i.x) * cos(i.y), cosh(i.x) * sin(i.y));
+}
+
 vec2 complexSin(vec2 i) {
   return vec2(sin(i.x) * cosh(i.y), cos(i.x) * sinh(i.y));
 }

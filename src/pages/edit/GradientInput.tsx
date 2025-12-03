@@ -1,34 +1,47 @@
-import { Stack, Button, ColorInput, Group, NumberInput } from "@mantine/core";
+import {
+  Stack,
+  Button,
+  ColorInput,
+  Group,
+  NumberInput,
+  ActionIcon,
+} from "@mantine/core";
 import React from "react";
 import { GradientStop } from "@/features/fractals/types";
+import { FiTrash } from "react-icons/fi";
 
 const MAX_POSITION = 1000;
 
 export const GradientInput = ({
-  initialStops,
+  stops,
   onChange,
 }: {
+  stops: GradientStop[];
   onChange: (stops: GradientStop[]) => void;
-  initialStops: GradientStop[];
 }) => {
-  const [stops, setStopsInternal] = React.useState<GradientStop[]>(
-    [...initialStops].sort((a, b) => a[0] - b[0])
+  const [stopsInternal, setStopsInternal] = React.useState<GradientStop[]>(
+    [...stops].sort((a, b) => a[0] - b[0])
   );
+  const [focused, setFocused] = React.useState<boolean>(false);
 
   const setStops = (newStops: GradientStop[]) => {
     const sorted = [...newStops].sort((a, b) => a[0] - b[0]);
-    setStopsInternal(sorted);
     onChange(sorted);
   };
 
   const handlePositionChange = (index: number, newPosition: number) => {
-    const newStops = [...stops];
-    newStops[index] = [newPosition, ...stops[index].slice(1)] as GradientStop;
+    const newStops = [...stopsInternal];
+    newStops[index] = [
+      newPosition,
+      ...stopsInternal[index].slice(1),
+    ] as GradientStop;
     setStopsInternal(newStops);
+
+    setStops(newStops);
   };
 
   const handlePositionBlur = () => {
-    setStops(stops);
+    setFocused(false);
   };
 
   const handleColorChange = (index: number, color: string) => {
@@ -51,11 +64,17 @@ export const GradientInput = ({
 
   return (
     <Stack gap="sm">
-      {stops.map((stop, index) => (
+      {(focused ? stopsInternal : stops).map((stop, index) => (
         <Group key={index} gap="xs" wrap="nowrap">
           <NumberInput
             value={stop[0]}
-            onChange={(value) => handlePositionChange(index, Number(value) || 0)}
+            onFocus={() => {
+              setStopsInternal(stops);
+              setFocused(true);
+            }}
+            onChange={(value) =>
+              handlePositionChange(index, Number(value) || 0)
+            }
             onBlur={handlePositionBlur}
             min={0}
             max={MAX_POSITION}
@@ -75,23 +94,18 @@ export const GradientInput = ({
             style={{ flex: 1 }}
             size="xs"
           />
-          <Button
-            size="xs"
+          <ActionIcon
+            size="sm"
             variant="light"
             color="red"
             onClick={() => handleDeleteStop(index)}
             disabled={stops.length <= 2}
           >
-            Delete
-          </Button>
+            <FiTrash />
+          </ActionIcon>
         </Group>
       ))}
-      <Button
-        size="xs"
-        variant="light"
-        onClick={handleAddStop}
-        fullWidth
-      >
+      <Button size="xs" variant="light" onClick={handleAddStop} fullWidth>
         Add Stop
       </Button>
     </Stack>

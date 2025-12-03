@@ -32,4 +32,20 @@ export const funcNameToSignature: Record<
     params: ["vector2"],
     return: "vector2",
   },
+  sinh: {
+    params: ["vector2"],
+    return: "vector2",
+  },
+  rotate: {
+    params: ["vector2", "number"],
+    return: "vector2",
+  },
+  mirror: {
+    params: ["vector2"],
+    return: "vector2",
+  },
+  conjugate: {
+    params: ["vector2"],
+    return: "vector2",
+  }
 };

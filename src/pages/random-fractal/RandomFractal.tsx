@@ -40,7 +40,7 @@ const numberOfStops = Math.floor(randomRange(2, 8));
 
 const stops = new Array(numberOfStops).fill(0).map((_, i) => {
   return [
-    i / (numberOfStops - 1),
+    Math.floor(250 * i / (numberOfStops - 1)),
     Math.random(),
     Math.random(),
     Math.random(),

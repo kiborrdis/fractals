@@ -1,5 +1,24 @@
 import { ConvertToBuildResult, ConvertToRule, NumberBuildRule, RangeNumberRule, RuleType, StaticNumberRule, StepNumberRule, StepTransitionFn, StepTransitionFnType } from "./types";
 
+export const extractMaxValueFromRule = (
+  rule: NumberBuildRule
+): number => {
+  if (rule.t === RuleType.StaticNumber) {
+    return rule.value;
+  }
+
+  if (rule.t === RuleType.RangeNumber) {
+    return Math.max(...rule.range);
+  }
+
+  if (rule.t === RuleType.StepNumber) {
+    const maxStep = Math.max(...rule.steps);
+    return maxStep * (rule.range[1] - rule.range[0]) + rule.range[0];
+  }
+
+  return 0;
+}
+
 export const makeRuleFromNumber = (value: number): StaticNumberRule => {
   return {
     t: RuleType.StaticNumber,
