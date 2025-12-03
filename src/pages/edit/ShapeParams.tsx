@@ -88,7 +88,7 @@ export const ShapeParams = React.memo(() => {
             </SettingsSection>
           )}
 
-          {mirroringType === "square" && (
+          {mirroringType === "hex" && (
             <SettingsSection>
               <DynamicRuleEdit name="hexMirroringFactor" />
               <DynamicRuleEdit name="hexMirroringPerDistChange" />

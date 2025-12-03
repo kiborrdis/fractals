@@ -13,7 +13,7 @@ export const defaultStringify = (value: any) => {
   return base64String;
 };
 
-const defaultParse = (value: any) => {
+export const defaultParse = (value: any) => {
   const jsonString = atob(value);
   return JSON.parse(jsonString);
 };

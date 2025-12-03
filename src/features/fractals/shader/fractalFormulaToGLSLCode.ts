@@ -167,4 +167,8 @@ const fnNameToFnMap: Record<string, string> = {
   re: "re",
   cmpl: "cmpl",
   sin: 'complexSin',
+  sinh: 'complexSinh',
+  rotate: 'complexRotate',
+  mirror: 'complexMirror',
+  conjugate: 'complexConjugate',
 };

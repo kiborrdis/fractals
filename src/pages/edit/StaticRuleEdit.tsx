@@ -5,6 +5,8 @@ import { Button, Checkbox, NumberInput, SegmentedControl } from "@mantine/core";
 import { FormulaInput } from "./FormulaInput";
 import { randomRange } from "@/features/fractals/utils";
 import { GradientInput } from "./GradientInput";
+import { useDynamicRule } from "./store/data/useDynamicRule";
+import { extractMaxValueFromRule } from "@/shared/libs/numberRule";
 
 type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
   {
@@ -49,7 +51,7 @@ const ruleConfigs: RuleRenderers = {
         }
       />
       <GradientInput
-        initialStops={props.value as GradientStop[]}
+        stops={props.value as GradientStop[]}
         onChange={(newStops) =>
           props.onChange(
             props.name,
@@ -85,6 +87,15 @@ const GenerateGradient = ({
   onChange: (val: GradientStop[]) => void;
 }) => {
   const [val, setValue] = useState(0);
+  const [iterations] = useDynamicRule("maxIterations");
+
+  let maxValue = 10;
+  if (Array.isArray(iterations)) {
+    maxValue = extractMaxValueFromRule(iterations[1]);
+  } else {
+    maxValue = extractMaxValueFromRule(iterations);
+  }
+
   return (
     <>
       <NumberInput
@@ -105,7 +116,7 @@ const GenerateGradient = ({
 
           const stops: GradientStop[] = [];
           for (let i = 0; i <= val; i++) {
-            const position = i / val;
+            const position = maxValue * i / val;
             const r = randomRange(0, 1);
             const g = randomRange(0, 1);
             const b = randomRange(0, 1);

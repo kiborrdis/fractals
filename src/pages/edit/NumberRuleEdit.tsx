@@ -141,9 +141,9 @@ export const NumberRuleEdit = memo(
 
               onChange(name, changeRulePeriod(value, Number(newValue)));
             }}
-            min={min}
-            max={max}
-            step={step}
+            min={1}
+            max={10000}
+            step={1}
           />
         </Stack>
       );
