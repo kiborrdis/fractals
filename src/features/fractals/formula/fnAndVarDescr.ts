@@ -47,5 +47,5 @@ export const funcNameToSignature: Record<
   conjugate: {
     params: ["vector2"],
     return: "vector2",
-  }
+  },
 };

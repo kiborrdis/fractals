@@ -1,10 +1,19 @@
-import { changeRulePeriod, NumberBuildRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
+import {
+  changeRulePeriod,
+  NumberBuildRule,
+  RuleType,
+  StepNumberRule,
+} from "@/shared/libs/numberRule";
 import { EditorNumberInput } from "@/shared/ui/EditorNumberInput";
 import { Group, Text, Input, ActionIcon, Button } from "@mantine/core";
 import { FiCrosshair } from "react-icons/fi";
 
 export const TimelineBaseRuleEdit = ({
-  editingRule, name, newStepActive, onNewStepClick, onRuleChange,
+  editingRule,
+  name,
+  newStepActive,
+  onNewStepClick,
+  onRuleChange,
 }: {
   onNewStepClick: () => void;
   onRuleChange: (newRule: NumberBuildRule) => void;
@@ -16,11 +25,13 @@ export const TimelineBaseRuleEdit = ({
     <Group>
       {editingRule && (
         <>
-          <Text size="sm" fw={600}>{name}</Text>
+          <Text size='sm' fw={600}>
+            {name}
+          </Text>
           {editingRule.t === RuleType.StepNumber && (
             <>
               <Group gap={4}>
-                <Text size="xs" fw={500}>
+                <Text size='xs' fw={500}>
                   From:To
                 </Text>
                 <EditorNumberInput
@@ -37,7 +48,8 @@ export const TimelineBaseRuleEdit = ({
                       range: [v, editingRule.range[1]],
                     });
                   }}
-                  step={0.01} />
+                  step={0.01}
+                />
                 <EditorNumberInput
                   w={80}
                   decimalScale={4}
@@ -51,10 +63,11 @@ export const TimelineBaseRuleEdit = ({
                       range: [editingRule.range[0], v],
                     });
                   }}
-                  step={0.01} />
+                  step={0.01}
+                />
               </Group>
               <Group gap={4}>
-                <Input.Label size="xs" htmlFor="period">
+                <Input.Label size='xs' htmlFor='period'>
                   Period (s)
                 </Input.Label>
 
@@ -68,7 +81,8 @@ export const TimelineBaseRuleEdit = ({
 
                     onRuleChange(changeRulePeriod(editingRule, newLen));
                   }}
-                  step={0.01} />
+                  step={0.01}
+                />
               </Group>
               <ActionIcon
                 color={newStepActive ? "green" : "gray"}

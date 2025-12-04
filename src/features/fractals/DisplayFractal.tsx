@@ -12,24 +12,25 @@ const defaultInitialState = { time: 0 };
 export const DisplayFractal = ({
   params,
   play,
-  formula = 'z^2 + c',
+  formula = "z^2 + c",
   timeMultiplier = 1,
   initialLoopState = defaultInitialState,
-  onRender
+  onRender,
 }: {
   params: FractalParamsBuildRules;
   play: boolean;
   formula?: string;
   timeMultiplier?: number;
-  initialLoopState?: { time: number},
+  initialLoopState?: { time: number };
   loopHandlerRef?: (number: number) => void;
   onRender?: (time: number) => void;
 }) => {
   const [[width, height], setSize] = useState([0, 0]);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const fractalRef = useRef<StaticFractalVisualizerControls | null>(null);
-  const fractalRerenderRef = useRef<(params: FractalParamsBuildRules) => void | null>(null);
-  
+  const fractalRerenderRef =
+    useRef<(params: FractalParamsBuildRules) => void | null>(null);
+
   if (fractalRef.current) {
     fractalRef.current.loop.setTimemultiplier(timeMultiplier);
   }
@@ -49,8 +50,8 @@ export const DisplayFractal = ({
         play,
         time: initialLoopState.time || 0,
         timeMultiplier: timeMultiplier,
-     },
-      throttledOnRender
+      },
+      throttledOnRender,
     );
     fractalRef.current = newVisualizer;
     fractalRerenderRef.current = throttle((params) => {
@@ -66,8 +67,8 @@ export const DisplayFractal = ({
     return () => {
       newVisualizer.loop.stop();
     };
-  // This is intentional, only recreate visualizer if new canvas element or formula
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // This is intentional, only recreate visualizer if new canvas element or formula
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvas, formula, onRender]);
 
   useEffect(() => {
@@ -106,4 +107,3 @@ export const DisplayFractal = ({
     />
   );
 };
-

@@ -1,22 +1,37 @@
-import { CalcNode, CalcNodeType, forEachNodeChild } from "@/shared/libs/calcGraph";
+import {
+  CalcNode,
+  CalcNodeType,
+  forEachNodeChild,
+} from "@/shared/libs/calcGraph";
 import { CalcNodeResultType, CalcNodeResultTypeMap } from "./types";
 import { funcNameToSignature, varNameToType } from "./fnAndVarDescr";
 
 export const calcTypesOfNodes = (
   calcNode: CalcNode,
-  customVars: Record<string, CalcNodeResultType> = {}
+  customVars: Record<string, CalcNodeResultType> = {},
 ): CalcNodeResultTypeMap => {
   const map: CalcNodeResultTypeMap = new Map();
-  forEachNodeChild(calcNode, (node) => {
-    const nodeType = getTypeForNode(node, map, { ...customVars, ...varNameToType });
+  forEachNodeChild(
+    calcNode,
+    (node) => {
+      const nodeType = getTypeForNode(node, map, {
+        ...customVars,
+        ...varNameToType,
+      });
 
-    map.set(node, nodeType);
-  }, { parentAfterChildren: true });
+      map.set(node, nodeType);
+    },
+    { parentAfterChildren: true },
+  );
 
   return map;
 };
 
-const getTypeForNode = (node: CalcNode, map: CalcNodeResultTypeMap, vars: Record<string, CalcNodeResultType>): CalcNodeResultType => {
+const getTypeForNode = (
+  node: CalcNode,
+  map: CalcNodeResultTypeMap,
+  vars: Record<string, CalcNodeResultType>,
+): CalcNodeResultType => {
   switch (node.t) {
     case CalcNodeType.Number:
       return "number";
@@ -59,14 +74,19 @@ const getTypeForNode = (node: CalcNode, map: CalcNodeResultTypeMap, vars: Record
         }
 
         return "number";
-      } 
+      }
 
-      if (node.v === '+' || node.v === '-' || node.v === '/' || node.v === '*') {
-        if (leftP === 'number' && leftP === rightP) {
-          return 'number';
+      if (
+        node.v === "+" ||
+        node.v === "-" ||
+        node.v === "/" ||
+        node.v === "*"
+      ) {
+        if (leftP === "number" && leftP === rightP) {
+          return "number";
         }
 
-        return 'vector2';
+        return "vector2";
       }
 
       return "error";
@@ -77,4 +97,3 @@ const getTypeForNode = (node: CalcNode, map: CalcNodeResultTypeMap, vars: Record
       return "error";
   }
 };
-

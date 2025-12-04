@@ -7,13 +7,13 @@ export type FractalParams = {
   invert: boolean;
 
   formula: string;
-  gradient: GradientStop[],
+  gradient: GradientStop[];
 
-  mirroringType: 'off' | 'hex' | 'square';
+  mirroringType: "off" | "hex" | "square";
 
   /**
-   * @description [2, Infinity] -- override auto-calculated smoothing power(in general, should be max power of z in formula). 
-   *              [-Infinity, 0) disable smoothing altogether, 
+   * @description [2, Infinity] -- override auto-calculated smoothing power(in general, should be max power of z in formula).
+   *              [-Infinity, 0) disable smoothing altogether,
    *              [0, 2) use auto-calculated smoothing power. If fail to calculate, smoothing disabled
    *              Not defined considered as 0
    */
@@ -21,7 +21,7 @@ export type FractalParams = {
 
   dynamic: FractalDynamicParams;
   custom: Record<string, number | Vector2>;
-}
+};
 
 export type FractalDynamicParams = {
   hexMirroringFactor: number;
@@ -47,17 +47,22 @@ export type GradientStop = [
   number,
   number,
   number,
-  number
+  number,
 ];
 
 export type FractalDynamicParamsBuildRules = {
   [K in keyof FractalDynamicParams]: ConvertToRule<FractalDynamicParams[K]>;
 };
 
-export type FractalCustomRules = Record<string, ConvertToRule<number | Vector2>>;
+export type FractalCustomRules = Record<
+  string,
+  ConvertToRule<number | Vector2>
+>;
 
-export type FractalParamsBuildRules = Omit<FractalParams, 'dynamic' | 'custom'> & {
+export type FractalParamsBuildRules = Omit<
+  FractalParams,
+  "dynamic" | "custom"
+> & {
   dynamic: FractalDynamicParamsBuildRules;
   custom: FractalCustomRules;
 };
-

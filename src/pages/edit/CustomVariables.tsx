@@ -9,13 +9,13 @@ import { NumberBuildRule } from "@/shared/libs/numberRule";
 type VariableType = "number" | "vector2";
 
 const isNumberRule = (
-  value: NumberBuildRule | [NumberBuildRule, NumberBuildRule]
+  value: NumberBuildRule | [NumberBuildRule, NumberBuildRule],
 ): value is NumberBuildRule => {
   return !Array.isArray(value);
 };
 
 const isVector2Rule = (
-  value: NumberBuildRule | [NumberBuildRule, NumberBuildRule]
+  value: NumberBuildRule | [NumberBuildRule, NumberBuildRule],
 ): value is [NumberBuildRule, NumberBuildRule] => {
   return Array.isArray(value);
 };
@@ -47,15 +47,15 @@ const CreateVariableForm = memo(
     }, [newVarName, newVarType, onComplete, existingNames]);
 
     return (
-      <Stack gap="sm">
+      <Stack gap='sm'>
         <TextInput
-          label="Variable Name"
-          placeholder="Enter variable name"
+          label='Variable Name'
+          placeholder='Enter variable name'
           value={newVarName}
           onChange={(e) => setNewVarName(e.currentTarget.value)}
         />
         <Select
-          label="Variable Type"
+          label='Variable Type'
           value={newVarType}
           onChange={(value) => setNewVarType(value as VariableType)}
           data={[
@@ -63,12 +63,12 @@ const CreateVariableForm = memo(
             { value: "vector2", label: "Vector2" },
           ]}
         />
-        <Button onClick={handleCreate} size="sm">
+        <Button onClick={handleCreate} size='sm'>
           Create Variable
         </Button>
       </Stack>
     );
-  }
+  },
 );
 CreateVariableForm.displayName = "CreateVariableForm";
 
@@ -95,7 +95,7 @@ export const CustomVariables = memo(() => {
       customVariableCreate(name, type);
       setSelectedVar(name);
     },
-    [customVariableCreate]
+    [customVariableCreate],
   );
 
   const handleDeleteVariable = useCallback(() => {
@@ -111,7 +111,7 @@ export const CustomVariables = memo(() => {
         customRuleChange([selectedVar], value);
       }
     },
-    [selectedVar, customRuleChange]
+    [selectedVar, customRuleChange],
   );
 
   const handleVector2RuleChange = useCallback(
@@ -120,21 +120,21 @@ export const CustomVariables = memo(() => {
         customRuleChange([selectedVar], value);
       }
     },
-    [selectedVar, customRuleChange]
+    [selectedVar, customRuleChange],
   );
 
   const selectedValue = selectedVar && customVars[selectedVar];
 
   return (
-    <Stack gap="md">
+    <Stack gap='md'>
       <Chip.Group value={selectedVar || undefined} onChange={handleChipChange}>
-        <Group gap="xs">
+        <Group gap='xs'>
           {variableNames.map((varName) => (
             <Chip key={varName} value={varName}>
               {varName}
             </Chip>
           ))}
-          <Chip value="__create_new__">+</Chip>
+          <Chip value='__create_new__'>+</Chip>
         </Group>
       </Chip.Group>
 
@@ -146,7 +146,7 @@ export const CustomVariables = memo(() => {
       )}
 
       {selectedVar && selectedVar !== "__create_new__" && selectedValue && (
-        <Stack gap="sm">
+        <Stack gap='sm'>
           {isNumberRule(selectedValue) ? (
             <NumberRuleEdit
               name={selectedVar}
@@ -171,7 +171,7 @@ export const CustomVariables = memo(() => {
             />
           ) : null}
 
-          <Button color="red" onClick={handleDeleteVariable} size="sm">
+          <Button color='red' onClick={handleDeleteVariable} size='sm'>
             Delete Variable
           </Button>
         </Stack>

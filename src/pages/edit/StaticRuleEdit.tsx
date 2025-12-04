@@ -23,7 +23,7 @@ type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
   };
 
 type RuleRenderer<
-  K extends keyof Omit<FractalParamsBuildRules, "dynamic" | "custom">
+  K extends keyof Omit<FractalParamsBuildRules, "dynamic" | "custom">,
 > = (props: RuleRenderProps<K>) => ReactNode;
 
 type RuleRenderers = {
@@ -40,7 +40,7 @@ const ruleConfigs: RuleRenderers = {
       onChange={(newValue) =>
         props.onChange(
           props.name,
-          newValue as FractalParamsBuildRules[typeof props.name]
+          newValue as FractalParamsBuildRules[typeof props.name],
         )
       }
     />
@@ -56,7 +56,7 @@ const ruleConfigs: RuleRenderers = {
 
   invert: (props) => (
     <Checkbox
-      label="Invert"
+      label='Invert'
       checked={props.value}
       onChange={() => {
         props.onChange(props.name, !props.value);
@@ -70,7 +70,7 @@ const ruleConfigs: RuleRenderers = {
         onChange={(newStops) =>
           props.onChange(
             props.name,
-            newStops as FractalParamsBuildRules[typeof props.name]
+            newStops as FractalParamsBuildRules[typeof props.name],
           )
         }
       />
@@ -79,7 +79,7 @@ const ruleConfigs: RuleRenderers = {
         onChange={(newStops) =>
           props.onChange(
             props.name,
-            newStops as FractalParamsBuildRules[typeof props.name]
+            newStops as FractalParamsBuildRules[typeof props.name],
           )
         }
       />
@@ -94,11 +94,11 @@ const ruleConfigs: RuleRenderers = {
         { value: "square", label: "Square" },
         { value: "hex", label: "Hex" },
       ]}
-      size="sm"
+      size='sm'
       onChange={(value) =>
         props.onChange(
           props.name,
-          value as FractalParamsBuildRules[typeof props.name]
+          value as FractalParamsBuildRules[typeof props.name],
         )
       }
     />
@@ -173,7 +173,7 @@ const BandSmoothingOptions = ({
 
   return (
     <Stack>
-      <Text size="sm" fw={600}>
+      <Text size='sm' fw={600}>
         Band Smoothing
       </Text>
       <SegmentedControl
@@ -183,7 +183,7 @@ const BandSmoothingOptions = ({
           { value: "disabled", label: "Disabled" },
           { value: "custom", label: "Custom" },
         ]}
-        size="sm"
+        size='sm'
         onChange={(newValue) => {
           let smoothingValue = 0;
           if (newValue === "custom") {

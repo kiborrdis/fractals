@@ -6,7 +6,7 @@ import { StepNumberRule } from "./types";
 
 export const changeRulePeriod = (
   rule: StepNumberRule,
-  newPeriod: number
+  newPeriod: number,
 ): StepNumberRule => {
   const len = rule.transitions.reduce((m, t) => m + t.len, 0);
 
@@ -21,7 +21,7 @@ export const changeRulePeriod = (
 
 export const addNewStepToRule = (
   rule: StepNumberRule,
-  time: number
+  time: number,
 ): StepNumberRule => {
   rule = makeEditableToTime(rule, time);
 
@@ -45,13 +45,16 @@ export const addNewStepToRule = (
   newRule.steps.splice(
     stepIndex + 1,
     0,
-    (separateValue - rule.range[0]) / (rule.range[1] - rule.range[0])
+    (separateValue - rule.range[0]) / (rule.range[1] - rule.range[0]),
   );
 
   return newRule;
 };
 
-const makeEditableToTime = (rule: StepNumberRule, time: number): StepNumberRule => {
+const makeEditableToTime = (
+  rule: StepNumberRule,
+  time: number,
+): StepNumberRule => {
   const rulePeriod = rule.transitions.reduce((m, r) => m + r.len, 0) * 1000;
   const n = Math.ceil(time / rulePeriod);
 
@@ -59,8 +62,8 @@ const makeEditableToTime = (rule: StepNumberRule, time: number): StepNumberRule 
     return rule;
   }
 
-  let transitions: typeof rule['transitions'] = [];
-  let steps: typeof rule['steps'] = [];
+  let transitions: (typeof rule)["transitions"] = [];
+  let steps: (typeof rule)["steps"] = [];
 
   for (let i = 0; i < n; i++) {
     transitions = transitions.concat(rule.transitions);
@@ -71,8 +74,8 @@ const makeEditableToTime = (rule: StepNumberRule, time: number): StepNumberRule 
     ...rule,
     transitions,
     steps,
-  }
-}
+  };
+};
 
 export const moveRuleStep = (
   rule: StepNumberRule,
@@ -81,7 +84,7 @@ export const moveRuleStep = (
    * In milliseconds
    */
   newStepTime: number,
-  newMagnitude: number
+  newMagnitude: number,
 ): StepNumberRule => {
   const lenToI = rule.transitions
     .slice(0, index - 1)
@@ -93,7 +96,7 @@ export const moveRuleStep = (
 
   const newPrevLen = Math.min(
     Math.max(newStepTimeSeconds - lenToI, 0),
-    prevLen + curLen - 0.001
+    prevLen + curLen - 0.001,
   );
 
   const newRule: typeof rule = {

@@ -16,7 +16,7 @@ export const convertScreenCoordToSpace = (
   screenSize: number,
   spaceCenter: number,
   spaceSize: number,
-  convertionScale: number
+  convertionScale: number,
 ) => {
   const targetRangeEnd = spaceSize * convertionScale + spaceCenter;
   const targetRangeStart = targetRangeEnd - 2 * spaceSize * convertionScale;
@@ -27,7 +27,7 @@ export const convertScreenCoordToSpace = (
 
 export const createIterationsColorConverterFn = (
   [startColor, endColor]: [RGBAVector, RGBAVector],
-  overflowColor: RGBAVector
+  overflowColor: RGBAVector,
 ) => {
   const diff = endColor.map((end, i) => end - startColor[i]);
   const colorMap: Record<number, Record<number, RGBAVector>> = {};
@@ -35,7 +35,7 @@ export const createIterationsColorConverterFn = (
   return (
     iterations: number,
     maxIterations: number,
-    _coords: Vector2
+    _coords: Vector2,
   ): RGBAVector => {
     if (iterations === -1) {
       return overflowColor;
@@ -61,12 +61,11 @@ export const createIterationsColorConverterFn = (
   };
 };
 
-
 export const transformToFractalCoord = (
   pointInContainer: Vector2,
   containerSize: Vector2,
   containerRLRange: Vector2,
-  containerIMRange: Vector2
+  containerIMRange: Vector2,
 ): Vector2 => {
   const transformedPoint: Vector2 = [...pointInContainer];
   transformedPoint[1] = containerSize[1] - transformedPoint[1];
@@ -81,6 +80,6 @@ export const transformToFractalCoord = (
 
   return sum(
     sum(mul(fractStartEndDelta, coord), fractStart),
-    fractStartEndDelta
+    fractStartEndDelta,
   );
 };

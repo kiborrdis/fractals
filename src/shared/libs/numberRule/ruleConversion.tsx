@@ -1,8 +1,16 @@
-import { ConvertToBuildResult, ConvertToRule, NumberBuildRule, RangeNumberRule, RuleType, StaticNumberRule, StepNumberRule, StepTransitionFn, StepTransitionFnType } from "./types";
+import {
+  ConvertToBuildResult,
+  ConvertToRule,
+  NumberBuildRule,
+  RangeNumberRule,
+  RuleType,
+  StaticNumberRule,
+  StepNumberRule,
+  StepTransitionFn,
+  StepTransitionFnType,
+} from "./types";
 
-export const extractMaxValueFromRule = (
-  rule: NumberBuildRule
-): number => {
+export const extractMaxValueFromRule = (rule: NumberBuildRule): number => {
   if (rule.t === RuleType.StaticNumber) {
     return rule.value;
   }
@@ -17,7 +25,7 @@ export const extractMaxValueFromRule = (
   }
 
   return 0;
-}
+};
 
 export const makeRuleFromNumber = (value: number): StaticNumberRule => {
   return {
@@ -26,7 +34,7 @@ export const makeRuleFromNumber = (value: number): StaticNumberRule => {
   };
 };
 export const makeRuleFromArray = <V extends number[]>(
-  value: V
+  value: V,
 ): ConvertToRule<V> => {
   return value.map(makeRuleFromNumber) as ConvertToRule<V>;
 };
@@ -34,7 +42,7 @@ export const makeRuleFromArray = <V extends number[]>(
 export const rangeRule = (
   range: [number, number],
   cycleSeconds: number,
-  phaseSeconds: number = 0
+  phaseSeconds: number = 0,
 ): RangeNumberRule => {
   return {
     t: RuleType.RangeNumber,
@@ -46,16 +54,13 @@ export const rangeRule = (
 
 export const makeScalarFromRule = (
   rule: NumberBuildRule,
-  time: number = 0
+  time: number = 0,
 ): number => {
   if (rule.t === RuleType.StaticNumber) {
     return rule.value;
   }
 
-  if (
-    rule.t === RuleType.RangeNumber ||
-    rule.t === RuleType.StepNumber
-  ) {
+  if (rule.t === RuleType.RangeNumber || rule.t === RuleType.StepNumber) {
     return makeNumberFromRangeRule(rule, time);
   }
 
@@ -64,10 +69,11 @@ export const makeScalarFromRule = (
 
 export const makeNumberFromRangeRule = (
   rule: NumberBuildRule,
-  time: number = 0
+  time: number = 0,
 ): number => {
   if (rule.t === RuleType.StepNumber) {
-    const { i: stepIndex, transitionPhase: transitionTime } = computeTransitionState(rule, time);
+    const { i: stepIndex, transitionPhase: transitionTime } =
+      computeTransitionState(rule, time);
 
     const stepTransition = rule.transitions[stepIndex];
     const stepValueStart = rule.steps[stepIndex];
@@ -78,12 +84,12 @@ export const makeNumberFromRangeRule = (
     if (animationFns[stepTransition.fn.t]) {
       relativeValue = animationFns[stepTransition.fn.t](
         transitionTime / stepTransition.len,
-        stepTransition.fn.data!
+        stepTransition.fn.data!,
       );
     } else {
       relativeValue = animationFns.linear(
         transitionTime / stepTransition.len,
-        stepTransition.fn.data!
+        stepTransition.fn.data!,
       );
     }
 
@@ -106,18 +112,18 @@ export const makeNumberFromRangeRule = (
     ((end - start) / 2) *
       Math.sin(
         (time + rule.phaseSeconds * 1000) /
-          ((rule.cycleSeconds * 1000) / Math.PI)
+          ((rule.cycleSeconds * 1000) / Math.PI),
       )
   );
 };
 
 export const computeTransitionState = (
   rule: StepNumberRule,
-  timeMs: number
+  timeMs: number,
 ): {
-  i: number,
-  phase: number,
-  transitionPhase: number,
+  i: number;
+  phase: number;
+  transitionPhase: number;
 } => {
   const timeSeconds = timeMs / 1000;
   const fullLen = rule.transitions.reduce((acc, t) => acc + t.len, 0);
@@ -129,26 +135,31 @@ export const computeTransitionState = (
     acc += rule.transitions[i].len;
 
     if (phase <= acc) {
-      return {i, phase, transitionPhase: phase - (acc - rule.transitions[i].len)};
+      return {
+        i,
+        phase,
+        transitionPhase: phase - (acc - rule.transitions[i].len),
+      };
     }
   }
 
   return {
     i: rule.transitions.length - 1,
     phase,
-    transitionPhase: phase - (acc - rule.transitions[rule.transitions.length - 1].len),
+    transitionPhase:
+      phase - (acc - rule.transitions[rule.transitions.length - 1].len),
   };
 };
 
 export const animationFns: {
   [K in StepTransitionFnType]: (
     t: number,
-    d: Extract<StepTransitionFn, { t: K }>["data"]
+    d: Extract<StepTransitionFn, { t: K }>["data"],
   ) => number;
 } = {
   linear: (t) => t,
-  t: (t) => Math.pow(t, 2) * Math.sin((Math.PI*17*t) / 2),
-  easeInSine: (t) => 1 - Math.pow(1 - t, 2) * Math.cos((Math.PI*17*t) / 2),
+  t: (t) => Math.pow(t, 2) * Math.sin((Math.PI * 17 * t) / 2),
+  easeInSine: (t) => 1 - Math.pow(1 - t, 2) * Math.cos((Math.PI * 17 * t) / 2),
   easeOutSine: (t) => Math.sin((t * Math.PI) / 2),
   easeInOutSine: (t) => -((Math.cos(Math.PI * t) - 1) / 2),
   easeInOutElastic: (t) => {
@@ -157,18 +168,19 @@ export const animationFns: {
     return t === 0
       ? 0
       : t === 1
-      ? 1
-      : t < 0.5
-      ? -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2
-      : (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5)) / 2 + 1;
+        ? 1
+        : t < 0.5
+          ? -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2
+          : (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5)) / 2 +
+            1;
   },
 };
 
 export const makeArrayFromRules = <V extends NumberBuildRule[]>(
   rules: V,
-  time: number = 0
+  time: number = 0,
 ): ConvertToBuildResult<V> => {
   return rules.map((rule) =>
-    makeScalarFromRule(rule, time)
+    makeScalarFromRule(rule, time),
   ) as ConvertToBuildResult<V>;
 };

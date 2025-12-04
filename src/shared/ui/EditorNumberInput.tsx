@@ -1,6 +1,12 @@
 import { NumberInput } from "@mantine/core";
 import { useGlobalKeyMods } from "../hooks/useGlobalKeyMods";
-import { ComponentProps, ReactNode, useCallback, useRef, useState } from "react";
+import {
+  ComponentProps,
+  ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 
 export const EditorNumberInput = ({
   onChange,
@@ -21,7 +27,7 @@ export const EditorNumberInput = ({
   decimalScale?: number;
   label?: ReactNode;
   id?: string;
-  w?: ComponentProps<typeof NumberInput>['w'];
+  w?: ComponentProps<typeof NumberInput>["w"];
 }) => {
   const { shift } = useGlobalKeyMods();
   const [focus, setFocus] = useState(false);
@@ -35,28 +41,32 @@ export const EditorNumberInput = ({
       label={label}
       onFocus={useCallback(() => setFocus(true), [])}
       onBlur={useCallback(() => setFocus(false), [])}
-      ref={useCallback((el: HTMLInputElement) => {
-        if (!el || !focus) {
-          return;
-        }
-        const handler = (e: WheelEvent) => {
-          const newValue =
-            valueRef.current + Math.sign(e.deltaY) * (step * (shift ? 10 : 1));
-
-          if (newValue >= min && newValue <= max) {
-            onChange(newValue);
+      ref={useCallback(
+        (el: HTMLInputElement) => {
+          if (!el || !focus) {
+            return;
           }
-          e.preventDefault();
-          e.stopPropagation();
-        };
-        el.addEventListener("wheel", handler, { passive: false });
+          const handler = (e: WheelEvent) => {
+            const newValue =
+              valueRef.current +
+              Math.sign(e.deltaY) * (step * (shift ? 10 : 1));
 
-        return () => {
-          el.removeEventListener("wheel", handler);
-        };
-      }, [focus, max, min, onChange, shift, step])}
-      size="xs"
-      clampBehavior="blur"
+            if (newValue >= min && newValue <= max) {
+              onChange(newValue);
+            }
+            e.preventDefault();
+            e.stopPropagation();
+          };
+          el.addEventListener("wheel", handler, { passive: false });
+
+          return () => {
+            el.removeEventListener("wheel", handler);
+          };
+        },
+        [focus, max, min, onChange, shift, step],
+      )}
+      size='xs'
+      clampBehavior='blur'
       decimalScale={decimalScale}
       value={value}
       stepHoldInterval={1000}

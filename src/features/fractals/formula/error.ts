@@ -1,7 +1,10 @@
 import { CalcNode, ErrAtCalcNode } from "@/shared/libs/calcGraph";
 
 export class ParseFormulaError extends Error {
-  constructor(public errorAt?: ErrAtCalcNode, public tree?: CalcNode) {
+  constructor(
+    public errorAt?: ErrAtCalcNode,
+    public tree?: CalcNode,
+  ) {
     super();
   }
 

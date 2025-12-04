@@ -20,7 +20,7 @@ export const GradientInput = ({
   onChange: (stops: GradientStop[]) => void;
 }) => {
   const [stopsInternal, setStopsInternal] = React.useState<GradientStop[]>(
-    [...stops].sort((a, b) => a[0] - b[0])
+    [...stops].sort((a, b) => a[0] - b[0]),
   );
   const [focused, setFocused] = React.useState<boolean>(false);
 
@@ -63,9 +63,9 @@ export const GradientInput = ({
   };
 
   return (
-    <Stack gap="sm">
+    <Stack gap='sm'>
       {(focused ? stopsInternal : stops).map((stop, index) => (
-        <Group key={index} gap="xs" wrap="nowrap">
+        <Group key={index} gap='xs' wrap='nowrap'>
           <NumberInput
             value={stop[0]}
             onFocus={() => {
@@ -80,24 +80,24 @@ export const GradientInput = ({
             max={MAX_POSITION}
             step={1}
             style={{ flex: "0 0 100px" }}
-            size="xs"
+            size='xs'
           />
           <ColorInput
-            format="rgba"
+            format='rgba'
             value={rgbaToRgbaString(
               Math.round(stop[1] * 255),
               Math.round(stop[2] * 255),
               Math.round(stop[3] * 255),
-              stop[4]
+              stop[4],
             )}
             onChange={(color) => handleColorChange(index, color)}
             style={{ flex: 1 }}
-            size="xs"
+            size='xs'
           />
           <ActionIcon
-            size="sm"
-            variant="light"
-            color="red"
+            size='sm'
+            variant='light'
+            color='red'
             onClick={() => handleDeleteStop(index)}
             disabled={stops.length <= 2}
           >
@@ -105,7 +105,7 @@ export const GradientInput = ({
           </ActionIcon>
         </Group>
       ))}
-      <Button size="xs" variant="light" onClick={handleAddStop} fullWidth>
+      <Button size='xs' variant='light' onClick={handleAddStop} fullWidth>
         Add Stop
       </Button>
     </Stack>

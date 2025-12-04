@@ -61,7 +61,7 @@ export const prepareFractalUniforms = (
       radialMirroringAngle,
     },
     custom,
-  }: FractalParams
+  }: FractalParams,
 ) => {
   context.useProgram(shaderProgram);
   context.uniform1f(linearSplit_u1f, linearMirroringFactor);
@@ -77,7 +77,7 @@ export const prepareFractalUniforms = (
   context.uniform2f(
     fractalRRangeStart_u2f,
     rlVisibleRange[0],
-    imVisibleRange[0]
+    imVisibleRange[0],
   );
   context.uniform2f(fractalRRangeEnd_u2f, rlVisibleRange[1], imVisibleRange[1]);
 
@@ -105,7 +105,7 @@ export const prepareFractalUniforms = (
   Object.keys(custom).forEach((key) => {
     const uniformLocation = context.getUniformLocation(
       shaderProgram,
-      `u_cstm_${key}`
+      `u_cstm_${key}`,
     );
     const value = custom[key];
     if (typeof value === "number") {
@@ -118,11 +118,11 @@ export const prepareFractalUniforms = (
 
 export function setupUniformLocations(
   context: WebGLRenderingContext,
-  shaderProgram: WebGLProgram
+  shaderProgram: WebGLProgram,
 ) {
   const resolution_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_resolution"
+    "u_resolution",
   );
 
   const fractalC_u2f = context.getUniformLocation(shaderProgram, "u_fractal_c");
@@ -132,77 +132,74 @@ export function setupUniformLocations(
 
   const fractalRRangeStart_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_fractal_r_range_start"
+    "u_fractal_r_range_start",
   );
   const fractalRRangeEnd_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_fractal_r_range_end"
+    "u_fractal_r_range_end",
   );
   const mirror_u1i = context.getUniformLocation(shaderProgram, "u_mirror_type");
 
   const linearSplitPerDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_linear_split_per_dist_change"
+    "u_linear_split_per_dist_change",
   );
   const radialSplitPerDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_radial_split_per_dist_change"
+    "u_radial_split_per_dist_change",
   );
   const cxSplitPerDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_cx_split_per_dist_change"
+    "u_cx_split_per_dist_change",
   );
   const cySplitPerDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_cy_split_per_dist_change"
+    "u_cy_split_per_dist_change",
   );
   const rSplitPerDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_r_split_per_dist_change"
+    "u_r_split_per_dist_change",
   );
   const iterationsSplitPerDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_iterations_split_per_dist_change"
+    "u_iterations_split_per_dist_change",
   );
 
   const linearSplit_u1f = context.getUniformLocation(
     shaderProgram,
-    "u_linear_split"
+    "u_linear_split",
   );
   const radialSplit_u1f = context.getUniformLocation(
     shaderProgram,
-    "u_radial_split"
+    "u_radial_split",
   );
   const radialSplitAngleBaseVector_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_radial_split_angle_base_vector"
+    "u_radial_split_angle_base_vector",
   );
   const maxIterations_u1f = context.getUniformLocation(
     shaderProgram,
-    "u_max_iterations"
+    "u_max_iterations",
   );
 
   const invertLocation_u1i = context.getUniformLocation(
     shaderProgram,
-    "u_invert"
+    "u_invert",
   );
 
   const hexMirroringFactor_u1f = context.getUniformLocation(
     shaderProgram,
-    "u_hex_mirroring_factor"
+    "u_hex_mirroring_factor",
   );
 
   const hexMirroringDistChange_u2f = context.getUniformLocation(
     shaderProgram,
-    "u_hex_mirroring_dist_change"
+    "u_hex_mirroring_dist_change",
   );
   return {
     smooth_u1i: context.getUniformLocation(shaderProgram, "u_smooth_pow"),
     resolution_u2f,
-    resolution2_u2f: context.getUniformLocation(
-      shaderProgram,
-      "u_resolution2"
-    ),
+    resolution2_u2f: context.getUniformLocation(shaderProgram, "u_resolution2"),
     fractalC_u2f,
     fractalR_u1f,
     linearSplit_u1f,

@@ -25,7 +25,7 @@ export const formulaGrammar = new Grammar()
       ({
         str: str as "+" | "-",
         r,
-      } as const)
+      }) as const,
   )
   .addTerminal(
     "mulOperator",
@@ -34,7 +34,7 @@ export const formulaGrammar = new Grammar()
       ({
         str: str as "*" | "/",
         r,
-      } as const)
+      }) as const,
   )
   .addTerminal(
     "powOperator",
@@ -43,7 +43,7 @@ export const formulaGrammar = new Grammar()
       ({
         str: str as "^",
         r,
-      } as const)
+      }) as const,
   )
   .addTerminal(
     "numberOperand",
@@ -57,7 +57,7 @@ export const formulaGrammar = new Grammar()
         };
       }
       throw new Error("numberOperator match error");
-    }
+    },
   )
   .addTerminal(
     "variableOperand",
@@ -66,7 +66,7 @@ export const formulaGrammar = new Grammar()
       t: CalcNodeType.Variable,
       r,
       v: str,
-    })
+    }),
   )
   .addRecursiveRule<"add", PossibleCalcNode>()
   .addRecursiveRule<"mul", PossibleCalcNode>()
@@ -88,7 +88,7 @@ export const formulaGrammar = new Grammar()
       r: op.r,
       t: CalcNodeType.Operation,
       v: op.str,
-    })
+    }),
   )
   .addRuleVariant("pow", ["operand"], (operand) => operand)
 
@@ -100,7 +100,7 @@ export const formulaGrammar = new Grammar()
       r: op.r,
       t: CalcNodeType.Operation,
       v: op.str,
-    })
+    }),
   )
   .addRuleVariant("mul", ["pow"], (pow) => pow)
 
@@ -112,22 +112,18 @@ export const formulaGrammar = new Grammar()
       r: op.r,
       t: CalcNodeType.Operation,
       v: op.str,
-    })
+    }),
   )
   .addRuleVariant("add", ["mul"], (mul) => mul)
 
   .addRule(
     "funcParams",
     ["add", "comma", "funcParams"],
-    (add, _comma, rest) => [add, ...rest]
+    (add, _comma, rest) => [add, ...rest],
   )
   .addRuleVariant("funcParams", ["add"], (add) => [add])
 
-  .addRule(
-    "expression",
-    ["oBracket", "add", "cBracket"],
-    (_1, add, _2) => add
-  )
+  .addRule("expression", ["oBracket", "add", "cBracket"], (_1, add, _2) => add)
 
   .addRule(
     "func_call",
@@ -139,6 +135,6 @@ export const formulaGrammar = new Grammar()
         r: variable.r,
         n: variable.v,
       };
-    }
+    },
   )
   .setRootRule("add");

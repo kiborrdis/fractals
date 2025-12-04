@@ -55,21 +55,21 @@ export type ConvertToRule<I extends boolean | number | number[]> =
   I extends number
     ? NumberBuildRule
     : I extends [infer F, ...infer Rest]
-    ? [
-        F extends number ? ConvertToRule<F> : never,
-        ...(Rest extends number[] ? ConvertToRule<Rest> : [])
-      ]
-    : [];
+      ? [
+          F extends number ? ConvertToRule<F> : never,
+          ...(Rest extends number[] ? ConvertToRule<Rest> : []),
+        ]
+      : [];
 
 export type ConvertToBuildResult<
-  R extends  NumberBuildRule | NumberBuildRule[]
+  R extends NumberBuildRule | NumberBuildRule[],
 > = R extends NumberBuildRule
   ? number
   : R extends boolean
-  ? boolean
-  : R extends [infer F, ...infer Rest]
-  ? [
-      F extends NumberBuildRule ? number : never,
-      ...(Rest extends NumberBuildRule[] ? ConvertToBuildResult<Rest> : [])
-    ]
-  : [];
+    ? boolean
+    : R extends [infer F, ...infer Rest]
+      ? [
+          F extends NumberBuildRule ? number : never,
+          ...(Rest extends NumberBuildRule[] ? ConvertToBuildResult<Rest> : []),
+        ]
+      : [];

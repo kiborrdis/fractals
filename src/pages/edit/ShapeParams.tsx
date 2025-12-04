@@ -9,7 +9,7 @@ import { CustomVariables } from "./CustomVariables";
 
 const SettingsSection = ({ children }: { children: ReactNode }) => {
   return (
-    <Stack p="md" gap="md">
+    <Stack p='md' gap='md'>
       {children}
     </Stack>
   );
@@ -21,128 +21,128 @@ export const ShapeParams = React.memo(() => {
   const selectAreaActive = useSelectAreaActive();
 
   return (
-    <Stack gap="sm">
+    <Stack gap='sm'>
       <SettingsSection>
-        <StaticRuleEdit name="formula" />
+        <StaticRuleEdit name='formula' />
 
-        <StaticRuleEdit name="invert" />
+        <StaticRuleEdit name='invert' />
       </SettingsSection>
-      <Tabs defaultValue="c">
+      <Tabs defaultValue='c'>
         <Tabs.List>
-          <Tabs.Tab size="xs" value="c">
+          <Tabs.Tab size='xs' value='c'>
             C
           </Tabs.Tab>
-          <Tabs.Tab size="xs" value="r">
+          <Tabs.Tab size='xs' value='r'>
             R
           </Tabs.Tab>
-          <Tabs.Tab size="xs" value="Iterations">
+          <Tabs.Tab size='xs' value='Iterations'>
             Iterations
           </Tabs.Tab>
-          <Tabs.Tab size="xs" value="Mirroring">
+          <Tabs.Tab size='xs' value='Mirroring'>
             Mirroring
           </Tabs.Tab>
-          <Tabs.Tab size="xs" value="Viewport">
+          <Tabs.Tab size='xs' value='Viewport'>
             Viewport
           </Tabs.Tab>
-          <Tabs.Tab size="xs" value="Coloring">
+          <Tabs.Tab size='xs' value='Coloring'>
             Coloring
           </Tabs.Tab>
-          <Tabs.Tab size="xs" value="Custom">
+          <Tabs.Tab size='xs' value='Custom'>
             Custom
           </Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel value="c">
+        <Tabs.Panel value='c'>
           <SettingsSection>
-            <DynamicRuleEdit name="c" />
+            <DynamicRuleEdit name='c' />
 
-            <DynamicRuleEdit name="cxPerDistChange" />
+            <DynamicRuleEdit name='cxPerDistChange' />
 
-            <DynamicRuleEdit name="cyPerDistChange" />
+            <DynamicRuleEdit name='cyPerDistChange' />
           </SettingsSection>
         </Tabs.Panel>
-        <Tabs.Panel value="r">
+        <Tabs.Panel value='r'>
           <SettingsSection>
-            <DynamicRuleEdit name="r" />
+            <DynamicRuleEdit name='r' />
 
-            <DynamicRuleEdit name="rPerDistChange" />
+            <DynamicRuleEdit name='rPerDistChange' />
           </SettingsSection>
         </Tabs.Panel>
-        <Tabs.Panel value="Iterations">
+        <Tabs.Panel value='Iterations'>
           <SettingsSection>
-            <DynamicRuleEdit name="maxIterations" />
+            <DynamicRuleEdit name='maxIterations' />
 
-            <DynamicRuleEdit name="iterationsPerDistChange" />
+            <DynamicRuleEdit name='iterationsPerDistChange' />
           </SettingsSection>
         </Tabs.Panel>
 
-        <Tabs.Panel value="Mirroring">
+        <Tabs.Panel value='Mirroring'>
           <SettingsSection>
-            <StaticRuleEdit name="mirroringType" />
+            <StaticRuleEdit name='mirroringType' />
           </SettingsSection>
 
           {mirroringType === "square" && (
             <SettingsSection>
-              <DynamicRuleEdit name="linearMirroringFactor" />
+              <DynamicRuleEdit name='linearMirroringFactor' />
 
-              <DynamicRuleEdit name="linearMirroringPerDistChange" />
+              <DynamicRuleEdit name='linearMirroringPerDistChange' />
             </SettingsSection>
           )}
 
           {mirroringType === "hex" && (
             <SettingsSection>
-              <DynamicRuleEdit name="hexMirroringFactor" />
-              <DynamicRuleEdit name="hexMirroringPerDistChange" />
+              <DynamicRuleEdit name='hexMirroringFactor' />
+              <DynamicRuleEdit name='hexMirroringPerDistChange' />
             </SettingsSection>
           )}
 
           {mirroringType !== "off" && (
             <SettingsSection>
-              <DynamicRuleEdit name="radialMirroringAngle" />
+              <DynamicRuleEdit name='radialMirroringAngle' />
 
-              <DynamicRuleEdit name="radialMirroringPerDistChange" />
+              <DynamicRuleEdit name='radialMirroringPerDistChange' />
             </SettingsSection>
           )}
         </Tabs.Panel>
-        <Tabs.Panel value="Viewport">
+        <Tabs.Panel value='Viewport'>
           <SettingsSection>
             <Group>
-              <Button size="xs" variant="outline" onClick={resetViewport}>
+              <Button size='xs' variant='outline' onClick={resetViewport}>
                 Reset
               </Button>
               <Button
-                size="xs"
-                variant="outline"
+                size='xs'
+                variant='outline'
                 onClick={() => magnifyViewport(0.5)}
               >
                 x0.5
               </Button>
               <Button
-                size="xs"
-                variant="outline"
+                size='xs'
+                variant='outline'
                 onClick={() => magnifyViewport(2)}
               >
                 x2
               </Button>
               <Button
-                size="xs"
-                variant="outline"
-                color="green"
+                size='xs'
+                variant='outline'
+                color='green'
                 onClick={toggleAreaSelection}
               >
                 {selectAreaActive ? "Selecting area" : "Select area"}
               </Button>
             </Group>
-            <DynamicRuleEdit name="rlVisibleRange" />
-            <DynamicRuleEdit name="imVisibleRange" />
+            <DynamicRuleEdit name='rlVisibleRange' />
+            <DynamicRuleEdit name='imVisibleRange' />
           </SettingsSection>
         </Tabs.Panel>
-        <Tabs.Panel value="Coloring">
+        <Tabs.Panel value='Coloring'>
           <SettingsSection>
-            <StaticRuleEdit name="gradient" />
-            <StaticRuleEdit name="bandSmoothing" />
+            <StaticRuleEdit name='gradient' />
+            <StaticRuleEdit name='bandSmoothing' />
           </SettingsSection>
         </Tabs.Panel>
-        <Tabs.Panel value="Custom">
+        <Tabs.Panel value='Custom'>
           <SettingsSection>
             <CustomVariables />
           </SettingsSection>

@@ -23,9 +23,7 @@ import { createEditStore } from "./store/editStore";
 import { useActions } from "./store/data/useActions";
 import { useAnimationData } from "./store/data/useAnimationData";
 import { useSelectAreaActive } from "./store/data/useSelectAreaActive";
-import {
-  useFractalParamsData,
-} from "./store/data/useFractalParamsData";
+import { useFractalParamsData } from "./store/data/useFractalParamsData";
 import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
 import { Vector2 } from "@/shared/libs/vectors";
@@ -36,7 +34,7 @@ const defaultRules = getDefaultFractalRules();
 export function EditFractal() {
   const [value, saveValue] = useQueryPersistentValue<FractalParamsBuildRules>(
     "s",
-    defaultRules
+    defaultRules,
   );
   const storeRef = useRef<ReturnType<typeof createEditStore>>(null);
 
@@ -63,26 +61,25 @@ export function EditFractal() {
 
 export function EditFractalLoaded() {
   const { play, timeMultiplier } = useAnimationData();
-  const { toggleAnimation, changeAnimationSpeed } =
-    useActions();
+  const { toggleAnimation, changeAnimationSpeed } = useActions();
 
   return (
     <>
       <AppShell
-        mih="100vh"
+        mih='100vh'
         aside={{
           width: "350px",
           breakpoint: "xs",
         }}
       >
         <AppShellAside style={{ overflowY: "auto" }}>
-          <Box style={{ position: "sticky", top: 0, zIndex: 5 }} bg="dark.7">
-            <Paper withBorder p="md">
-              <Stack gap="sm">
-                <Text size="sm">Animation</Text>
-                <Group gap="md">
+          <Box style={{ position: "sticky", top: 0, zIndex: 5 }} bg='dark.7'>
+            <Paper withBorder p='md'>
+              <Stack gap='sm'>
+                <Text size='sm'>Animation</Text>
+                <Group gap='md'>
                   <ActionIcon
-                    size="lg"
+                    size='lg'
                     onClick={toggleAnimation}
                     color={play ? "green" : "red"}
                   >
@@ -92,7 +89,7 @@ export function EditFractalLoaded() {
                   <SegmentedControl
                     value={timeMultiplier}
                     data={["0.5x", "1.0x", "2.0x", "5.0x", "10.0x"]}
-                    size="sm"
+                    size='sm'
                     onChange={changeAnimationSpeed}
                   />
                 </Group>
@@ -101,13 +98,12 @@ export function EditFractalLoaded() {
           </Box>
           <ShapeParams />
         </AppShellAside>
-        <AppShellMain h="100vh">
-          <Stack w="100%" h="100%" gap={0}>
+        <AppShellMain h='100vh'>
+          <Stack w='100%' h='100%' gap={0}>
             <div style={{ flex: 1, overflow: "hidden" }}>
               <DisplayEditFractal />
             </div>
             <TimelineTool />
-            
           </Stack>
         </AppShellMain>
       </AppShell>
@@ -147,7 +143,7 @@ const SelectArea = ({
   onSelect: (
     startCoord: Vector2,
     size: Vector2,
-    containerSize: Vector2
+    containerSize: Vector2,
   ) => void;
 }) => {
   const [startCoords, setStartCoord] = useState<Vector2>([0, 0]);
@@ -202,7 +198,7 @@ const SelectArea = ({
         setSelectionInProgress(false);
         const { pos, dims: dimensions } = transformToPositiveDims(
           startCoords,
-          dims
+          dims,
         );
         onSelect(pos, dimensions, containerSize);
       }}

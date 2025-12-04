@@ -14,7 +14,7 @@ type RuleRenderProps<K extends keyof FractalDynamicParamsBuildRules> = {
 };
 
 type RuleRenderer<K extends keyof FractalDynamicParamsBuildRules> = (
-  props: RuleRenderProps<K>
+  props: RuleRenderProps<K>,
 ) => ReactNode;
 
 type RuleRenderers = {
@@ -24,7 +24,7 @@ type RuleRenderers = {
 const ruleConfigs: RuleRenderers = {
   hexMirroringFactor: (props) => (
     <NumberRuleEdit
-      label="Hex Mirroring Factor"
+      label='Hex Mirroring Factor'
       min={0}
       max={2000}
       step={1}
@@ -35,7 +35,7 @@ const ruleConfigs: RuleRenderers = {
 
   hexMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label="Hex Mirroring Per Dist Change"
+      label='Hex Mirroring Per Dist Change'
       min={-2000}
       max={2000}
       step={1}
@@ -46,7 +46,7 @@ const ruleConfigs: RuleRenderers = {
 
   linearMirroringFactor: (props) => (
     <NumberRuleEdit
-      label="Linear Mirroring Factor"
+      label='Linear Mirroring Factor'
       min={50}
       max={2000}
       step={1}
@@ -57,7 +57,7 @@ const ruleConfigs: RuleRenderers = {
 
   linearMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label="Linear Mirroring Per Dist Change"
+      label='Linear Mirroring Per Dist Change'
       min={-2000}
       max={2000}
       step={1}
@@ -68,7 +68,7 @@ const ruleConfigs: RuleRenderers = {
 
   radialMirroringAngle: (props) => (
     <NumberRuleEdit
-      label="Radial Mirroring Angle"
+      label='Radial Mirroring Angle'
       min={0}
       max={360}
       step={1}
@@ -79,7 +79,7 @@ const ruleConfigs: RuleRenderers = {
 
   radialMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label="Radial Mirroring Per Dist Change"
+      label='Radial Mirroring Per Dist Change'
       min={-180}
       max={180}
       step={0.1}
@@ -90,7 +90,7 @@ const ruleConfigs: RuleRenderers = {
 
   time: (props) => (
     <NumberRuleEdit
-      label="Time"
+      label='Time'
       min={0}
       max={1000}
       step={0.1}
@@ -112,7 +112,7 @@ const ruleConfigs: RuleRenderers = {
 
   r: (props) => (
     <NumberRuleEdit
-      label="R"
+      label='R'
       min={0.5}
       max={50}
       step={0.01}
@@ -145,7 +145,7 @@ const ruleConfigs: RuleRenderers = {
 
   maxIterations: (props) => (
     <NumberRuleEdit
-      label="Max Iterations"
+      label='Max Iterations'
       min={1}
       max={1000}
       step={1}
@@ -156,7 +156,7 @@ const ruleConfigs: RuleRenderers = {
 
   cxPerDistChange: (props) => (
     <NumberRuleEdit
-      label="Cx Per Dist Change"
+      label='Cx Per Dist Change'
       min={-3}
       max={3}
       step={0.001}
@@ -167,7 +167,7 @@ const ruleConfigs: RuleRenderers = {
 
   cyPerDistChange: (props) => (
     <NumberRuleEdit
-      label="Cy Per Dist Change"
+      label='Cy Per Dist Change'
       min={-3}
       max={3}
       step={0.001}
@@ -178,7 +178,7 @@ const ruleConfigs: RuleRenderers = {
 
   rPerDistChange: (props) => (
     <NumberRuleEdit
-      label="R Per Dist Change"
+      label='R Per Dist Change'
       min={-50}
       max={50}
       step={0.1}
@@ -189,7 +189,7 @@ const ruleConfigs: RuleRenderers = {
 
   iterationsPerDistChange: (props) => (
     <NumberRuleEdit
-      label="Iterations Per Dist Change"
+      label='Iterations Per Dist Change'
       min={-100}
       max={500}
       step={1}

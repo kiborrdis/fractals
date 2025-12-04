@@ -16,7 +16,7 @@ describe("GrammarBuilder", () => {
 
   it("parses nested expressions", () => {
     const grammar = new Grammar()
-      .addRecursiveRule<'expr', number>()
+      .addRecursiveRule<"expr", number>()
       .addTerminal("add", regex(/[+-]/))
       .addTerminal("num", regex(/\d+/), (str) => parseInt(str, 10))
       .addRule("expr", ["num", "add", "expr"], (a, _, c) => a + c)
@@ -26,7 +26,7 @@ describe("GrammarBuilder", () => {
 
     const result = parser.parse("  23  +42+10");
     expect(result[0]).toBe(23 + 42 + 10);
-  })
+  });
 
   it("failes to parse nested expressions with forbidden symbols", () => {
     const grammar = new Grammar()
@@ -40,5 +40,5 @@ describe("GrammarBuilder", () => {
     const result = parser.parse("  23  +42*10");
     expect(result[0]).toBe(null);
     expect(result[1].lastIndex).toBe(9);
-  })
+  });
 });

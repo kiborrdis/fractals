@@ -7,4 +7,4 @@ export const isVector2 = (value: unknown): value is Vector2 => {
     typeof value[0] === "number" &&
     typeof value[1] === "number"
   );
-}
+};

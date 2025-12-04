@@ -38,11 +38,11 @@ export const Simulation = () => {
   console.log("res2", matrixMultiply(toTriangleMatrix, [0, 1]));
   console.log(
     "res3",
-    matrixMultiply(toBasisMatrix, matrixMultiply(toTriangleMatrix, [1, 0]))
+    matrixMultiply(toBasisMatrix, matrixMultiply(toTriangleMatrix, [1, 0])),
   );
   console.log(
     "res4",
-    matrixMultiply(toBasisMatrix, matrixMultiply(toTriangleMatrix, [0, 1]))
+    matrixMultiply(toBasisMatrix, matrixMultiply(toTriangleMatrix, [0, 1])),
   );
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
 
@@ -59,7 +59,7 @@ export const Simulation = () => {
       <button
         onClick={() => {
           setTexts((t) =>
-            t[0] === "Light" ? ["Dark", "Light"] : ["Light", "Dark"]
+            t[0] === "Light" ? ["Dark", "Light"] : ["Light", "Dark"],
           );
         }}
       >
@@ -101,7 +101,7 @@ const initCanvas = (canvas: HTMLCanvasElement, canvasSize: Vector2) => {
   const fragmentShader = createShader(
     context,
     context.FRAGMENT_SHADER,
-    fragment
+    fragment,
   );
 
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
@@ -130,17 +130,17 @@ const initCanvas = (canvas: HTMLCanvasElement, canvasSize: Vector2) => {
   context.bufferData(
     context.ARRAY_BUFFER,
     new Float32Array(positions),
-    context.STATIC_DRAW
+    context.STATIC_DRAW,
   );
 
   const positionAttributeLocation = context.getAttribLocation(
     shaderProgram,
-    "a_position"
+    "a_position",
   );
 
   const resolutionUniformLocation = context.getUniformLocation(
     shaderProgram,
-    "u_resolution"
+    "u_resolution",
   );
 
   return {
@@ -162,7 +162,7 @@ const renderCanvas = (
     positionBuffer,
     shaderProgram,
   }: CanvasParams,
-  res: Vector2
+  res: Vector2,
 ) => {
   context.viewport(0, 0, ...res);
   context.clearColor(1, 1, 1, 1);
@@ -172,7 +172,7 @@ const renderCanvas = (
   context.uniform2f(
     resolution_u2f,
     context.canvas.width,
-    context.canvas.height
+    context.canvas.height,
   );
 
   context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);
@@ -188,7 +188,7 @@ const renderCanvas = (
     type,
     normalize,
     stride,
-    offset
+    offset,
   );
   const primitiveType = context.TRIANGLES;
   const offset2 = 0;

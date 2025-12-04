@@ -8,10 +8,10 @@ const routeToLabelMap: {
     | string
     ? [string]
     : FractalDynamicParams[K] extends Vector2
-    ? [string, [string, string]]
-    : [string];
+      ? [string, [string, string]]
+      : [string];
 } = {
-  c: ['C', ["C.re", "C.im"]],
+  c: ["C", ["C.re", "C.im"]],
   maxIterations: ["Iterations4444444"],
 };
 
@@ -22,7 +22,8 @@ export const getDynamicParamLabel = (route: string[]) => {
 
   if (route.length === 1) {
     return (
-      routeToLabelMap[route[0] as keyof FractalDynamicParams]?.[0] ?? route.join(".")
+      routeToLabelMap[route[0] as keyof FractalDynamicParams]?.[0] ??
+      route.join(".")
     );
   }
 

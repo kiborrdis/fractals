@@ -7,7 +7,10 @@ import { parseFormula, validateFormula } from "../formula/parseFormula";
 import { calcTypesOfNodes } from "../formula/trackTypes";
 import { CalcNodeResultType, CalcNodeResultTypeMap } from "../formula/types";
 
-export const fractalFormulaToGLSLCode = (formula: string, customVars: Record<string, CalcNodeResultType> = {}) => {
+export const fractalFormulaToGLSLCode = (
+  formula: string,
+  customVars: Record<string, CalcNodeResultType> = {},
+) => {
   let node: CalcNode | null;
   try {
     node = parseFormula(formula);
@@ -18,7 +21,10 @@ export const fractalFormulaToGLSLCode = (formula: string, customVars: Record<str
   if (!node) {
     throw new Error("fractalFormulaToGLSLCode: failed to parse formula");
   }
-  const [valid, msg] = validateFormula(node, customVars ? new Set(Object.keys(customVars)) : new Set());
+  const [valid, msg] = validateFormula(
+    node,
+    customVars ? new Set(Object.keys(customVars)) : new Set(),
+  );
 
   if (!valid) {
     throw new Error('fractalFormulaToGLSLCode: invalid formula "' + msg + '"');
@@ -31,7 +37,7 @@ export const fractalFormulaToGLSLCode = (formula: string, customVars: Record<str
     throw new Error(
       'fractalFormulaToGLSLCode: invalid result type of formula, must be "vector2", got "' +
         typeMap.get(node) +
-        '"'
+        '"',
     );
   }
   let allNodesWithTypes = true;
@@ -42,7 +48,7 @@ export const fractalFormulaToGLSLCode = (formula: string, customVars: Record<str
 
   if (!allNodesWithTypes) {
     throw new Error(
-      'fractalFormulaToGLSLCode: types for some nodes have not been calculated"'
+      'fractalFormulaToGLSLCode: types for some nodes have not been calculated"',
     );
   }
   const res = transformToGLSLCode(node, typeMap, (varName: string) => {
@@ -55,7 +61,7 @@ export const fractalFormulaToGLSLCode = (formula: string, customVars: Record<str
   return [res, pow] as const;
 };
 
-const getMaxZPower = (node: CalcNode): number | null  => {
+const getMaxZPower = (node: CalcNode): number | null => {
   switch (node.t) {
     case CalcNodeType.Number:
       return 0;
@@ -69,7 +75,11 @@ const getMaxZPower = (node: CalcNode): number | null  => {
       if (node.v === "^") {
         const base = node.c[0];
         const exponent = node.c[1];
-        if (base.t === CalcNodeType.Variable && base.v === "z" && exponent.t === CalcNodeType.Number) {
+        if (
+          base.t === CalcNodeType.Variable &&
+          base.v === "z" &&
+          exponent.t === CalcNodeType.Number
+        ) {
           return exponent.v;
         }
       }
@@ -103,12 +113,12 @@ const getMaxZPower = (node: CalcNode): number | null  => {
     case CalcNodeType.Error:
       return null;
   }
-}
+};
 
 const transformToGLSLCode = (
   node: CalcNode,
   map: CalcNodeResultTypeMap,
-  variableTransform = (varName: string) => varName
+  variableTransform = (varName: string) => varName,
 ): string => {
   switch (node.t) {
     case CalcNodeType.Number:
@@ -128,7 +138,7 @@ const transformToGLSLCode = (
         return `${operationToFnMap[node.v]}(${transformToGLSLCode(
           node.c[0],
           map,
-          variableTransform
+          variableTransform,
         )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
       }
 
@@ -136,7 +146,7 @@ const transformToGLSLCode = (
         return `pow(${transformToGLSLCode(
           node.c[0],
           map,
-          variableTransform
+          variableTransform,
         )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
       }
 
@@ -166,9 +176,9 @@ const fnNameToFnMap: Record<string, string> = {
   im: "im",
   re: "re",
   cmpl: "cmpl",
-  sin: 'complexSin',
-  sinh: 'complexSinh',
-  rotate: 'complexRotate',
-  mirror: 'complexMirror',
-  conjugate: 'complexConjugate',
+  sin: "complexSin",
+  sinh: "complexSinh",
+  rotate: "complexRotate",
+  mirror: "complexMirror",
+  conjugate: "complexConjugate",
 };

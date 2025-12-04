@@ -24,7 +24,7 @@ export const useStateWithQueryPersistence = <T>(
   options?: {
     parse?: (value: string) => T;
     stringify?: (value: T) => string;
-  }
+  },
 ): [T, React.Dispatch<SetStateAction<T>>] => {
   const { parse = defaultParse, stringify = defaultStringify } = options || {};
 
@@ -52,7 +52,7 @@ export const useQueryPersistentValue = <T>(
   options?: {
     parse?: (value: string) => T;
     stringify?: (value: T) => string;
-  }
+  },
 ): [T, (newValue: T) => void] => {
   const { parse = defaultParse, stringify = defaultStringify } = options || {};
 
@@ -64,11 +64,14 @@ export const useQueryPersistentValue = <T>(
     valueRef.current = queryValue ? parse(queryValue) : initialValue;
   }
 
-  useEffect(() => () => {
-    if (timeoutId.current) {
-      clearTimeout(timeoutId.current as any);
-    }
-  }, []);
+  useEffect(
+    () => () => {
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current as any);
+      }
+    },
+    [],
+  );
 
   return [
     valueRef.current!,
@@ -92,7 +95,7 @@ export const useQueryPersistentValue = <T>(
           window.history.replaceState({}, "", `?${params.toString()}`);
         }, 5000);
       },
-      [key, stringify]
+      [key, stringify],
     ),
   ];
 };

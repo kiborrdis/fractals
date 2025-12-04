@@ -2,7 +2,12 @@ import { Stack, Group, ActionIcon, Tooltip } from "@mantine/core";
 import { memo, ReactNode, useCallback } from "react";
 import { EditorNumberInput } from "@/shared/ui/EditorNumberInput";
 import { TbMathMaxMin, TbLine } from "react-icons/tb";
-import { changeRulePeriod, NumberBuildRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
+import {
+  changeRulePeriod,
+  NumberBuildRule,
+  RuleType,
+  StepNumberRule,
+} from "@/shared/libs/numberRule";
 
 export const NumberRuleEdit = memo(
   ({
@@ -35,7 +40,7 @@ export const NumberRuleEdit = memo(
           value: Number(newValue),
         });
       },
-      [name, onChange]
+      [name, onChange],
     );
 
     if (value.t === RuleType.StaticNumber) {
@@ -44,10 +49,10 @@ export const NumberRuleEdit = memo(
           label={
             <>
               <span>
-                <Tooltip label="Const">
+                <Tooltip label='Const'>
                   <ActionIcon
                     size={12}
-                    variant="transparent"
+                    variant='transparent'
                     onClick={() => {
                       onChange(name, {
                         t: RuleType.RangeNumber,
@@ -81,14 +86,14 @@ export const NumberRuleEdit = memo(
     if (value.t === RuleType.StepNumber) {
       content = (
         <Stack>
-          <Group gap="xs" justify="space-between" wrap="nowrap">
+          <Group gap='xs' justify='space-between' wrap='nowrap'>
             <EditorNumberInput
               label={
                 <>
-                  <Tooltip label="Convert to static" openDelay={750}>
+                  <Tooltip label='Convert to static' openDelay={750}>
                     <ActionIcon
                       size={12}
-                      variant="transparent"
+                      variant='transparent'
                       onClick={(newValue) => {
                         onChange(name, {
                           ...value,
@@ -152,14 +157,14 @@ export const NumberRuleEdit = memo(
     if (value.t === RuleType.RangeNumber) {
       content = (
         <>
-          <Group gap="xs" justify="space-between" wrap="nowrap">
+          <Group gap='xs' justify='space-between' wrap='nowrap'>
             <EditorNumberInput
               label={
                 <>
-                  <Tooltip label="Range">
+                  <Tooltip label='Range'>
                     <ActionIcon
                       size={12}
-                      variant="transparent"
+                      variant='transparent'
                       onClick={() => {
                         onChange(name, {
                           t: RuleType.StaticNumber,
@@ -205,9 +210,9 @@ export const NumberRuleEdit = memo(
             />
           </Group>
 
-          <Group gap="xs" justify="space-between" wrap="nowrap">
+          <Group gap='xs' justify='space-between' wrap='nowrap'>
             <EditorNumberInput
-              label="Half period (s)"
+              label='Half period (s)'
               decimalScale={0}
               value={value.cycleSeconds}
               onChange={(newValue) => {
@@ -224,7 +229,7 @@ export const NumberRuleEdit = memo(
             />
 
             <EditorNumberInput
-              label="Start phase (s)"
+              label='Start phase (s)'
               decimalScale={1}
               value={value.phaseSeconds}
               onChange={(newValue) => {
@@ -244,7 +249,7 @@ export const NumberRuleEdit = memo(
       );
     }
 
-    return <Stack gap="xs">{content}</Stack>;
-  }
+    return <Stack gap='xs'>{content}</Stack>;
+  },
 );
 NumberRuleEdit.displayName = "NumberRuleEdit";

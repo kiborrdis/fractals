@@ -43,7 +43,7 @@ describe("throttle", () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-    it("should not make call after throttle delay if there was no throttled calls", async () => {
+  it("should not make call after throttle delay if there was no throttled calls", async () => {
     const spy = vitest.fn();
     const throttledFn = throttle(spy, 10);
 
@@ -62,7 +62,7 @@ describe("throttle", () => {
 
     await delay(12);
     expect(spy).toHaveBeenCalledTimes(1);
-    
+
     throttledFn();
     expect(spy).toHaveBeenCalledTimes(2);
   });

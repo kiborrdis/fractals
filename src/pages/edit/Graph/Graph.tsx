@@ -79,7 +79,7 @@ export const Graph = ({
             onClick(calcPercent(event, width));
           }
         }}
-      />      
+      />
 
       {/* Cursor line */}
       {cursorX !== null && cursorX !== undefined && (

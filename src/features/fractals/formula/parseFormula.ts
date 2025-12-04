@@ -1,4 +1,10 @@
-import { CalcNode, CalcNodeError, CalcNodeNumber, CalcNodeType, forEachNodeChild } from "@/shared/libs/calcGraph";
+import {
+  CalcNode,
+  CalcNodeError,
+  CalcNodeNumber,
+  CalcNodeType,
+  forEachNodeChild,
+} from "@/shared/libs/calcGraph";
 import { funcNameToSignature, varNameToType } from "./fnAndVarDescr";
 import { formulaGrammar } from "./grammar";
 import { ParseFormulaError } from "./error";
@@ -25,10 +31,7 @@ export const parseFormula = (formula: string) => {
     });
   }
 
-  if (
-    !node ||
-    errors.length > 0
-  ) {
+  if (!node || errors.length > 0) {
     throw new ParseFormulaError(undefined, node ?? undefined);
   }
 
@@ -38,19 +41,26 @@ export const parseFormula = (formula: string) => {
 const allowedVars = new Set(Object.keys(varNameToType));
 const allowedFns = new Set(Object.keys(funcNameToSignature));
 
-export const validateFormula = (node: CalcNode, customVars: Set<string> = new Set()) => {
-  let message = '';
-  forEachNodeChild(node, node => {
+export const validateFormula = (
+  node: CalcNode,
+  customVars: Set<string> = new Set(),
+) => {
+  let message = "";
+  forEachNodeChild(node, (node) => {
     if (message) {
       return;
     }
 
-    if (node.t == CalcNodeType.Variable && !allowedVars.has(node.v) && !customVars.has(node.v)) {
-      message = `Unknown variable "${node.v}", only ${[...allowedVars, ...customVars].join(', ')} are allowed`;
+    if (
+      node.t == CalcNodeType.Variable &&
+      !allowedVars.has(node.v) &&
+      !customVars.has(node.v)
+    ) {
+      message = `Unknown variable "${node.v}", only ${[...allowedVars, ...customVars].join(", ")} are allowed`;
     } else if (node.t == CalcNodeType.FuncCall && !allowedFns.has(node.n)) {
-      message = `Unknown variable "${node.n}", only ${[...allowedFns, ...customVars].join(', ')} are allowed`;
+      message = `Unknown variable "${node.n}", only ${[...allowedFns, ...customVars].join(", ")} are allowed`;
     }
   });
 
   return [!message, message] as const;
-}
+};

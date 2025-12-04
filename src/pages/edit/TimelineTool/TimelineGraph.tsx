@@ -6,7 +6,14 @@ import {
 } from "../Graph/HighlightedRangeItem";
 import { useDrag } from "@/shared/hooks/useDrag";
 import { TimelineNumberRuleItem } from "./TimelineTool";
-import { addNewStepToRule, makeNumberFromRangeRule, moveRuleStep, RangeNumberRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
+import {
+  addNewStepToRule,
+  makeNumberFromRangeRule,
+  moveRuleStep,
+  RangeNumberRule,
+  RuleType,
+  StepNumberRule,
+} from "@/shared/libs/numberRule";
 import { Vector2 } from "@/shared/libs/vectors";
 
 const calcPercent = (event: React.MouseEvent<HTMLElement>, width: number) => {
@@ -74,8 +81,9 @@ export const TimelineGraph = ({
   }, [width, rules, period]);
   const msPerPixel = width ? period / width : 0;
   const highlightedRanges: HighlightedRange[] = [];
-  const editRule =
-    editingId ? rules.find(rule => rule.id === editingId)?.rule : undefined;
+  const editRule = editingId
+    ? rules.find((rule) => rule.id === editingId)?.rule
+    : undefined;
 
   if (width && editRule && editRule.t === RuleType.StepNumber) {
     let startTime = 0;
@@ -102,14 +110,14 @@ export const TimelineGraph = ({
 
   const getHighlightedRangePositions = (
     zoomLevel: number = 1,
-    dataOffset: number = 0
+    dataOffset: number = 0,
   ) => {
     if (!highlightedRanges.length || !data.length || !width) return [];
 
     const effectiveWidth = Math.floor(width / zoomLevel);
     const startIndex = Math.max(
       0,
-      data.length - effectiveWidth + (dataOffset || 0)
+      data.length - effectiveWidth + (dataOffset || 0),
     );
 
     return highlightedRanges.map((range, index) => {
@@ -199,8 +207,8 @@ export const TimelineGraph = ({
             if (rules.length > 0) {
               onDynamicParamOverride(
                 rules.map((rule) =>
-                  makeNumberFromRangeRule(rule.rule, perc * period)
-                )
+                  makeNumberFromRangeRule(rule.rule, perc * period),
+                ),
               );
             }
           }}
@@ -260,7 +268,7 @@ export const TimelineGraph = ({
                         editRule,
                         i,
                         (pos[0] - leftRef.current) * msPerPixel,
-                        (pos[1] - topRef.current) / GRAPH_HEIGHT
+                        (pos[1] - topRef.current) / GRAPH_HEIGHT,
                       );
 
                       onChange?.(newRule);

@@ -35,7 +35,7 @@ export class FractalsRenderer {
     for (let row = 0; row < gridRows; row++) {
       for (let col = 0; col < gridCols; col++) {
         const fractalImage = this.grid[row][col];
-        
+
         if (!fractalImage) {
           continue;
         }
@@ -50,7 +50,7 @@ export class FractalsRenderer {
             [col / gridCols, row / gridRows],
             [(col + 1) / gridCols, (row + 1) / gridRows],
           ],
-          params
+          params,
         );
       }
     }

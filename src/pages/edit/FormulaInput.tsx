@@ -21,10 +21,13 @@ export const FormulaInput = ({
   const [error, setError] = useState<string | null>(null);
 
   const customVarTypes: Record<string, CalcNodeResultType> = useMemo(() => {
-    return Object.entries(customVars).reduce((acc, [key, type]) => {
-      acc[key] = Array.isArray(type) ? "vector2" : "number";
-      return acc;
-    }, {} as Record<string, CalcNodeResultType>);
+    return Object.entries(customVars).reduce(
+      (acc, [key, type]) => {
+        acc[key] = Array.isArray(type) ? "vector2" : "number";
+        return acc;
+      },
+      {} as Record<string, CalcNodeResultType>,
+    );
   }, [customVars]);
 
   const customVarsSet = useMemo(() => {
@@ -41,7 +44,7 @@ export const FormulaInput = ({
           onChange(formula);
         }
       }}
-      placeholder="Fractal formula"
+      placeholder='Fractal formula'
       error={error ? error : undefined}
       value={formula}
       onChange={(e) => {
@@ -52,10 +55,7 @@ export const FormulaInput = ({
           const node = parseFormula(newFormula);
           const typeMap = calcTypesOfNodes(node, customVarTypes);
 
-          const [valid, message] = validateFormula(
-            node,
-            customVarsSet
-          );
+          const [valid, message] = validateFormula(node, customVarsSet);
           if (!valid) {
             setError(message);
             return;

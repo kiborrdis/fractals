@@ -1,23 +1,23 @@
-import { createContext, ReactNode, useContext } from "react"
-import { createEditStore } from "./editStore"
+import { createContext, ReactNode, useContext } from "react";
+import { createEditStore } from "./editStore";
 
-export const editStoreContext = createContext<
-  ReturnType<typeof createEditStore> | null
->(null);
+export const editStoreContext = createContext<ReturnType<
+  typeof createEditStore
+> | null>(null);
 
 export const EditStoreProvider = ({
   store,
   children,
 }: {
-  store: ReturnType<typeof createEditStore>,
-  children: ReactNode
+  store: ReturnType<typeof createEditStore>;
+  children: ReactNode;
 }) => {
   return (
     <editStoreContext.Provider value={store}>
       {children}
     </editStoreContext.Provider>
   );
-}
+};
 
 export const useEditStore = <R,>(
   selector: (
@@ -27,13 +27,13 @@ export const useEditStore = <R,>(
   const useStore = useContext(editStoreContext);
 
   if (!useStore) {
-    throw new Error('useEditStore must be used within a EditStoreProvider');
+    throw new Error("useEditStore must be used within a EditStoreProvider");
   }
 
-  return useStore(selector)
-}
+  return useStore(selector);
+};
 
 export const useEditStoreInstance = () => {
-  const useStore = useContext(editStoreContext)
-  return useStore
-}
+  const useStore = useContext(editStoreContext);
+  return useStore;
+};

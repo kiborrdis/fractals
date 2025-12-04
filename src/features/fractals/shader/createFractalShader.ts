@@ -8,7 +8,7 @@ import { setupUniformLocations } from "./prepareFractalUniforms";
 export const createFractalShader = (
   context: WebGL2RenderingContext,
   formula: string,
-  customVars: Record<string, CalcNodeResultType>
+  customVars: Record<string, CalcNodeResultType>,
 ) => {
   const [glslCodeFormula, pow] = fractalFormulaToGLSLCode(formula, customVars);
 
@@ -29,10 +29,10 @@ export const createFractalShader = (
             (varName) =>
               `uniform ${
                 customVars[varName] === "vector2" ? "vec2" : "float"
-              } u_cstm_${varName};`
+              } u_cstm_${varName};`,
           )
-          .join("\n")
-      )
+          .join("\n"),
+      ),
   );
 
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
@@ -42,7 +42,7 @@ export const createFractalShader = (
   }
   const pos_vertex_attr_array = context.getAttribLocation(
     shaderProgram,
-    "a_position"
+    "a_position",
   );
 
   return {

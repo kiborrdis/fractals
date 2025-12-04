@@ -5,7 +5,7 @@ export const forEachNodeChild = (
   cb: (node: CalcNode) => void,
   options: {
     parentAfterChildren?: boolean;
-  } = {}
+  } = {},
 ) => {
   if (!options.parentAfterChildren) {
     cb(node);

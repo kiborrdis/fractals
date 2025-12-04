@@ -1,10 +1,9 @@
-
 export function createShader(
   gl: WebGLRenderingContext,
   type:
     | WebGLRenderingContext["VERTEX_SHADER"]
     | WebGLRenderingContext["FRAGMENT_SHADER"],
-  source: string
+  source: string,
 ) {
   const shader = gl.createShader(type);
 
@@ -26,7 +25,7 @@ export function createShader(
 export function createProgram(
   gl: WebGLRenderingContext,
   vertexShader: WebGLShader | undefined,
-  fragmentShader: WebGLShader | undefined
+  fragmentShader: WebGLShader | undefined,
 ) {
   const program = gl.createProgram();
 
