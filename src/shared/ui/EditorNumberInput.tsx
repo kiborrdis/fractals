@@ -34,13 +34,20 @@ export const EditorNumberInput = ({
   const valueRef = useRef(value);
   valueRef.current = value;
 
+  const [localValue, setLocalValue] = useState(String(value));
+
   return (
     <NumberInput
       w={w}
       id={id}
       label={label}
-      onFocus={useCallback(() => setFocus(true), [])}
-      onBlur={useCallback(() => setFocus(false), [])}
+      onFocus={useCallback(() => {
+        setFocus(true);
+        setLocalValue(String(value));
+      }, [value])}
+      onBlur={useCallback(() => {
+        setFocus(false);
+      }, [])}
       ref={useCallback(
         (el: HTMLInputElement) => {
           if (!el || !focus) {
@@ -68,10 +75,12 @@ export const EditorNumberInput = ({
       size='xs'
       clampBehavior='blur'
       decimalScale={decimalScale}
-      value={value}
+      value={focus ? localValue : value}
       stepHoldInterval={1000}
       onChange={(newValue) => {
         const num = Number(newValue);
+
+        setLocalValue(String(newValue));
 
         if (!isNaN(num)) {
           onChange(num);
