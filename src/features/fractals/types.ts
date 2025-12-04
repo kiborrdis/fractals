@@ -11,6 +11,14 @@ export type FractalParams = {
 
   mirroringType: 'off' | 'hex' | 'square';
 
+  /**
+   * @description [2, Infinity] -- override auto-calculated smoothing power(in general, should be max power of z in formula). 
+   *              [-Infinity, 0) disable smoothing altogether, 
+   *              [0, 2) use auto-calculated smoothing power. If fail to calculate, smoothing disabled
+   *              Not defined considered as 0
+   */
+  bandSmoothing?: number;
+
   dynamic: FractalDynamicParams;
   custom: Record<string, number | Vector2>;
 }

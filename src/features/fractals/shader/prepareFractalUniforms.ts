@@ -1,6 +1,6 @@
-import { FractalCanvasParams } from "./initFractalCanvas";
 import { FractalParams } from "../types";
 import { loadTexture } from "./texture";
+import { FractalShaderDescrition } from "./createFractalShader";
 
 const mirroringTypeToInt = {
   off: 0,
@@ -9,9 +9,9 @@ const mirroringTypeToInt = {
 };
 
 export const prepareFractalUniforms = (
+  context: WebGL2RenderingContext,
   {
-    context,
-    shaderProgram,
+    program: shaderProgram,
     uniforms: {
       fractalC_u2f,
       fractalR_u1f,
@@ -34,12 +34,14 @@ export const prepareFractalUniforms = (
       hexMirroringFactor_u1f,
       sampler2D_tex,
       sampler2D_wl_i1f,
+      smooth_u1i,
     },
-  }: FractalCanvasParams,
+  }: FractalShaderDescrition,
   {
     gradient,
     mirroringType,
     invert,
+    bandSmoothing,
     dynamic: {
       linearMirroringFactor,
       time,
@@ -81,23 +83,14 @@ export const prepareFractalUniforms = (
 
   context.uniform1i(mirror_u1i, mirroringTypeToInt[mirroringType]);
 
-  context.uniform1f(
-    linearSplitPerDistChange_u2f,
-    linearMirroringPerDistChange
-  );
-  context.uniform1f(
-    radialSplitPerDistChange_u2f,
-    radialMirroringPerDistChange
-  );
+  context.uniform1f(linearSplitPerDistChange_u2f, linearMirroringPerDistChange);
+  context.uniform1f(radialSplitPerDistChange_u2f, radialMirroringPerDistChange);
   context.uniform1f(cxSplitPerDistChange_u2f, cxPerDistChange);
   context.uniform1f(cySplitPerDistChange_u2f, cyPerDistChange);
   context.uniform1f(rSplitPerDistChange_u2f, rPerDistChange);
-  context.uniform1f(
-    iterationsSplitPerDistChange_u2f,
-    iterationsPerDistChange
-  );
+  context.uniform1f(iterationsSplitPerDistChange_u2f, iterationsPerDistChange);
   context.uniform1i(invertLocation_u1i, invert ? 1 : 0);
-  context.uniform1f(hexMirroringFactor_u1f,  hexMirroringFactor);
+  context.uniform1f(hexMirroringFactor_u1f, hexMirroringFactor);
   context.uniform1f(hexMirroringDistChange_u2f, hexMirroringPerDistChange);
   context.activeTexture(context.TEXTURE0);
 
@@ -107,6 +100,7 @@ export const prepareFractalUniforms = (
   // Tell the shader we bound the texture to texture unit 0
   context.uniform1i(sampler2D_tex, 0);
   context.uniform1i(sampler2D_wl_i1f, gradient.length);
+  context.uniform1i(smooth_u1i, bandSmoothing ?? 0);
 
   Object.keys(custom).forEach((key) => {
     const uniformLocation = context.getUniformLocation(
@@ -203,7 +197,12 @@ export function setupUniformLocations(
     "u_hex_mirroring_dist_change"
   );
   return {
+    smooth_u1i: context.getUniformLocation(shaderProgram, "u_smooth_pow"),
     resolution_u2f,
+    resolution2_u2f: context.getUniformLocation(
+      shaderProgram,
+      "u_resolution2"
+    ),
     fractalC_u2f,
     fractalR_u1f,
     linearSplit_u1f,

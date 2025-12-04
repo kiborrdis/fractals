@@ -139,6 +139,7 @@ export const ShapeParams = React.memo(() => {
         <Tabs.Panel value="Coloring">
           <SettingsSection>
             <StaticRuleEdit name="gradient" />
+            <StaticRuleEdit name="bandSmoothing" />
           </SettingsSection>
         </Tabs.Panel>
         <Tabs.Panel value="Custom">
