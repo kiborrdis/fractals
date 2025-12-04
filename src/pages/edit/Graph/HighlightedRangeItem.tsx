@@ -10,7 +10,13 @@ export interface HighlightedRange {
 }
 
 export const HighlightedRangeItem = ({
-  range, pixelStart, pixelEnd, width, height, onRangeClick, onRangeResize,
+  range,
+  pixelStart,
+  pixelEnd,
+  width,
+  height,
+  onRangeClick,
+  onRangeResize,
 }: {
   range: HighlightedRange;
   pixelStart: number;
@@ -63,9 +69,11 @@ export const HighlightedRangeItem = ({
         zIndex: 1,
         ...style,
       }}
-      onClick={range.rangeId && onRangeClick
-        ? () => onRangeClick(range.rangeId!)
-        : undefined}
+      onClick={
+        range.rangeId && onRangeClick
+          ? () => onRangeClick(range.rangeId!)
+          : undefined
+      }
     >
       {range.label && (
         <div
@@ -96,7 +104,8 @@ export const HighlightedRangeItem = ({
             cursor: "ew-resize",
             zIndex: 4,
             backgroundColor: "rgba(255, 255, 255, 0.5)",
-          }} />
+          }}
+        />
       )}
     </div>
   );

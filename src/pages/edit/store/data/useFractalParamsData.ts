@@ -1,6 +1,4 @@
-import {
-  FractalParamsBuildRules,
-} from "@/features/fractals";
+import { FractalParamsBuildRules } from "@/features/fractals";
 import { useEditStore } from "../provider";
 import { makeRuleFromNumber } from "@/shared/libs/numberRule";
 
@@ -31,7 +29,7 @@ export const useFractalParamsData = () => {
 const mergeDeep = (
   target: unknown,
   source: unknown,
-  transform?: (value: unknown) => unknown
+  transform?: (value: unknown) => unknown,
 ): unknown => {
   if (source === null || source === undefined) return target;
   if (target === null || target === undefined)
@@ -72,7 +70,7 @@ const mergeDeep = (
 
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (source as any)[key],
-              transform
+              transform,
             );
           } else {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

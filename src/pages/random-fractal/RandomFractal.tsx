@@ -40,7 +40,7 @@ const numberOfStops = Math.floor(randomRange(2, 8));
 
 const stops = new Array(numberOfStops).fill(0).map((_, i) => {
   return [
-    Math.floor(250 * i / (numberOfStops - 1)),
+    Math.floor((250 * i) / (numberOfStops - 1)),
     Math.random(),
     Math.random(),
     Math.random(),
@@ -67,43 +67,43 @@ const randomParams: FractalParamsBuildRules = {
         Math.max(linearSplit - linearSplit, 0.5),
         Math.max(linearSplit + linearSplit - 1, 0.5),
       ],
-      longTime + Math.random() * (longTime / 10)
+      longTime + Math.random() * (longTime / 10),
     ),
     time: makeRuleFromNumber(0),
     c: [
       rangeRule(
         [fractalC[0] - 0.03, fractalC[0] + 0.03],
-        shortTime + Math.random() * (shortTime / 10)
+        shortTime + Math.random() * (shortTime / 10),
       ),
       rangeRule(
         [fractalC[1] - 0.03, fractalC[1] + 0.03],
-        shortTime + Math.random() * (shortTime / 10)
+        shortTime + Math.random() * (shortTime / 10),
       ),
     ],
     r: makeRuleFromNumber(3),
     rlVisibleRange: [
       rangeRule(
         [fractalRRangeStart[0] - 0.02, fractalRRangeStart[0] + 0.02],
-        shortTime + Math.random() * (shortTime / 10)
+        shortTime + Math.random() * (shortTime / 10),
       ),
       rangeRule(
         [fractalRRangeEnd[0] - 0.02, fractalRRangeEnd[0] + 0.02],
-        shortTime + Math.random() * (shortTime / 10)
+        shortTime + Math.random() * (shortTime / 10),
       ),
     ],
     imVisibleRange: [
       rangeRule(
         [fractalRRangeStart[1] - 0.02, fractalRRangeStart[1] + 0.02],
-        shortTime + Math.random() * (shortTime / 10)
+        shortTime + Math.random() * (shortTime / 10),
       ),
       rangeRule(
         [fractalRRangeEnd[1] - 0.02, fractalRRangeEnd[1] + 0.02],
-        shortTime + Math.random() * (shortTime / 10)
+        shortTime + Math.random() * (shortTime / 10),
       ),
     ],
     maxIterations: rangeRule(
       [50, 250],
-      shortTime + Math.random() * (shortTime / 10)
+      shortTime + Math.random() * (shortTime / 10),
     ),
     linearMirroringPerDistChange: makeRuleFromNumber(linearSplitPerD),
     radialMirroringAngle: makeRuleFromNumber(radialSplit),

@@ -1,18 +1,18 @@
-
 export enum CalcNodeType {
   Operation = 1,
   Variable = 2,
   Number = 3,
   FuncCall = 4,
 
-  Error = 256
+  Error = 256,
 }
 
-export type CalcNode = CalcNodeError |
-  CalcNodeOperation |
-  CalcNodeVariable |
-  CalcNodeNumber |
-  CalcNodeFuncCall;
+export type CalcNode =
+  | CalcNodeError
+  | CalcNodeOperation
+  | CalcNodeVariable
+  | CalcNodeNumber
+  | CalcNodeFuncCall;
 
 export type CalcNodeNumber = {
   /**
@@ -36,11 +36,17 @@ export type CalcNodeFuncCall = {
   /**
    * @description Name of function
    */
-  n: string,
+  n: string;
   /**
    * @description Arguments of function
    */
-  o: (CalcNodeNumber | CalcNodeVariable | CalcNodeOperation | CalcNodeError | CalcNodeFuncCall)[];
+  o: (
+    | CalcNodeNumber
+    | CalcNodeVariable
+    | CalcNodeOperation
+    | CalcNodeError
+    | CalcNodeFuncCall
+  )[];
   /**
    * @description Range of function name
    */
@@ -49,7 +55,7 @@ export type CalcNodeFuncCall = {
 
 export type CalcNodeVariable = {
   p?: CalcNode;
-  
+
   t: CalcNodeType.Variable;
   /**
    * @description Variable name

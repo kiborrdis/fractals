@@ -4,7 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
-} from 'react'
+} from "react";
 
 type Vector2 = [number, number];
 
@@ -15,47 +15,47 @@ export const useDrag = <ID = undefined>({
   onDragMove,
   onDragStop,
 }: {
-  canStartDrag: boolean
-  withRAF?: boolean
-  onDragStart?: (elem: Element, mousePosition: Vector2) => ID
-  onDragStop?: (mousePosition: Vector2, intermediate: ID) => void
-  onDragMove: (mousePosition: Vector2, delta: Vector2, intermediate: ID) => ID
+  canStartDrag: boolean;
+  withRAF?: boolean;
+  onDragStart?: (elem: Element, mousePosition: Vector2) => ID;
+  onDragStop?: (mousePosition: Vector2, intermediate: ID) => void;
+  onDragMove: (mousePosition: Vector2, delta: Vector2, intermediate: ID) => ID;
 }) => {
-  const startTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const rafRef = useRef<number | undefined>(undefined)
-  const intermediateDataRef = useRef<ID | undefined>(undefined)
+  const startTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const rafRef = useRef<number | undefined>(undefined);
+  const intermediateDataRef = useRef<ID | undefined>(undefined);
 
-  const prevPosRef = useRef<Vector2 | null>(null)
-  const [dragEnabled, setDragEnabled] = useState(false)
+  const prevPosRef = useRef<Vector2 | null>(null);
+  const [dragEnabled, setDragEnabled] = useState(false);
 
   useEffect(() => {
     const handler = () => {
-      clearTimeout(startTimeoutRef.current)
-    }
+      clearTimeout(startTimeoutRef.current);
+    };
 
-    window.addEventListener('mouseup', handler)
+    window.addEventListener("mouseup", handler);
 
     return () => {
-      window.removeEventListener('mouseup', handler)
-    }
-  }, [])
+      window.removeEventListener("mouseup", handler);
+    };
+  }, []);
 
   useEffect(() => {
     if (!dragEnabled) {
-      return
+      return;
     }
 
     const handler = (e: MouseEvent) => {
-      const coords: Vector2 = [e.clientX, e.clientY]
+      const coords: Vector2 = [e.clientX, e.clientY];
 
       if (withRAF) {
         if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current)
+          cancelAnimationFrame(rafRef.current);
         }
 
         rafRef.current = requestAnimationFrame(() => {
           if (!prevPosRef.current) {
-            return
+            return;
           }
 
           intermediateDataRef.current = onDragMove(
@@ -65,15 +65,15 @@ export const useDrag = <ID = undefined>({
               coords[1] - prevPosRef.current[1],
             ],
             intermediateDataRef.current!,
-          )
+          );
 
-          prevPosRef.current = coords
-        })
+          prevPosRef.current = coords;
+        });
 
         if (!prevPosRef.current) {
-          prevPosRef.current = [e.clientX, e.clientY]
+          prevPosRef.current = [e.clientX, e.clientY];
         }
-        return
+        return;
       }
 
       if (prevPosRef.current) {
@@ -84,49 +84,52 @@ export const useDrag = <ID = undefined>({
             e.clientY - prevPosRef.current[1],
           ],
           intermediateDataRef.current!,
-        )
+        );
       }
 
-      prevPosRef.current = [e.clientX, e.clientY]
-    }
+      prevPosRef.current = [e.clientX, e.clientY];
+    };
 
     const handlerUp = () => {
       if (onDragStop) {
-        onDragStop(prevPosRef.current || [0, 0], intermediateDataRef.current!)
-        intermediateDataRef.current = undefined
+        onDragStop(prevPosRef.current || [0, 0], intermediateDataRef.current!);
+        intermediateDataRef.current = undefined;
       }
 
-      prevPosRef.current = null
+      prevPosRef.current = null;
 
-      setDragEnabled(false)
-    }
-    window.addEventListener('mousemove', handler)
-    window.addEventListener('mouseup', handlerUp)
+      setDragEnabled(false);
+    };
+    window.addEventListener("mousemove", handler);
+    window.addEventListener("mouseup", handlerUp);
 
     return () => {
-      window.removeEventListener('mousemove', handler)
-      window.removeEventListener('mouseup', handlerUp)
-    }
-  }, [dragEnabled, onDragMove, onDragStop, withRAF])
+      window.removeEventListener("mousemove", handler);
+      window.removeEventListener("mouseup", handlerUp);
+    };
+  }, [dragEnabled, onDragMove, onDragStop, withRAF]);
 
   const onMouseDown = useCallback(
     (e: ReactMouseEvent) => {
       if (canStartDrag) {
         if (onDragStart) {
-          intermediateDataRef.current = onDragStart(e.currentTarget, [e.clientX, e.clientY])
+          intermediateDataRef.current = onDragStart(e.currentTarget, [
+            e.clientX,
+            e.clientY,
+          ]);
         }
 
-        startTimeoutRef.current = setTimeout(() => setDragEnabled(true), 250)
-        e.stopPropagation()
+        startTimeoutRef.current = setTimeout(() => setDragEnabled(true), 250);
+        e.stopPropagation();
       }
     },
     [canStartDrag, onDragStart],
-  )
+  );
 
   return {
     elementHandlers: {
       onMouseDown,
     },
     dragInProgress: dragEnabled,
-  }
-}
+  };
+};

@@ -31,7 +31,7 @@ describe("parseFormula", () => {
     expect(calcNode).toMatchSnapshot();
   });
 
-   test("parses single float number", () => {
+  test("parses single float number", () => {
     const calcNode = parseFormula("222.232");
 
     expect(transformCalcNodeToString(calcNode)).toMatchSnapshot();

@@ -10,7 +10,7 @@ export const createFractalVisualizer = (
   canvasSize: Vector2,
   initialFractalParams: FractalParamsBuildRules,
   loopParams: { play: boolean; time: number; timeMultiplier: number },
-  renderCallback?: (time: number) => void
+  renderCallback?: (time: number) => void,
 ) => {
   const context = canvas.getContext("webgl2", { antialias: true });
   if (!context) {
@@ -36,7 +36,6 @@ export const createFractalVisualizer = (
   const updateParams = (newParams: FractalParamsBuildRules) => {
     fractalImage.updateParams(newParams);
     renderer.render(loop.getCurrentTime());
-
   };
 
   return {
@@ -51,7 +50,7 @@ export const createFractalVisualizer = (
 export const createShowcaseFractalsVisualizer = (
   canvas: HTMLCanvasElement,
   canvasSize: Vector2,
-  fractals: FractalParamsBuildRules[][]
+  fractals: FractalParamsBuildRules[][],
 ) => {
   const context = canvas.getContext("webgl2", { antialias: true });
   if (!context) {

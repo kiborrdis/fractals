@@ -2,7 +2,11 @@ import { Group, Tooltip, ActionIcon, Stack, Text, Slider } from "@mantine/core";
 import { FiLock } from "react-icons/fi";
 
 export const VisibleRangeSettings = ({
-  to, lockToPeriod, period, onRangeChange, onLockToPeriodChange,
+  to,
+  lockToPeriod,
+  period,
+  onRangeChange,
+  onLockToPeriodChange,
 }: {
   to: number;
   lockToPeriod?: boolean;
@@ -12,7 +16,7 @@ export const VisibleRangeSettings = ({
 }) => {
   return (
     <Group>
-      <Tooltip label="Lock visible range to period" openDelay={500}>
+      <Tooltip label='Lock visible range to period' openDelay={500}>
         <ActionIcon
           color={lockToPeriod ? "orange" : "gray"}
           onClick={() => onLockToPeriodChange(!lockToPeriod)}
@@ -22,7 +26,7 @@ export const VisibleRangeSettings = ({
       </Tooltip>
 
       <Stack gap={0}>
-        <Text size="xs" fw={500}>
+        <Text size='xs' fw={500}>
           Visible range
         </Text>
         <Slider
@@ -35,7 +39,8 @@ export const VisibleRangeSettings = ({
           onChange={(v) => {
             onLockToPeriodChange(false);
             onRangeChange(v);
-          }} />
+          }}
+        />
       </Stack>
     </Group>
   );

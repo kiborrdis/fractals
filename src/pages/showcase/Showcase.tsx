@@ -38,7 +38,7 @@ export const Showcase = () => {
         fractals={toGrid(
           fractals.map((f) => defaultParse(f) as FractalParamsBuildRules),
           rows,
-          cols
+          cols,
         )}
       />
       <BoxShadowGrid rows={rows} cols={cols} />
@@ -49,7 +49,7 @@ export const Showcase = () => {
 const toGrid = <E extends object>(
   elems: E[],
   rows: number,
-  cols: number
+  cols: number,
 ): E[][] => {
   const grid: E[][] = [];
   for (let r = 0; r < rows; r++) {
@@ -102,7 +102,7 @@ const BoxShadowGrid = ({ rows, cols }: { rows: number; cols: number }) => {
 
 const ShowcaseItem = memo(({ fractalIndex }: { fractalIndex: number }) => {
   const fractal = defaultParse(
-    fractals[fractalIndex]
+    fractals[fractalIndex],
   ) as FractalParamsBuildRules;
 
   return (

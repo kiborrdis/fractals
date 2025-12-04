@@ -22,9 +22,9 @@ export const TimelineControls = ({
   return (
     <Group>
       <Group>
-        <Tooltip label="Preview values on hover">
+        <Tooltip label='Preview values on hover'>
           <ActionIcon
-            title="Preview values on hover"
+            title='Preview values on hover'
             color={previewValueOnHover ? "green" : "gray"}
             onClick={() => onPreviewValueOnHoverChange(!previewValueOnHover)}
           >
@@ -32,7 +32,7 @@ export const TimelineControls = ({
           </ActionIcon>
         </Tooltip>
       </Group>
-      <Divider size="xs" orientation="vertical" />
+      <Divider size='xs' orientation='vertical' />
       <VisibleRangeSettings
         to={visibleTo}
         period={period}

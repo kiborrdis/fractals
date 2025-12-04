@@ -6,7 +6,7 @@ import { FractalParamsBuildRules } from "@/features/fractals";
 export const DisplayFractals = ({
   fractals,
 }: {
-  fractals: FractalParamsBuildRules[][],
+  fractals: FractalParamsBuildRules[][];
 }) => {
   const [[width, height], setSize] = useState([0, 0]);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
@@ -22,7 +22,7 @@ export const DisplayFractals = ({
     const visializer = createShowcaseFractalsVisualizer(
       canvas,
       [width, height],
-      fractals
+      fractals,
     );
     visualizerRef.current = visializer;
     return () => {

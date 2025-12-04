@@ -1,6 +1,4 @@
-import {
-  getDynamicParamLabel,
-} from "@/features/fractals";
+import { getDynamicParamLabel } from "@/features/fractals";
 import { useEffect, useMemo, useState } from "react";
 import { useFractalRules } from "../store/data/useFractalParamsData";
 import { Box, Group, Paper, Stack } from "@mantine/core";
@@ -12,7 +10,12 @@ import { useCurrentTime } from "../store/data/useCurrentTime";
 import { TimelineBaseRuleEdit } from "./TimelineBaseRuleEdit";
 import { TimelineRulesList } from "./TimelineRulesList";
 import { TimelineControls } from "./TimelineControls";
-import { NumberBuildRule, RangeNumberRule, RuleType, StepNumberRule } from "@/shared/libs/numberRule";
+import {
+  NumberBuildRule,
+  RangeNumberRule,
+  RuleType,
+  StepNumberRule,
+} from "@/shared/libs/numberRule";
 
 export const colorsArray = [
   "rgba(255, 0, 0, 0.7)",
@@ -41,9 +44,7 @@ export const TimelineTool = () => {
   const [activeRangesIds, setActiveRangesIds] = useState<
     Record<string, boolean>
   >({});
-  const [editingRuleId, setEditingRuleId] = useState<
-    string | null
-  >(null);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
 
   const time = useCurrentTime();
 
@@ -51,7 +52,6 @@ export const TimelineTool = () => {
   const [newStep, setNewStep] = useState<boolean>(false);
   const [previewValueOnHover, setPreviewValueOnHover] = useState<boolean>(true);
 
-  
   const {
     dynamicParamOverride,
     customParamOverride,
@@ -61,27 +61,27 @@ export const TimelineTool = () => {
   } = useActions();
 
   const changeRule = (route: string[], newRule: NumberBuildRule) => {
-    if (route[0] === 'd') {
+    if (route[0] === "d") {
       dynamicRuleChangeByRoute(route.slice(1), newRule);
       return;
-    } else if (route[0] === 'c') {
+    } else if (route[0] === "c") {
       customRuleChange(route.slice(1), newRule);
       return;
     }
-  }
+  };
 
   const overrideRule = (route: string[], newValue: number | undefined) => {
-    if (route[0] === 'd') {
+    if (route[0] === "d") {
       dynamicParamOverride(route.slice(1), newValue);
       return;
-    } else if (route[0] === 'c') {
+    } else if (route[0] === "c") {
       customParamOverride(route.slice(1), newValue);
       return;
     }
-  }
+  };
 
   const dynamicNumberRules = useDynamicNumberRules();
-  const editingRule =  dynamicNumberRules.find(({ id }) => id === editingRuleId);
+  const editingRule = dynamicNumberRules.find(({ id }) => id === editingRuleId);
 
   const activeRules: typeof dynamicNumberRules = useMemo(() => {
     const arr: typeof dynamicNumberRules = [];
@@ -101,7 +101,7 @@ export const TimelineTool = () => {
   const period = useMemo(() => calcPeriod(activeRules), [activeRules]);
   const fullPeriod = useMemo(
     () => calcPeriod(dynamicNumberRules),
-    [dynamicNumberRules]
+    [dynamicNumberRules],
   );
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export const TimelineTool = () => {
           )}
 
         {editingRule && (
-          <Paper p="xs">
+          <Paper p='xs'>
             <TimelineBaseRuleEdit
               editingRule={editingRule?.rule ?? null}
               name={editingRule?.name ?? ""}
@@ -169,8 +169,8 @@ export const TimelineTool = () => {
         )}
       </Stack>
 
-      <Group align="start" wrap="nowrap" gap='xs' p='xs'>
-        <Box w="150px">
+      <Group align='start' wrap='nowrap' gap='xs' p='xs'>
+        <Box w='150px'>
           <TimelineRulesList
             activeRangesIds={activeRangesIds}
             editingRangeId={editingRuleId}
@@ -184,7 +184,7 @@ export const TimelineTool = () => {
           />
         </Box>
 
-        <Stack gap="xs" flex={1}>
+        <Stack gap='xs' flex={1}>
           <TimelineControls
             previewValueOnHover={previewValueOnHover}
             visibleTo={visibleTo}
@@ -224,7 +224,7 @@ export const TimelineTool = () => {
             }}
             onStepSelect={(stepIndex) => {
               setEditingStepIndex((prev) =>
-                prev === stepIndex ? null : stepIndex
+                prev === stepIndex ? null : stepIndex,
               );
             }}
             onChange={(newRule) => {
@@ -249,79 +249,76 @@ export type TimelineNumberRuleItem = {
 
 const useDynamicNumberRules = (): TimelineNumberRuleItem[] => {
   const fractal = useFractalRules();
-  const dynamic =  Object.entries(fractal.dynamic).reduce<TimelineNumberRuleItem[]>(
-    (memo, [key, rule]) => {
-      if (
-        "t" in rule &&
-        (rule.t === RuleType.RangeNumber ||
-          rule.t === RuleType.StepNumber)
-      ) {
-        const route = ['d', key];
-        memo.push({
-          id: route.join('.'),
-          route: route,
-          name: getDynamicParamLabel(route.slice(1)),
-          color: colorsArray[memo.length % colorsArray.length],
-          rule: rule as RangeNumberRule | StepNumberRule,
-        });
-      } else if (Array.isArray(rule)) {
-        rule.forEach((aRule, i) => {
-          if (
-            aRule.t === RuleType.RangeNumber ||
-            aRule.t === RuleType.StepNumber
-          ) {
-            const route = ['d', key, String(i)]
-            memo.push({
-              id: route.join('.'),
-              route: route,
-              name: getDynamicParamLabel(route.slice(1)),
-              color: colorsArray[memo.length % colorsArray.length],
-              rule: aRule as RangeNumberRule | StepNumberRule,
-            });
-          }
-        });
-      }
-      return memo;
-    },
-    []
-  );
+  const dynamic = Object.entries(fractal.dynamic).reduce<
+    TimelineNumberRuleItem[]
+  >((memo, [key, rule]) => {
+    if (
+      "t" in rule &&
+      (rule.t === RuleType.RangeNumber || rule.t === RuleType.StepNumber)
+    ) {
+      const route = ["d", key];
+      memo.push({
+        id: route.join("."),
+        route: route,
+        name: getDynamicParamLabel(route.slice(1)),
+        color: colorsArray[memo.length % colorsArray.length],
+        rule: rule as RangeNumberRule | StepNumberRule,
+      });
+    } else if (Array.isArray(rule)) {
+      rule.forEach((aRule, i) => {
+        if (
+          aRule.t === RuleType.RangeNumber ||
+          aRule.t === RuleType.StepNumber
+        ) {
+          const route = ["d", key, String(i)];
+          memo.push({
+            id: route.join("."),
+            route: route,
+            name: getDynamicParamLabel(route.slice(1)),
+            color: colorsArray[memo.length % colorsArray.length],
+            rule: aRule as RangeNumberRule | StepNumberRule,
+          });
+        }
+      });
+    }
+    return memo;
+  }, []);
 
-  const custom =  Object.entries(fractal.custom).reduce<TimelineNumberRuleItem[]>(
-    (memo, [key, rule]) => {
-      if (
-        "t" in rule &&
-        (rule.t === RuleType.RangeNumber ||
-          rule.t === RuleType.StepNumber)
-      ) {
-        const route = ['c', key];
-        memo.push({
-          id: route.join('.'),
-          route: route,
-          name: getDynamicParamLabel(route.slice(1)),
-          color: colorsArray[(memo.length + dynamic.length) % colorsArray.length],
-          rule: rule as RangeNumberRule | StepNumberRule,
-        });
-      } else if (Array.isArray(rule)) {
-        rule.forEach((aRule, i) => {
-          if (
-            aRule.t === RuleType.RangeNumber ||
-            aRule.t === RuleType.StepNumber
-          ) {
-            const route = ['c', key, String(i)]
-            memo.push({
-              id: route.join('.'),
-              route: route,
-              name: getDynamicParamLabel(route.slice(1)),
-              color: colorsArray[(memo.length + dynamic.length) % colorsArray.length],
-              rule: aRule as RangeNumberRule | StepNumberRule,
-            });
-          }
-        });
-      }
-      return memo;
-    },
-    []
-  );
+  const custom = Object.entries(fractal.custom).reduce<
+    TimelineNumberRuleItem[]
+  >((memo, [key, rule]) => {
+    if (
+      "t" in rule &&
+      (rule.t === RuleType.RangeNumber || rule.t === RuleType.StepNumber)
+    ) {
+      const route = ["c", key];
+      memo.push({
+        id: route.join("."),
+        route: route,
+        name: getDynamicParamLabel(route.slice(1)),
+        color: colorsArray[(memo.length + dynamic.length) % colorsArray.length],
+        rule: rule as RangeNumberRule | StepNumberRule,
+      });
+    } else if (Array.isArray(rule)) {
+      rule.forEach((aRule, i) => {
+        if (
+          aRule.t === RuleType.RangeNumber ||
+          aRule.t === RuleType.StepNumber
+        ) {
+          const route = ["c", key, String(i)];
+          memo.push({
+            id: route.join("."),
+            route: route,
+            name: getDynamicParamLabel(route.slice(1)),
+            color:
+              colorsArray[(memo.length + dynamic.length) % colorsArray.length],
+            rule: aRule as RangeNumberRule | StepNumberRule,
+          });
+        }
+      });
+    }
+    return memo;
+  }, []);
 
   return [...dynamic, ...custom];
 };

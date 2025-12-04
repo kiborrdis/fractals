@@ -1,7 +1,4 @@
-
-export const initFractalCanvas = (
-  context: WebGL2RenderingContext,
-) => {
+export const initFractalCanvas = (context: WebGL2RenderingContext) => {
   const positionBuffer = context.createBuffer();
 
   context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);

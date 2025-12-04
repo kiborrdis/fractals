@@ -3,13 +3,16 @@
 type ConvertTupleTypeWithMap<
   K extends string | number | symbol,
   T extends [K, ...K[]] | [],
-  M extends { [key in K]: any }
+  M extends { [key in K]: any },
 > = {
   [I in keyof T]: T[I] extends K ? M[T[I]] : undefined;
 };
 
 export class GrammarParser<G extends Grammar<any, any, any, any>> {
-  constructor(private grammar: G, private indentRegex: RegExp = /\s/) {}
+  constructor(
+    private grammar: G,
+    private indentRegex: RegExp = /\s/,
+  ) {}
 
   private lastIndex: number = 0;
   private skipIndent(str: string, index: number): number {
@@ -18,13 +21,13 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     }
 
     return index;
-  } 
+  }
 
   private parseRuleWithCache(
     str: string,
     ruleName: string,
     index: number,
-    cache: { [key: string]: { [index: number]: [any, number] | null } }
+    cache: { [key: string]: { [index: number]: [any, number] | null } },
   ): [unknown, number] | null {
     if (!cache[ruleName]) {
       cache[ruleName] = {};
@@ -50,7 +53,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     str: string,
     ruleName: string,
     index: number,
-    cache: { [key: string]: { [index: number]: [unknown, number] | null } }
+    cache: { [key: string]: { [index: number]: [unknown, number] | null } },
   ): [unknown, number] | null {
     const rule = this.grammar.rulesDefinition[ruleName];
     const ruleTransforms = this.grammar.transformsDefinition[ruleName];
@@ -69,7 +72,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
         rule[1],
         ruleTransforms[0],
         index,
-        cache
+        cache,
       );
     }
 
@@ -80,12 +83,15 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     str: string,
     matcher: (str: string, index: number) => [string, number] | null,
     transform: (arg: string, r: readonly [number, number]) => unknown,
-    index: number
+    index: number,
   ): [unknown, number] | null {
     const matchResult = matcher(str, index);
 
     if (matchResult) {
-      return [transform(matchResult[0], [index, matchResult[1] - 1]), matchResult[1]];
+      return [
+        transform(matchResult[0], [index, matchResult[1] - 1]),
+        matchResult[1],
+      ];
     }
 
     return null;
@@ -96,7 +102,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     definition: [string, ...string[]] | [],
     transform: (...args: unknown[]) => unknown,
     index: number,
-    cache: { [key: string]: { [index: number]: [unknown, number] | null } }
+    cache: { [key: string]: { [index: number]: [unknown, number] | null } },
   ): [unknown, number] | null {
     let currentIndex = index;
     const args: unknown[] = [];
@@ -107,7 +113,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
         str,
         subRuleName,
         currentIndex,
-        cache
+        cache,
       );
 
       if (!result) {
@@ -126,7 +132,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     definitions: ([string, ...string[]] | [])[],
     transforms: ((...args: unknown[]) => unknown)[],
     index: number,
-    cache: { [key: string]: { [index: number]: [unknown, number] | null } }
+    cache: { [key: string]: { [index: number]: [unknown, number] | null } },
   ): [unknown, number] | null {
     const orArgs: unknown[] = [];
     // Try each sub-rule in order until one matches
@@ -136,7 +142,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
         definitions[i],
         transforms[i],
         index,
-        cache
+        cache,
       );
 
       if (!result) {
@@ -151,11 +157,12 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
     return null;
   }
 
-  public parse(
-    str: string
-  ): [(G extends Grammar<any, any, infer T, infer R> ? T[R] : null) | null, {
-    lastIndex: number;
-  }] {
+  public parse(str: string): [
+    (G extends Grammar<any, any, infer T, infer R> ? T[R] : null) | null,
+    {
+      lastIndex: number;
+    },
+  ] {
     this.lastIndex = 0;
 
     const cache: { [key: string]: { [index: number]: [any, number] | null } } =
@@ -164,13 +171,18 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
       str,
       this.grammar.rootRule,
       0,
-      cache
+      cache,
     );
 
     const lastIndex = this.skipIndent(str, this.lastIndex);
 
     if (result && lastIndex === str.length) {
-      return [result[0] as (G extends Grammar<any, any, infer T, infer R> ? T[R] : null), { lastIndex: lastIndex }];
+      return [
+        result[0] as G extends Grammar<any, any, infer T, infer R>
+          ? T[R]
+          : null,
+        { lastIndex: lastIndex },
+      ];
     }
 
     return [null, { lastIndex: this.lastIndex }];
@@ -181,7 +193,7 @@ export class Grammar<
   Rules extends string = "$",
   Variants = string,
   Trnsf extends { [K in Rules]: Variants } = { [K in Rules]: Variants },
-  Root extends Rules = Rules
+  Root extends Rules = Rules,
 > {
   private root: Rules = "$" as Rules;
   private rules: {
@@ -279,7 +291,8 @@ export class Grammar<
   addTerminal<NR extends string, NTr = string>(
     name: NR,
     matcher: (str: string, index: number) => [string, number] | null,
-    transform: (str: string, r: readonly [number, number]) => NTr = (s) => s as NTr
+    transform: (str: string, r: readonly [number, number]) => NTr = (s) =>
+      s as NTr,
   ): Grammar<Rules | NR, Variants | NTr, Trnsf & { [K in NR]: NTr }> {
     this.rules[name] = ["term", matcher];
     this.transforms[name] = [transform];
@@ -291,7 +304,11 @@ export class Grammar<
       Trnsf & { [K in NR]: NTr }
     >;
   }
-  addRecursiveRule<NR extends string, NTr = string>(): Grammar<Rules | NR, Variants | NTr, Trnsf & { [K in NR]: NTr }> {
+  addRecursiveRule<NR extends string, NTr = string>(): Grammar<
+    Rules | NR,
+    Variants | NTr,
+    Trnsf & { [K in NR]: NTr }
+  > {
     return this as Grammar<
       Rules | NR,
       Variants | NTr,
@@ -302,15 +319,19 @@ export class Grammar<
   addRule<
     NTr,
     NR extends string,
-    NDef extends [Rules | NR, ...(Rules | NR)[]] | []
+    NDef extends [Rules | NR, ...(Rules | NR)[]] | [],
   >(
     name: NR,
     definition: NDef,
     transform: (
       ...args: NoInfer<
-        ConvertTupleTypeWithMap<Rules | NR, NDef, Trnsf & { [K in NR]: unknown }>
+        ConvertTupleTypeWithMap<
+          Rules | NR,
+          NDef,
+          Trnsf & { [K in NR]: unknown }
+        >
       >
-    ) => NTr
+    ) => NTr,
   ): Grammar<Rules | NR, Variants | NTr, Trnsf & { [K in NR]: NTr }> {
     this.rules[name] = ["nonterm", definition];
     this.transforms[name] = [transform];
@@ -325,7 +346,7 @@ export class Grammar<
   addRuleVariant<
     NTr,
     NR extends Rules,
-    NDef extends [Rules | NR, ...(Rules | NR)[]] | []
+    NDef extends [Rules | NR, ...(Rules | NR)[]] | [],
   >(
     name: NR,
     definition: NDef,
@@ -337,7 +358,7 @@ export class Grammar<
           Trnsf & { [K in NR]: unknown }
         >
       >
-    ) => NTr
+    ) => NTr,
   ): Grammar<
     Rules | NR,
     Variants | NTr,

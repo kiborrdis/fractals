@@ -1,9 +1,6 @@
 import { rangeRule } from "@/shared/libs/numberRule";
 import { makeRulesBasedOnParams } from "./ruleConversion";
-import {
-  FractalParams,
-  FractalParamsBuildRules,
-} from "./types";
+import { FractalParams, FractalParamsBuildRules } from "./types";
 
 export const getDefaultFractalRules = () => {
   const initialFractalParams: FractalParams = {

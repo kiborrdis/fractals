@@ -10,7 +10,7 @@ export const renderFractalOnCanvas = (
   shader: FractalShaderDescrition,
   //** @desciption top left and bottom right corners of the area to render. From 0 to 1
   size: readonly [Vector2, Vector2],
-  params: FractalParams
+  params: FractalParams,
 ) => {
   context.useProgram(shader.program);
 
@@ -62,7 +62,7 @@ export const renderFractalOnCanvas = (
   context.bufferData(
     context.ARRAY_BUFFER,
     new Float32Array(textureCoordinates),
-    context.STATIC_DRAW
+    context.STATIC_DRAW,
   );
 
   context.bindBuffer(context.ARRAY_BUFFER, textureCoordBuffer);
@@ -72,10 +72,10 @@ export const renderFractalOnCanvas = (
     context.FLOAT, // the data in the buffer is 32-bit float
     false, // don't normalize
     0, // how many bytes to get from one set to the next
-    0 // how many bytes inside the buffer to start from
+    0, // how many bytes inside the buffer to start from
   );
   context.enableVertexAttribArray(
-    context.getAttribLocation(shader.program, "a_texture_coord")
+    context.getAttribLocation(shader.program, "a_texture_coord"),
   );
 
   context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);
@@ -83,20 +83,20 @@ export const renderFractalOnCanvas = (
   context.bufferData(
     context.ARRAY_BUFFER,
     new Float32Array(positions),
-    context.STATIC_DRAW
+    context.STATIC_DRAW,
   );
 
   context.enableVertexAttribArray(shader.pos_vertex_attr_array);
   context.uniform2f(
     shader.uniforms.resolution_u2f,
     canvasSize[0],
-    canvasSize[1]
+    canvasSize[1],
   );
 
   context.uniform2f(
     shader.uniforms.resolution2_u2f,
     (size[1][0] - size[0][0]) * canvasSize[0],
-    (size[1][1] - size[0][1]) * canvasSize[1]
+    (size[1][1] - size[0][1]) * canvasSize[1],
   );
 
   context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);
@@ -107,7 +107,7 @@ export const renderFractalOnCanvas = (
     context.FLOAT, // the data is 32bit floats
     false, // don't normalize the data
     0, // 0 = move forward size * sizeof(type) each iteration to get the next position
-    0 // start at the beginning of the buffer
+    0, // start at the beginning of the buffer
   );
 
   const primitiveType = context.TRIANGLES;

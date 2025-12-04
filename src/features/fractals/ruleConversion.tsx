@@ -32,7 +32,7 @@ export const makeRulesBasedOnParams = ({
     dynamic: {
       hexMirroringFactor: makeRuleFromNumber(params.hexMirroringFactor),
       hexMirroringPerDistChange: makeRuleFromNumber(
-        params.hexMirroringPerDistChange
+        params.hexMirroringPerDistChange,
       ),
       linearMirroringFactor: makeRuleFromNumber(params.linearMirroringFactor),
       time: makeRuleFromNumber(params.time),
@@ -42,16 +42,16 @@ export const makeRulesBasedOnParams = ({
       imVisibleRange: makeRuleFromArray(params.imVisibleRange),
       maxIterations: makeRuleFromNumber(params.maxIterations),
       linearMirroringPerDistChange: makeRuleFromNumber(
-        params.linearMirroringPerDistChange
+        params.linearMirroringPerDistChange,
       ),
       radialMirroringPerDistChange: makeRuleFromNumber(
-        params.radialMirroringPerDistChange
+        params.radialMirroringPerDistChange,
       ),
       cxPerDistChange: makeRuleFromNumber(params.cxPerDistChange),
       cyPerDistChange: makeRuleFromNumber(params.cyPerDistChange),
       rPerDistChange: makeRuleFromNumber(params.rPerDistChange),
       iterationsPerDistChange: makeRuleFromNumber(
-        params.iterationsPerDistChange
+        params.iterationsPerDistChange,
       ),
       radialMirroringAngle: makeRuleFromNumber(params.radialMirroringAngle),
     },
@@ -62,7 +62,7 @@ export const makeRulesBasedOnParams = ({
 
 export const makeFractalParamsFromRules = (
   rules: FractalParamsBuildRules,
-  time: number = 0
+  time: number = 0,
 ): FractalParams => {
   return {
     ...rules,
@@ -73,31 +73,34 @@ export const makeFractalParamsFromRules = (
 
 const makeCustomFractalParamsFromRules = (
   rules: FractalCustomRules,
-  time: number = 0
+  time: number = 0,
 ): { [key: string]: number | [number, number] } => {
-  const params = Object.entries(rules).reduce((acc, [key, value]) => {
-    if (Array.isArray(value)) {
-      acc[key] = makeArrayFromRules(value, time);
+  const params = Object.entries(rules).reduce(
+    (acc, [key, value]) => {
+      if (Array.isArray(value)) {
+        acc[key] = makeArrayFromRules(value, time);
+        return acc;
+      }
+
+      acc[key] = makeScalarFromRule(value, time);
+
       return acc;
-    }
-
-    acc[key] = makeScalarFromRule(value, time);
-
-    return acc;
-  }, {} as { [key: string]: number | [number, number] });
+    },
+    {} as { [key: string]: number | [number, number] },
+  );
 
   return params;
 };
 
 const makeFractalDynamicParamsFromRules = (
   rules: FractalDynamicParamsBuildRules,
-  time: number = 0
+  time: number = 0,
 ): FractalDynamicParams => {
   const params = Object.entries(rules).reduce((acc, [key, value]) => {
     if (Array.isArray(value)) {
       acc[key as keyof FractalDynamicParams] = makeArrayFromRules(
         value,
-        time
+        time,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ) as any;
       return acc;
@@ -105,7 +108,7 @@ const makeFractalDynamicParamsFromRules = (
 
     acc[key as keyof FractalDynamicParams] = makeScalarFromRule(
       value,
-      time
+      time,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any;
 

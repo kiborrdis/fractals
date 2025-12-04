@@ -4,7 +4,10 @@ export function sum(a: number, b: number): number;
 export function sum(a: Vector2, b: Vector2): Vector2;
 export function sum(a: Vector2, b: number): Vector2;
 export function sum(a: number, b: Vector2): Vector2;
-export function sum(a: number | Vector2, b: number | Vector2): number | Vector2 {
+export function sum(
+  a: number | Vector2,
+  b: number | Vector2,
+): number | Vector2 {
   if (typeof a === "number" && typeof b === "number") {
     return a + b;
   } else if (Array.isArray(a) && Array.isArray(b)) {
@@ -22,7 +25,10 @@ export function mul(a: number, b: number): number;
 export function mul(a: Vector2, b: Vector2): Vector2;
 export function mul(a: Vector2, b: number): Vector2;
 export function mul(a: number, b: Vector2): Vector2;
-export function mul(a: number | Vector2, b: number | Vector2): number | Vector2 {
+export function mul(
+  a: number | Vector2,
+  b: number | Vector2,
+): number | Vector2 {
   if (typeof a === "number" && typeof b === "number") {
     return a * b;
   } else if (Array.isArray(a) && Array.isArray(b)) {
@@ -40,7 +46,10 @@ export function divide(a: number, b: number): number;
 export function divide(a: Vector2, b: Vector2): Vector2;
 export function divide(a: Vector2, b: number): Vector2;
 export function divide(a: number, b: Vector2): Vector2;
-export function divide(a: number | Vector2, b: number | Vector2): number | Vector2 {
+export function divide(
+  a: number | Vector2,
+  b: number | Vector2,
+): number | Vector2 {
   if (typeof a === "number" && typeof b === "number") {
     return a / b;
   } else if (Array.isArray(a) && Array.isArray(b)) {

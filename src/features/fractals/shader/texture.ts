@@ -43,7 +43,7 @@ export function loadTexture(gl: WebGLRenderingContext, stops: GradientStop[]) {
     border,
     srcFormat,
     srcType,
-    pixel
+    pixel,
   );
 
   return texture;
@@ -52,21 +52,23 @@ export function loadTexture(gl: WebGLRenderingContext, stops: GradientStop[]) {
 export function loadIterDataTexture(
   gl: WebGLRenderingContext,
   iterData: Record<number, Vector2>,
-  maxIterations: number
+  maxIterations: number,
 ) {
-  const textPixels = new Array(maxIterations).fill(0).map((_, i) => {
-    if (!iterData[i]) {
-      iterData[i] = [0, 0];
-    }
-    const minmax = iterData[i];
-    return [
-      minmax[0] % 255,
-      Math.floor(minmax[0] / 255),
-      minmax[1] % 255,
-      Math.floor(minmax[1] / 255),
-    ];
-  }).flat();
- 
+  const textPixels = new Array(maxIterations)
+    .fill(0)
+    .map((_, i) => {
+      if (!iterData[i]) {
+        iterData[i] = [0, 0];
+      }
+      const minmax = iterData[i];
+      return [
+        minmax[0] % 255,
+        Math.floor(minmax[0] / 255),
+        minmax[1] % 255,
+        Math.floor(minmax[1] / 255),
+      ];
+    })
+    .flat();
 
   const texture = gl.createTexture();
 
@@ -94,7 +96,7 @@ export function loadIterDataTexture(
     border,
     srcFormat,
     srcType,
-    pixel
+    pixel,
   );
 
   return texture;
@@ -103,7 +105,7 @@ export function loadIterDataTexture(
 export function loadFractalTexture(
   gl: WebGLRenderingContext,
   arr: Uint8Array,
-  size: Vector2
+  size: Vector2,
 ) {
   const texture = gl.createTexture();
 
@@ -131,7 +133,7 @@ export function loadFractalTexture(
     border,
     srcFormat,
     srcType,
-    pixel
+    pixel,
   );
 
   return texture;

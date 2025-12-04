@@ -11,7 +11,7 @@ const downHandler = (event: KeyboardEvent) => {
     ctrlPressed = true;
     fireCallbacks();
   }
-}
+};
 
 const upHandler = (event: KeyboardEvent) => {
   if (event.key === "Shift") {
@@ -21,7 +21,7 @@ const upHandler = (event: KeyboardEvent) => {
     ctrlPressed = false;
     fireCallbacks();
   }
-}
+};
 
 window.addEventListener("keydown", downHandler);
 window.addEventListener("keyup", upHandler);
@@ -29,7 +29,7 @@ window.addEventListener("keyup", upHandler);
 const changeCallback: Set<() => void> = new Set();
 const fireCallbacks = () => {
   changeCallback.forEach((cb) => cb());
-}
+};
 
 export const useGlobalKeyMods = () => {
   const [, setV] = useState(false);
@@ -44,5 +44,5 @@ export const useGlobalKeyMods = () => {
   return {
     shift: shiftPressed,
     ctrl: ctrlPressed,
-  }
-}
+  };
+};

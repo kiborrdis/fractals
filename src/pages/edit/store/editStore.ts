@@ -8,7 +8,11 @@ import {
   transformToFractalCoord,
 } from "@/features/fractals";
 import { sum, Vector2 } from "@/shared/libs/vectors";
-import { makeArrayFromRules, NumberBuildRule, RuleType } from "@/shared/libs/numberRule";
+import {
+  makeArrayFromRules,
+  NumberBuildRule,
+  RuleType,
+} from "@/shared/libs/numberRule";
 
 type DeepPartial<T> = T extends object
   ? {
@@ -31,16 +35,16 @@ export type EditStoreData = {
 export type EditStoreActions = {
   dynamicRuleChange: <K extends keyof FractalDynamicParamsBuildRules>(
     name: K,
-    value: FractalDynamicParamsBuildRules[K]
+    value: FractalDynamicParamsBuildRules[K],
   ) => void;
   dynamicRuleChangeByRoute: (
     route: string[],
-    value: FractalDynamicParamsBuildRules[keyof FractalDynamicParamsBuildRules]
+    value: FractalDynamicParamsBuildRules[keyof FractalDynamicParamsBuildRules],
   ) => void;
 
-  customRuleChange:  (
+  customRuleChange: (
     route: string[],
-    value: NumberBuildRule | [NumberBuildRule, NumberBuildRule]
+    value: NumberBuildRule | [NumberBuildRule, NumberBuildRule],
   ) => void;
 
   customVariableCreate: (name: string, type: "number" | "vector2") => void;
@@ -54,7 +58,7 @@ export type EditStoreActions = {
     value: FractalParamsBuildRules[keyof Omit<
       FractalParamsBuildRules,
       "dynamic"
-    >]
+    >],
   ) => void;
   toggleAnimation: () => void;
   changeAnimationSpeed: (speed: string) => void;
@@ -62,7 +66,7 @@ export type EditStoreActions = {
   zoomToArea: (
     startCoord: [number, number],
     size: [number, number],
-    containerSize: [number, number]
+    containerSize: [number, number],
   ) => void;
   resetViewport: () => void;
   magnifyViewport: (factor: number) => void;
@@ -117,7 +121,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
 
           customRuleChange: (
             route: string[],
-            value: NumberBuildRule | [NumberBuildRule, NumberBuildRule]
+            value: NumberBuildRule | [NumberBuildRule, NumberBuildRule],
           ) => {
             set((prev) => {
               const target: FractalCustomRules = prev.fractal.custom;
@@ -147,7 +151,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
 
           dynamicRuleChange: <K extends keyof FractalDynamicParamsBuildRules>(
             name: K,
-            value: FractalDynamicParamsBuildRules[K]
+            value: FractalDynamicParamsBuildRules[K],
           ) => {
             set((prev) => {
               prev.fractal.dynamic[name] = value;
@@ -156,7 +160,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
 
           dynamicRuleChangeByRoute: (
             route: string[],
-            value: FractalDynamicParamsBuildRules[keyof FractalDynamicParamsBuildRules]
+            value: FractalDynamicParamsBuildRules[keyof FractalDynamicParamsBuildRules],
           ) => {
             set((prev) => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -277,24 +281,24 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
 
               const rl: Vector2 = makeArrayFromRules(
                 prev.fractal.dynamic.rlVisibleRange,
-                0
+                0,
               );
               const im: Vector2 = makeArrayFromRules(
                 prev.fractal.dynamic.imVisibleRange,
-                0
+                0,
               );
 
               const fractalStart = transformToFractalCoord(
                 startCoord,
                 containerSize,
                 rl,
-                im
+                im,
               );
               const fractalEnd = transformToFractalCoord(
                 end,
                 containerSize,
                 rl,
-                im
+                im,
               );
 
               prev.fractal.dynamic.rlVisibleRange = [
@@ -340,8 +344,8 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             });
           },
         },
-      })
-    )
+      }),
+    ),
   );
 
   return store;

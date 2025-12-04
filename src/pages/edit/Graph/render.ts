@@ -7,7 +7,7 @@ export function render(
     width: number;
     dataOffset?: number;
     zoomLevel?: number;
-  }
+  },
 ) {
   const { max, data, height, width, dataOffset = 0, zoomLevel = 1 } = options;
 
@@ -36,7 +36,7 @@ export function render(
     const startIndex = Math.max(0, arr.length - effectiveWidth + dataOffset);
     const endIndex = Math.max(
       startIndex,
-      Math.min(arr.length, startIndex + effectiveWidth)
+      Math.min(arr.length, startIndex + effectiveWidth),
     );
     const visibleData = arr.slice(startIndex, endIndex);
 
