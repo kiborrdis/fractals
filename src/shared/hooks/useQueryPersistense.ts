@@ -18,30 +18,46 @@ export const defaultParse = (value: any) => {
   return JSON.parse(jsonString);
 };
 
+export const defaultExtract = (key: string) => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key);
+};
+
+export const defaultSave = (key: string, value: string) => {
+  const params = new URLSearchParams(window.location.search);
+  params.set(key, value);
+  window.history.replaceState({}, "", `?${params.toString()}`);
+};
+
 export const useStateWithQueryPersistence = <T>(
   key: string,
   initialValue: T,
   options?: {
     parse?: (value: string) => T;
     stringify?: (value: T) => string;
+    extract?: (key: string) => string | null | undefined;
+    save?: (key: string, value: string) => void;
   },
 ): [T, React.Dispatch<SetStateAction<T>>] => {
-  const { parse = defaultParse, stringify = defaultStringify } = options || {};
+  const {
+    parse = defaultParse,
+    stringify = defaultStringify,
+    extract = defaultExtract,
+    save = defaultSave,
+  } = options || {};
 
   const [state, setState] = useState<T>(() => {
-    const queryValue = new URLSearchParams(window.location.search).get(key);
+    const queryValue = extract(key);
     return queryValue ? parse(queryValue) : initialValue;
   });
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const params = new URLSearchParams(window.location.search);
-      params.set(key, stringify(state));
-      window.history.replaceState({}, "", `?${params.toString()}`);
+      save(key, stringify(state));
     }, 5000);
 
     return () => clearTimeout(timeoutId);
-  }, [key, state, stringify]);
+  }, [key, state, stringify, save]);
 
   return [state, setState];
 };
@@ -52,15 +68,22 @@ export const useQueryPersistentValue = <T>(
   options?: {
     parse?: (value: string) => T;
     stringify?: (value: T) => string;
+    extract?: (key: string) => string | null | undefined;
+    save?: (key: string, value: string) => void;
   },
 ): [T, (newValue: T) => void] => {
-  const { parse = defaultParse, stringify = defaultStringify } = options || {};
+  const {
+    parse = defaultParse,
+    stringify = defaultStringify,
+    extract = defaultExtract,
+    save = defaultSave,
+  } = options || {};
 
   const valueRef = useRef<T | null>(null);
   const timeoutId = useRef<null | unknown>(null);
 
   if (valueRef.current === null) {
-    const queryValue = new URLSearchParams(window.location.search).get(key);
+    const queryValue = extract(key);
     valueRef.current = queryValue ? parse(queryValue) : initialValue;
   }
 
@@ -90,12 +113,10 @@ export const useQueryPersistentValue = <T>(
             return;
           }
 
-          const params = new URLSearchParams(window.location.search);
-          params.set(key, stringify(valueRef.current));
-          window.history.replaceState({}, "", `?${params.toString()}`);
+          save(key, stringify(valueRef.current));
         }, 5000);
       },
-      [key, stringify],
+      [key, stringify, save],
     ),
   ];
 };

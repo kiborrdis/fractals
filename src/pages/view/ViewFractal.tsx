@@ -8,10 +8,17 @@ import { FullViewport } from "@/shared/ui/FullViewport/FullViewport";
 
 const defaultRules = getDefaultFractalRules();
 
-export function ViewFractal() {
+export function ViewFractal({
+  extractParam,
+}: {
+  extractParam?: (key: string) => string | null | undefined;
+}) {
   const [params] = useStateWithQueryPersistence<FractalParamsBuildRules>(
     "s",
     defaultRules,
+    {
+      extract: extractParam,
+    },
   );
 
   return (

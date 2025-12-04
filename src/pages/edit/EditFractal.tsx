@@ -31,10 +31,20 @@ import { ShapeParams } from "./ShapeParams";
 
 const defaultRules = getDefaultFractalRules();
 
-export function EditFractal() {
+export function EditFractal({
+  onSave,
+  extractParam,
+}: {
+  extractParam?: (key: string) => string | null | undefined;
+  onSave?: (k: string, s: string) => void;
+}) {
   const [value, saveValue] = useQueryPersistentValue<FractalParamsBuildRules>(
     "s",
     defaultRules,
+    {
+      extract: extractParam,
+      save: onSave,
+    },
   );
   const storeRef = useRef<ReturnType<typeof createEditStore>>(null);
 
