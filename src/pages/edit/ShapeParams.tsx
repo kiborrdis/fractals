@@ -1,4 +1,4 @@
-import { Button, Group, Stack, Tabs } from "@mantine/core";
+import { Button, Group, Stack, Tabs, Tooltip } from "@mantine/core";
 import React, { ReactNode } from "react";
 import { StaticRuleEdit } from "./StaticRuleEdit";
 import { DynamicRuleEdit } from "./DynamicRuleEdit";
@@ -6,6 +6,7 @@ import { useActions } from "./store/data/useActions";
 import { useStaticRule } from "./store/data/useStaticRule";
 import { useSelectAreaActive } from "./store/data/useSelectAreaActive";
 import { CustomVariables } from "./CustomVariables";
+import { TbAdjustments, TbCircle, TbFlipHorizontal, TbMathFunction, TbPalette, TbRepeat, TbZoomScan } from "react-icons/tb";
 
 const SettingsSection = ({ children }: { children: ReactNode }) => {
   return (
@@ -29,27 +30,37 @@ export const ShapeParams = React.memo(() => {
       </SettingsSection>
       <Tabs defaultValue='c'>
         <Tabs.List>
-          <Tabs.Tab size='xs' value='c'>
-            C
-          </Tabs.Tab>
-          <Tabs.Tab size='xs' value='r'>
-            R
-          </Tabs.Tab>
-          <Tabs.Tab size='xs' value='Iterations'>
-            Iterations
-          </Tabs.Tab>
-          <Tabs.Tab size='xs' value='Mirroring'>
-            Mirroring
-          </Tabs.Tab>
-          <Tabs.Tab size='xs' value='Viewport'>
-            Viewport
-          </Tabs.Tab>
-          <Tabs.Tab size='xs' value='Coloring'>
-            Coloring
-          </Tabs.Tab>
-          <Tabs.Tab size='xs' value='Custom'>
-            Custom
-          </Tabs.Tab>
+          <Tooltip label='Complex constant (c)' position='right'>
+            <Tabs.Tab value='c' leftSection={<TbMathFunction size={16} />} />
+          </Tooltip>
+          <Tooltip label='Escape radius' position='right'>
+            <Tabs.Tab value='r' leftSection={<TbCircle size={16} />} />
+          </Tooltip>
+          <Tooltip label='Max iterations' position='bottom' withArrow>
+            <Tabs.Tab value='Iterations'>
+              <TbRepeat size={18} />
+            </Tabs.Tab>
+          </Tooltip>
+          <Tooltip label='Mirroring & symmetry' position='bottom' withArrow>
+            <Tabs.Tab value='Mirroring'>
+              <TbFlipHorizontal size={18} />
+            </Tabs.Tab>
+          </Tooltip>
+          <Tooltip label='Viewport & zoom' position='bottom' withArrow>
+            <Tabs.Tab value='Viewport'>
+              <TbZoomScan size={18} />
+            </Tabs.Tab>
+          </Tooltip>
+          <Tooltip label='Coloring & gradient' position='bottom' withArrow>
+            <Tabs.Tab value='Coloring'>
+              <TbPalette size={18} />
+            </Tabs.Tab>
+          </Tooltip>
+          <Tooltip label='Custom variables' position='bottom' withArrow>
+            <Tabs.Tab value='Custom'>
+              <TbAdjustments size={18} />
+            </Tabs.Tab>
+          </Tooltip>
         </Tabs.List>
         <Tabs.Panel value='c'>
           <SettingsSection>

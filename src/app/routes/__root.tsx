@@ -1,17 +1,36 @@
 import * as React from "react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, createTheme } from "@mantine/core";
 
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
+const theme = createTheme({
+  primaryColor: 'green',
+  defaultRadius: 'sm',
+  colors: {
+    dark: [
+      '#C1C2C5', '#A6A7AB', '#909296', '#5c5f66',
+      '#373A40', '#2C2E33', '#25262b', '#1A1B1E',
+      '#141517', '#101113',
+    ],
+  },
+  components: {
+    Button: { defaultProps: { size: 'xs' } },
+    TextInput: { defaultProps: { size: 'sm' } },
+    Paper: { defaultProps: { radius: 'md', p: 'md' } },
+  },
+});
+
+console.log('theme colors', theme.colors);
+
 function RootComponent() {
   return (
     <>
       <React.StrictMode>
-        <MantineProvider defaultColorScheme='dark'>
+        <MantineProvider theme={theme} defaultColorScheme='dark'>
           <Outlet />
         </MantineProvider>
       </React.StrictMode>

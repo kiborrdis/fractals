@@ -36,6 +36,7 @@ export const FormulaInput = ({
 
   return (
     <TextInput
+    size="sm"
       onBlur={() => {
         if (error) {
           setFormula(value);

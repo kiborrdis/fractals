@@ -5,6 +5,7 @@ import {
   AppShellAside,
   AppShellMain,
   Box,
+  Divider,
   Group,
   Paper,
   SegmentedControl,
@@ -28,6 +29,8 @@ import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
 import { Vector2 } from "@/shared/libs/vectors";
 import { ShapeParams } from "./ShapeParams";
+import { FormulaInput } from "./FormulaInput";
+import { FiDownload, FiShare2 } from "react-icons/fi";
 
 const defaultRules = getDefaultFractalRules();
 
@@ -83,29 +86,22 @@ export function EditFractalLoaded() {
         }}
       >
         <AppShellAside style={{ overflowY: "auto" }}>
-          <Box style={{ position: "sticky", top: 0, zIndex: 5 }} bg='dark.7'>
-            <Paper withBorder p='md'>
-              <Stack gap='sm'>
-                <Text size='sm'>Animation</Text>
-                <Group gap='md'>
-                  <ActionIcon
-                    size='lg'
-                    onClick={toggleAnimation}
-                    color={play ? "green" : "red"}
-                  >
-                    {play ? <FaPlay /> : <FaPause />}
-                  </ActionIcon>
-
-                  <SegmentedControl
-                    value={timeMultiplier}
-                    data={["0.5x", "1.0x", "2.0x", "5.0x", "10.0x"]}
-                    size='sm'
-                    onChange={changeAnimationSpeed}
-                  />
-                </Group>
-              </Stack>
-            </Paper>
-          </Box>
+          <Group bg='dark.8' p='sm' justify="space-between" style={{ position: "sticky" }}>
+            <Group gap='sm' >
+              <ActionIcon variant='subtle' onClick={toggleAnimation}>
+                {play ? <FaPause /> : <FaPlay />}
+              </ActionIcon>
+              <SegmentedControl size='xs' data={["0.5x", "1x", "2x", "10x"]} />
+            </Group>
+            <Group gap='sm' >
+              <ActionIcon variant='subtle'>
+                <FiShare2 />
+              </ActionIcon>
+              <ActionIcon variant='subtle'>
+                <FiDownload />
+              </ActionIcon>
+            </Group>
+          </Group>
           <ShapeParams />
         </AppShellAside>
         <AppShellMain h='100vh'>
