@@ -12,10 +12,10 @@ export const Route = createFileRoute("/edit")({
 });
 
 function EditPage() {
+  const navigate = useNavigate();
+  
   const search = Route.useSearch();
   const ref = useRef(search);
-  const navigate = useNavigate();
-
   ref.current = search;
 
   const getParam = useCallback((key: string): string | undefined => {

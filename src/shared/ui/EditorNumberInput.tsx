@@ -59,6 +59,7 @@ export const EditorNumberInput = ({
               Math.sign(e.deltaY) * (step * (shift ? 10 : 1));
 
             if (newValue >= min && newValue <= max) {
+              setLocalValue(String(newValue));
               onChange(newValue);
             }
             e.preventDefault();

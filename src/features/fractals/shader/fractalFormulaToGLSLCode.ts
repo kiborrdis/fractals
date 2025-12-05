@@ -181,4 +181,10 @@ const fnNameToFnMap: Record<string, string> = {
   rotate: "complexRotate",
   mirror: "complexMirror",
   conjugate: "complexConjugate",
+  cos: "complexCos",
+  cosh: "complexCosh",
+  acos: "complexAcos",
+  asin: "complexAsin",
+  exp: "complexExp",
+  tan: "complexTan",
 };

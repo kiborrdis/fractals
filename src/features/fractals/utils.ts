@@ -68,7 +68,6 @@ export const transformToFractalCoord = (
   containerIMRange: Vector2,
 ): Vector2 => {
   const transformedPoint: Vector2 = [...pointInContainer];
-  transformedPoint[1] = containerSize[1] - transformedPoint[1];
 
   const centerCoord = sum(mul(transformedPoint, 2), mul(containerSize, -1));
   const coord = divide(centerCoord, containerSize[1]);

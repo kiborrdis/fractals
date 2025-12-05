@@ -36,6 +36,30 @@ export const funcNameToSignature: Record<
     params: ["vector2"],
     return: "vector2",
   },
+  exp: {
+    params: ["vector2"],
+    return: "vector2",
+  },
+  cos: {
+    params: ["vector2"],
+    return: "vector2",
+  },
+  cosh: {
+    params: ["vector2"],
+    return: "vector2",
+  },
+  acos: {
+    params: ["vector2"],
+    return: "vector2",
+  },
+  asin: {
+    params: ["vector2"],
+    return: "vector2",
+  },
+  tan: {
+    params: ["vector2"],
+    return: "vector2",
+  },
   rotate: {
     params: ["vector2", "number"],
     return: "vector2",

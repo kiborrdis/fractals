@@ -177,46 +177,6 @@ vec2 cmpl(float x, float y) {
   return vec2(x, y);
 }
 
-vec2 complexConjugate(vec2 i) {
-  return vec2(i.x, -i.y);
-}
-
-vec2 complexMirror(vec2 i) {
-  return vec2(i.y, i.x);
-}
-
-vec2 complexRotate(vec2 i, float ang) {
-  return vec2(cos(ang / PI) * i.x, sin(ang / PI) * i.y);
-}
-
-vec2 complexSinh(vec2 i) {
-  return vec2(sinh(i.x) * cos(i.y), cosh(i.x) * sin(i.y));
-}
-
-vec2 complexSin(vec2 i) {
-  return vec2(sin(i.x) * cosh(i.y), cos(i.x) * sinh(i.y));
-}
-
-vec2 complexMul(vec2 a, vec2 b) {
-  return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
-}
-
-vec2 complexAdd(vec2 a, vec2 b) {
-  return vec2(a.x + b.x, a.y + b.y);
-}
-
-vec2 complexSub(vec2 a, vec2 b) {
-  return vec2(a.x - b.x, a.y - b.y);
-}
-
-vec2 complexDiv(vec2 c1, vec2 c2) {
-  float a = c1.x;
-  float b = c1.y;
-  float c = c2.x;
-  float d = c2.y;
-  return vec2((a * c + b * d) / (c * c + d * d), (b * c - a * d) / (c * c + d * d));
-}
-
 float atan2(float y, float x) {
   float angle = 0.0f;
 
@@ -241,26 +201,85 @@ float vectorAngle(vec2 v) {
   return angle;
 }
 
-vec2 complexPow(vec2 a, float p) {
-
-  float len = pow(length(a), p);
-  // vec2 norm = a / length(a);
-  // float angle = acos(norm.x);
-
-  // if (norm.y < 0.0) {
-  //   angle = 2.0 * PI - angle;
-  // }
-
-  float angle = vectorAngle(a);
-
-  return vec2(cos(angle * p) * len, sin(angle * p) * len);
+vec2 complexExp(vec2 i) {
+  float expVal = exp(i.x);
+  return vec2(expVal * cos(i.y), expVal * sin(i.y));
 }
 
-  // float len = pow(length(a), p);
-  // float angle = vectorAngle(a);
+vec2 complexConjugate(vec2 i) {
+  return vec2(i.x, -i.y);
+}
+
+vec2 complexMirror(vec2 i) {
+  return vec2(i.y, i.x);
+}
+
+vec2 complexRotate(vec2 i, float ang) {
+  return rotate(ang, i);
+}
+
+vec2 complexMul(vec2 a, vec2 b) {
+  return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+}
+
+vec2 complexAdd(vec2 a, vec2 b) {
+  return vec2(a.x + b.x, a.y + b.y);
+}
+
+vec2 complexSub(vec2 a, vec2 b) {
+  return vec2(a.x - b.x, a.y - b.y);
+}
+
+vec2 complexDiv(vec2 c1, vec2 c2) {
+  float a = c1.x;
+  float b = c1.y;
+  float c = c2.x;
+  float d = c2.y;
+  return vec2((a * c + b * d) / (c * c + d * d), (b * c - a * d) / (c * c + d * d));
+}
 
 vec2 complexPLog(vec2 a) {
-  return vec2(log(length(a)), atan(a.y, a.x));
+  return vec2(log(length(a)), vectorAngle(a));
+}
+
+vec2 complexPow(vec2 a, float p) {
+  return complexExp(p * complexPLog(a));
+}
+
+vec2 complexSin(vec2 i) {
+  return vec2(sin(i.x) * cosh(i.y), cos(i.x) * sinh(i.y));
+}
+
+vec2 complexSinh(vec2 i) {
+  return vec2(sinh(i.x) * cos(i.y), cosh(i.x) * sin(i.y));
+}
+
+vec2 complexCos(vec2 i) {
+  return vec2(cos(i.x) * cosh(i.y), sin(i.x) * sinh(i.y));
+}
+
+vec2 complexCosh(vec2 i) {
+  return vec2(cosh(i.x) * cos(i.y), sinh(i.x) * sin(i.y));
+}
+
+vec2 complexAsin(vec2 v) {
+  vec2 i = vec2(0.0f, 1.0f);
+  vec2 iz = complexMul(i, v);
+
+  return complexMul(-1.0f * i, complexPLog(complexAdd(iz, complexPow((vec2(1.0f, 0.0f) - complexPow(v, 2.0f)), 0.5f))));
+}
+
+vec2 complexAcos(vec2 v) {
+  vec2 i = vec2(0.0f, 1.0f);
+  vec2 iz = complexMul(i, v);
+  vec2 sqrtTerm = complexPow(vec2(1.0f, 0.0f) - complexPow(v, 2.0f), 0.5f);
+  vec2 logTerm = complexPLog(complexAdd(iz, sqrtTerm));
+
+  return vec2(PI / 2.0f, 0.0f) + complexMul(i, logTerm);
+}
+
+vec2 complexTan(vec2 i) {
+  return complexDiv(complexSin(i), complexCos(i));
 }
 
 float distToLine(vec3 line, vec2 point) {
@@ -467,8 +486,9 @@ void main() {
         if (j > superSampling) {
           break;
         }
-
+  
         vec2 samplePoint = coord + vec2((i - sidePoints) * step, (j - sidePoints) * step);
+        // iterationSmooth = min(generateFractalIntensity(samplePoint), iterationSmooth);
         iterationSmooth += generateFractalIntensity(samplePoint);
       }
     }
