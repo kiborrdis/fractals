@@ -13,9 +13,12 @@ import {
   FractalParamsBuildRules,
   getDefaultFractalRules,
 } from "@/features/fractals";
-import { useQueryPersistentValue } from "@/shared/hooks/useQueryPersistense";
+import {
+  defaultStringify,
+  useQueryPersistentValue,
+} from "@/shared/hooks/useQueryPersistense";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { EditStoreProvider } from "./store/provider";
+import { EditStoreProvider, useEditStore } from "./store/provider";
 import { createEditStore } from "./store/editStore";
 import { useActions } from "./store/data/useActions";
 import { useAnimationData } from "./store/data/useAnimationData";
@@ -67,6 +70,27 @@ export function EditFractal({
   );
 }
 
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).catch((err) => {
+    console.error("Could not copy text: ", err);
+  });
+};
+
+export const ShareButton = () => {
+  const fractal = useEditStore((state) => state.fractal);
+
+  return (
+    <ActionIcon
+      variant='subtle'
+      onClick={() => {
+        copyToClipboard(window.location.origin + "/view?s=" + defaultStringify(fractal));
+      }}
+    >
+      <FiShare2 />
+    </ActionIcon>
+  );
+};
+
 export function EditFractalLoaded() {
   const { play, timeMultiplier } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed } = useActions();
@@ -81,20 +105,25 @@ export function EditFractalLoaded() {
         }}
       >
         <AppShellAside style={{ overflowY: "auto" }}>
-          <Group bg='dark.8' p='sm' justify="space-between" style={{ position: "sticky" }}>
-            <Group gap='sm' >
+          <Group
+            bg='dark.8'
+            p='sm'
+            justify='space-between'
+            style={{ position: "sticky" }}
+          >
+            <Group gap='sm'>
               <ActionIcon variant='subtle' onClick={toggleAnimation}>
                 {play ? <FaPause /> : <FaPlay />}
               </ActionIcon>
-              <SegmentedControl size='xs' value={timeMultiplier} data={["0.5x", "1x", "2x", "10x"]} onChange={changeAnimationSpeed} />
+              <SegmentedControl
+                size='xs'
+                value={timeMultiplier}
+                data={["0.5x", "1x", "2x", "10x"]}
+                onChange={changeAnimationSpeed}
+              />
             </Group>
-            <Group gap='sm' >
-              <ActionIcon variant='subtle'>
-                <FiShare2 />
-              </ActionIcon>
-              <ActionIcon variant='subtle'>
-                <FiDownload />
-              </ActionIcon>
+            <Group gap='sm'>
+              <ShareButton />
             </Group>
           </Group>
           <ShapeParams />
@@ -251,16 +280,3 @@ const calcStyleForSquare = (startCoord: Vector2, dimensions: Vector2) => {
     height: dims[1],
   };
 };
-
-// const findAllRangeRules = (
-//   rules: FractalParamsBuildRules
-// ): RangeNumberRule[] => {
-//   return Object.values(rules.dynamic).reduce((acc, value) => {
-//     if (Array.isArray(value)) {
-//       acc.push(...value.filter((v) => v.t === RuleType.RangeNumber));
-//     } else if (value.t === RuleType.RangeNumber) {
-//       acc.push(value);
-//     }
-//     return acc;
-//   }, [] as RangeNumberRule[]);
-// };

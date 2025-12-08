@@ -54,7 +54,7 @@ export class FractalImage {
   getRenderData(time: number) {
     return [
       this.shader,
-      makeFractalParamsFromRules(this.params, time),
+      makeFractalParamsFromRules(this.params, time + (this.params.initialTime ?? 0)),
     ] as const;
   }
 }

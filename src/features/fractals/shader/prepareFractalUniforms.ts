@@ -43,6 +43,7 @@ export const prepareFractalUniforms = (
     mirroringType,
     invert,
     bandSmoothing,
+    initialTime = 0,
     dynamic: {
       linearMirroringFactor,
       time,
@@ -70,7 +71,7 @@ export const prepareFractalUniforms = (
   context.uniform2f(radialSplitAngleBaseVector_u2f, ...[1, 0]);
 
   context.uniform1f(maxIterations_u1f, maxIterations);
-  context.uniform1f(time_u1f, time);
+  context.uniform1f(time_u1f, time + initialTime);
 
   context.uniform1f(fractalR_u1f, r);
   context.uniform2f(fractalC_u2f, ...c);

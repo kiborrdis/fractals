@@ -13,6 +13,7 @@ import {
   NumberBuildRule,
   RuleType,
 } from "@/shared/libs/numberRule";
+import { fractalPresets } from "./presets";
 
 type DeepPartial<T> = T extends object
   ? {
@@ -33,6 +34,7 @@ export type EditStoreData = {
 };
 
 export type EditStoreActions = {
+  presetPicked: (presetId: string) => void;
   dynamicRuleChange: <K extends keyof FractalDynamicParamsBuildRules>(
     name: K,
     value: FractalDynamicParamsBuildRules[K],
@@ -115,7 +117,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
 
           initialLoopStateChange: (time: number) => {
             set((prev) => {
-              prev.initialLoopState = { time };
+              prev.initialLoopState = { time: time - (prev.fractal.initialTime ?? 0) };
             });
           },
 
@@ -328,6 +330,20 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
               ];
             });
           },
+          presetPicked: (presetId: string) => {
+            set((prev) => {
+              console.log('Picking preset', presetId);
+              const preset = fractalPresets[presetId];
+              if (preset) {
+                prev.fractal = preset;
+                prev.fractalOverrides = {};
+                prev.play = false;
+                prev.currentTime = 0;
+                prev.initialLoopState = { time: 0 };
+              }
+            });
+          },
+
           magnifyViewport: (factor: number) => {
             set((prev) => {
               prev.fractal.dynamic.rlVisibleRange.forEach((e) => {

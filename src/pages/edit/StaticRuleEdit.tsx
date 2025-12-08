@@ -14,6 +14,7 @@ import { randomRange } from "@/features/fractals/utils";
 import { GradientInput } from "./GradientInput";
 import { useDynamicRule } from "./store/data/useDynamicRule";
 import { extractMaxValueFromRule } from "@/shared/libs/numberRule";
+import { InitialTimeEdit } from "./InitialTimeEdit";
 
 type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
   {
@@ -45,10 +46,19 @@ const ruleConfigs: RuleRenderers = {
         props.onChange(
           props.name,
           newValue as FractalParamsBuildRules[typeof props.name],
-        )
+        );
       }}
     />
   ),
+
+  initialTime: (props) => {
+    return (
+      <InitialTimeEdit
+        value={props.value}
+        onChange={(value) => props.onChange(props.name, value)}
+      />
+    );
+  },
 
   bandSmoothing: (props) => (
     <BandSmoothingOptions
@@ -227,22 +237,14 @@ export const StaticRuleEdit = ({
   name: keyof Omit<FractalParamsBuildRules, "dynamic" | "custom">;
 }) => {
   const [rule, setRule] = useStaticRule(name);
-  const renderFunc = ruleConfigs[name];
+  const Component = ruleConfigs[name];
 
-  if (!renderFunc) {
+  if (!Component) {
     return null;
   }
 
-  return renderFunc({
-    // Type assertion needed due to the generic nature of the rule system
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    name,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    value: rule,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    onChange: setRule,
-  });
+  // Could probably do it little more cleanly, but not today
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  return <Component name={name} value={rule} onChange={setRule} />;
 };

@@ -9,6 +9,7 @@ export type FractalParams = {
   formula: string;
   initialZFormula?: string;
   initialCFormula?: string;
+  initialTime?: number;
 
   gradient: GradientStop[];
 

@@ -315,15 +315,20 @@ float generateFractalIntensity(vec2 point) {
   // Square mirroring
   if (u_mirror_type == 1) {
     sep = sep + u_linear_split_per_dist_change * normLenFromCenter;
-    preparedCoord = mod(centeredCoord - sep / 2.0f, sep) - sep / 2.0f;
+
+    float resolutionSep = sep*u_resolution2.y;
+    preparedCoord = mod(centeredCoord - resolutionSep / 2.0f, resolutionSep) - resolutionSep / 2.0f;
 
     coord = abs(preparedCoord / u_resolution2.y);
   }
 
   // Hexagonal mirroring
   if (u_mirror_type == 2) {
-    float hexHeight = u_hex_mirroring_factor;
-    hexHeight = hexHeight + u_hex_mirroring_dist_change * normLenFromCenter;
+    float hexFactor = u_hex_mirroring_factor;
+    hexFactor = hexFactor + u_hex_mirroring_dist_change * normLenFromCenter;
+
+    float hexHeight = hexFactor * u_resolution2.y;
+
     preparedCoord = hexMirror(preparedCoord, hexHeight);
 
     coord = preparedCoord / u_resolution2.y;

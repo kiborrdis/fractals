@@ -24,44 +24,44 @@ type RuleRenderers = {
 const ruleConfigs: RuleRenderers = {
   hexMirroringFactor: (props) => (
     <NumberRuleEdit
-      label='Hex Mirroring (px)'
+      label='Hex Mirroring'
       min={0}
-      max={2000}
-      step={1}
-      minRange={10}
+      max={4}
+      step={0.01}
+      minRange={0.01}
       {...props}
     />
   ),
 
   hexMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Distance based change (px)'
-      min={-2000}
-      max={2000}
-      step={1}
-      minRange={10}
+      label='Distance based change'
+      min={-4}
+      max={4}
+      step={0.01}
+      minRange={0.01}
       {...props}
     />
   ),
 
   linearMirroringFactor: (props) => (
     <NumberRuleEdit
-      label='Linear mirroring (px)'
-      min={50}
-      max={2000}
-      step={1}
-      minRange={10}
+      label='Linear mirroring'
+      min={0}
+      max={4}
+      step={0.01}
+      minRange={0.01}
       {...props}
     />
   ),
 
   linearMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Distance based change (px)'
-      min={-2000}
-      max={2000}
-      step={1}
-      minRange={1}
+      label='Distance based change'
+      min={-4}
+      max={4}
+      step={0.01}
+      minRange={0.01}
       {...props}
     />
   ),

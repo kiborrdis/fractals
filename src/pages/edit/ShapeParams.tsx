@@ -16,6 +16,8 @@ import {
   TbZoomScan,
 } from "react-icons/tb";
 import { ModeEdit } from "./ModeEdit";
+import { PresetModal } from "./PresetModal";
+import { useState } from "react";
 
 const SettingsSection = ({ children }: { children: ReactNode }) => {
   return (
@@ -63,11 +65,23 @@ export const ShapeParams = React.memo(() => {
   const [mirroringType] = useStaticRule("mirroringType");
   const selectAreaActive = useSelectAreaActive();
   const [activeTab, setActiveTab] = React.useState<string | null>("c");
+  const [presetModalOpen, setPresetModalOpen] = useState(false);
 
   return (
     <Stack gap='sm'>
       <SettingsSection>
-        <StaticRuleEdit name='formula' />
+        <Group align="flex-start" gap="sm">
+          <div style={{ flex: 1 }}>
+            <StaticRuleEdit name='formula' />
+          </div>
+          <Button
+            size="sm"
+            variant="light"
+            onClick={() => setPresetModalOpen(true)}
+          >
+            Presets
+          </Button>
+        </Group>
 
         <ModeEdit />
       </SettingsSection>
@@ -110,8 +124,8 @@ export const ShapeParams = React.memo(() => {
             activeTab={activeTab}
           />
           <TabWithIcon
-            value='Custom'
-            label='Custom variables'
+            value='Rest'
+            label='Other settings'
             icon={TbAdjustments}
             activeTab={activeTab}
           />
@@ -207,12 +221,18 @@ export const ShapeParams = React.memo(() => {
             <StaticRuleEdit name='bandSmoothing' />
           </SettingsSection>
         </Tabs.Panel>
-        <Tabs.Panel value='Custom'>
+        <Tabs.Panel value='Rest'>
           <SettingsSection>
+            <StaticRuleEdit name='initialTime' />
             <CustomVariables />
           </SettingsSection>
         </Tabs.Panel>
       </Tabs>
+      
+      <PresetModal
+        opened={presetModalOpen}
+        onClose={() => setPresetModalOpen(false)}
+      />
     </Stack>
   );
 });

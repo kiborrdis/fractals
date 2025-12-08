@@ -92,8 +92,9 @@ export const DisplayFractal = ({
   useEffect(() => {
     if (fractalRef.current) {
       fractalRef.current.loop.setCurrentTime(initialLoopState.time);
+      onRender?.(initialLoopState.time);
     }
-  }, [initialLoopState]);
+  }, [initialLoopState, onRender]);
 
   return (
     <DisplayCanvas

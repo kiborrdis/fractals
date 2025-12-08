@@ -6,7 +6,7 @@ import { useActions } from "../store/data/useActions";
 import { TimelineGraph } from "./TimelineGraph";
 import { StepTransitionEdit } from "./StepTransitionEdit";
 import { lowestCommonMultiple } from "@/shared/libs/numbers";
-import { useCurrentTime } from "../store/data/useCurrentTime";
+import { useCurrentTime, useInitialTime } from "../store/data/useCurrentTime";
 import { TimelineBaseRuleEdit } from "./TimelineBaseRuleEdit";
 import { TimelineRulesList } from "./TimelineRulesList";
 import { TimelineControls } from "./TimelineControls";
@@ -47,6 +47,7 @@ export const TimelineTool = () => {
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
 
   const time = useCurrentTime();
+  const initialTime = useInitialTime();
 
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   const [newStep, setNewStep] = useState<boolean>(false);
@@ -196,7 +197,7 @@ export const TimelineTool = () => {
           />
 
           <TimelineGraph
-            displayTime={time % fullPeriod}
+            displayTime={(time + initialTime) % fullPeriod}
             onStepCreateEnd={() => setNewStep(false)}
             newStepModeActive={newStep}
             visibleTo={visibleTo}

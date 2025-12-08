@@ -1,0 +1,47 @@
+import { Stack, Text, Group, Button } from "@mantine/core";
+import { useCurrentTime } from "./store/data/useCurrentTime";
+import { useActions } from "./store/data/useActions";
+
+export const InitialTimeEdit = ({
+  value: initialTime,
+  onChange: setInitialTime,
+}: {
+  value: number | undefined;
+  onChange: (value: number) => void;
+}) => {
+  const currentTime = useCurrentTime();
+  const { initialLoopStateChange } = useActions();
+
+  return (
+    <Stack>
+      <Text fw={500}>Initial Animation Time</Text>
+      <Group justify="space-between">
+        <Text>Now: {formatMsToHumanReadable(initialTime ?? 0)}</Text>
+        <Button
+          onClick={() => {
+            initialLoopStateChange(0);
+            setInitialTime(currentTime);
+          }}
+        >
+          Set to current time
+        </Button>
+      </Group>
+    </Stack>
+  );
+};
+
+const formatMsToHumanReadable = (ms: number) => {
+  // millisecond part
+  const milliseconds = Math.floor(ms % 1000);
+
+  const seconds = Math.floor((ms / 1000) % 60);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0) parts.push(`${minutes}m`);
+  parts.push(`${seconds}s.${milliseconds}ms`);
+
+  return parts.join(" ");
+}

@@ -188,4 +188,5 @@ const fnNameToFnMap: Record<string, string> = {
   asin: "complexAsin",
   exp: "complexExp",
   tan: "complexTan",
+  abs: "abs",
 };
