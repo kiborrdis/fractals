@@ -179,9 +179,10 @@ export const TimelineTool = () => {
             onRuleActivityChange={(id, newVal) =>
               setActiveRangesIds((old) => ({ ...old, [id]: newVal }))
             }
-            onRuleEditChange={(id) =>
-              setEditingRuleId((old) => (old === id ? null : id))
-            }
+            onRuleEditChange={(id) => {
+              setEditingRuleId((old) => (old === id ? null : id));
+              setEditingStepIndex(null);
+            }}
           />
         </Box>
 
