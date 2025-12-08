@@ -45,6 +45,7 @@ const ruleConfigs: RuleRenderers = {
       }
     />
   ),
+
   bandSmoothing: (props) => (
     <BandSmoothingOptions
       value={props.value}
@@ -93,6 +94,7 @@ const ruleConfigs: RuleRenderers = {
         { value: "off", label: "Off" },
         { value: "square", label: "Square" },
         { value: "hex", label: "Hex" },
+        { value: "radial", label: "Radial" },
       ]}
       size='sm'
       onChange={(value) =>

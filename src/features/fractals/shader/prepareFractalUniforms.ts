@@ -6,6 +6,7 @@ const mirroringTypeToInt = {
   off: 0,
   square: 1,
   hex: 2,
+  radial: 3,
 };
 
 export const prepareFractalUniforms = (

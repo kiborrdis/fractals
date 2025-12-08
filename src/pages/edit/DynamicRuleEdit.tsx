@@ -24,7 +24,7 @@ type RuleRenderers = {
 const ruleConfigs: RuleRenderers = {
   hexMirroringFactor: (props) => (
     <NumberRuleEdit
-      label='Hex Mirroring Factor'
+      label='Hex Mirroring (px)'
       min={0}
       max={2000}
       step={1}
@@ -35,7 +35,7 @@ const ruleConfigs: RuleRenderers = {
 
   hexMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Hex Mirroring Per Dist Change'
+      label='Distance based change (px)'
       min={-2000}
       max={2000}
       step={1}
@@ -46,7 +46,7 @@ const ruleConfigs: RuleRenderers = {
 
   linearMirroringFactor: (props) => (
     <NumberRuleEdit
-      label='Linear Mirroring Factor'
+      label='Linear mirroring (px)'
       min={50}
       max={2000}
       step={1}
@@ -57,7 +57,7 @@ const ruleConfigs: RuleRenderers = {
 
   linearMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Linear Mirroring Per Dist Change'
+      label='Distance based change (px)'
       min={-2000}
       max={2000}
       step={1}
@@ -68,7 +68,7 @@ const ruleConfigs: RuleRenderers = {
 
   radialMirroringAngle: (props) => (
     <NumberRuleEdit
-      label='Radial Mirroring Angle'
+      label='Radial mirroring angle (deg)'
       min={0}
       max={360}
       step={1}
@@ -79,7 +79,7 @@ const ruleConfigs: RuleRenderers = {
 
   radialMirroringPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Radial Mirroring Per Dist Change'
+      label='Distance based change (deg)'
       min={-180}
       max={180}
       step={0.1}
@@ -112,7 +112,7 @@ const ruleConfigs: RuleRenderers = {
 
   r: (props) => (
     <NumberRuleEdit
-      label='R'
+      label='Escape Radius'
       min={0.5}
       max={50}
       step={0.01}
@@ -123,7 +123,7 @@ const ruleConfigs: RuleRenderers = {
 
   rlVisibleRange: (props) => (
     <Vector2RuleEdit
-      sublabels={["From", "To"]}
+      sublabels={["Visible x from", "To"]}
       min={-200}
       max={200}
       step={0.01}
@@ -134,7 +134,7 @@ const ruleConfigs: RuleRenderers = {
 
   imVisibleRange: (props) => (
     <Vector2RuleEdit
-      sublabels={["From", "To"]}
+      sublabels={["Visible y from", "To"]}
       min={-200}
       max={200}
       step={0.01}
@@ -145,7 +145,7 @@ const ruleConfigs: RuleRenderers = {
 
   maxIterations: (props) => (
     <NumberRuleEdit
-      label='Max Iterations'
+      label='Maximum iterations'
       min={1}
       max={1000}
       step={1}
@@ -156,7 +156,7 @@ const ruleConfigs: RuleRenderers = {
 
   cxPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Cx Per Dist Change'
+      label='C(Real) Distance based change'
       min={-3}
       max={3}
       step={0.001}
@@ -167,7 +167,7 @@ const ruleConfigs: RuleRenderers = {
 
   cyPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Cy Per Dist Change'
+      label='C(Imaginary) Distance based change'
       min={-3}
       max={3}
       step={0.001}
@@ -178,7 +178,7 @@ const ruleConfigs: RuleRenderers = {
 
   rPerDistChange: (props) => (
     <NumberRuleEdit
-      label='R Per Dist Change'
+      label='Distance based change'
       min={-50}
       max={50}
       step={0.1}
@@ -189,7 +189,7 @@ const ruleConfigs: RuleRenderers = {
 
   iterationsPerDistChange: (props) => (
     <NumberRuleEdit
-      label='Iterations Per Dist Change'
+      label='Distance based change'
       min={-100}
       max={500}
       step={1}

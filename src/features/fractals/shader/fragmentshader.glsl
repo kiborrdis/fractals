@@ -28,7 +28,7 @@ uniform float u_cy_split_per_dist_change;
 uniform float u_r_split_per_dist_change;
 uniform float u_iterations_split_per_dist_change;
 
-uniform int u_mirror_type; // 0 = off, 1 = square, 2 = hex
+uniform int u_mirror_type; // 0 = off, 1 = square, 2 = hex, 3 = radial
 uniform bool u_invert;
 
 uniform float u_hex_mirroring_factor;
@@ -308,7 +308,7 @@ float generateFractalIntensity(vec2 point) {
   vec2 preparedCoord = centeredCoord;
   vec2 coord = preparedCoord;
 
-  if (u_mirror_type == 0) {
+  if (u_mirror_type == 0 || u_mirror_type == 3) {
     coord = preparedCoord / u_resolution2.y;
   }
 
@@ -331,7 +331,7 @@ float generateFractalIntensity(vec2 point) {
 
   // Perform radial split based on the angle
   vec2 normailizedCentrCoord = coord / length(coord);
-  float angle = atan(normailizedCentrCoord.y, normailizedCentrCoord.x) * (180.0f / PI);
+  float angle = vectorAngle(normailizedCentrCoord) * (180.0f / PI);
   float sepAng = u_radial_split;
 
   // Increase radial split based on the distance from the center

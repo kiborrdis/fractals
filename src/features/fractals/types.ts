@@ -9,7 +9,7 @@ export type FractalParams = {
   formula: string;
   gradient: GradientStop[];
 
-  mirroringType: "off" | "hex" | "square";
+  mirroringType: "off" | "hex" | "square" | "radial";
 
   /**
    * @description [2, Infinity] -- override auto-calculated smoothing power(in general, should be max power of z in formula).

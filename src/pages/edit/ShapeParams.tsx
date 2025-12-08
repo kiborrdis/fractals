@@ -42,17 +42,17 @@ const TabWithIcon = ({
       px='sm'
       py='xs'
       style={{
-        textAlign: 'center'
+        textAlign: "center",
       }}
     >
       <ThemeIcon
-          p={0}
-          size='xs'
-          color={activeTab !== value ? "gray" : undefined}
-          variant='transparent'
-        >
-          <Icon size={14} />
-        </ThemeIcon>
+        p={0}
+        size='xs'
+        color={activeTab !== value ? "gray" : undefined}
+        variant='transparent'
+      >
+        <Icon size={14} />
+      </ThemeIcon>
     </Tabs.Tab>
   </Tooltip>
 );
@@ -142,30 +142,30 @@ export const ShapeParams = React.memo(() => {
         <Tabs.Panel value='Mirroring'>
           <SettingsSection>
             <StaticRuleEdit name='mirroringType' />
+
+            {mirroringType === "square" && (
+              <>
+                <DynamicRuleEdit name='linearMirroringFactor' />
+
+                <DynamicRuleEdit name='linearMirroringPerDistChange' />
+              </>
+            )}
+
+            {mirroringType === "hex" && (
+              <>
+                <DynamicRuleEdit name='hexMirroringFactor' />
+                <DynamicRuleEdit name='hexMirroringPerDistChange' />
+              </>
+            )}
+
+            {mirroringType !== "off" && (
+              <>
+                <DynamicRuleEdit name='radialMirroringAngle' />
+
+                <DynamicRuleEdit name='radialMirroringPerDistChange' />
+              </>
+            )}
           </SettingsSection>
-
-          {mirroringType === "square" && (
-            <SettingsSection>
-              <DynamicRuleEdit name='linearMirroringFactor' />
-
-              <DynamicRuleEdit name='linearMirroringPerDistChange' />
-            </SettingsSection>
-          )}
-
-          {mirroringType === "hex" && (
-            <SettingsSection>
-              <DynamicRuleEdit name='hexMirroringFactor' />
-              <DynamicRuleEdit name='hexMirroringPerDistChange' />
-            </SettingsSection>
-          )}
-
-          {mirroringType !== "off" && (
-            <SettingsSection>
-              <DynamicRuleEdit name='radialMirroringAngle' />
-
-              <DynamicRuleEdit name='radialMirroringPerDistChange' />
-            </SettingsSection>
-          )}
         </Tabs.Panel>
         <Tabs.Panel value='Viewport'>
           <SettingsSection>
