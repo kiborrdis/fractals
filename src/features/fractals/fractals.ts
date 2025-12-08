@@ -5,7 +5,6 @@ import { Vector2 } from "@/shared/libs/vectors";
 import { FractalImage } from "./shader/FractalImage";
 
 export const createFractalVisualizer = (
-  formula: string,
   canvas: HTMLCanvasElement,
   canvasSize: Vector2,
   initialFractalParams: FractalParamsBuildRules,
@@ -17,7 +16,7 @@ export const createFractalVisualizer = (
     throw new Error("WebGL2 context initialization failed");
   }
 
-  const fractalImage = new FractalImage(context, formula, initialFractalParams);
+  const fractalImage = new FractalImage(context, initialFractalParams);
   const renderer = new FractalsRenderer(context, canvasSize, [[fractalImage]]);
 
   renderer.render(0);
@@ -58,7 +57,7 @@ export const createShowcaseFractalsVisualizer = (
   }
   const fractalImagesGrid: FractalImage[][] = fractals.map((row) => {
     return row.map((fractalParams) => {
-      return new FractalImage(context, fractalParams.formula, fractalParams);
+      return new FractalImage(context, fractalParams);
     });
   });
   const renderer = new FractalsRenderer(context, canvasSize, fractalImagesGrid);

@@ -1,9 +1,8 @@
 import { CalcNodeResultType } from "./types";
 
-export const varNameToType: Record<string, CalcNodeResultType> = {
-  c: "vector2",
-  z: "vector2",
-};
+export type VarNameToTypeMap = Record<string, CalcNodeResultType>;
+
+export const varNameToType: VarNameToTypeMap = {};
 
 export const funcNameToSignature: Record<
   string,
@@ -71,5 +70,9 @@ export const funcNameToSignature: Record<
   conjugate: {
     params: ["vector2"],
     return: "vector2",
+  },
+  abs: {
+    params: ["number"],
+    return: "number",
   },
 };

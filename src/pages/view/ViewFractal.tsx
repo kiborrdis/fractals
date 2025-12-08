@@ -23,7 +23,7 @@ export function ViewFractal({
 
   return (
     <FullViewport>
-      <DisplayFractal formula={params.formula} params={params} play />
+      <DisplayFractal params={params} play />
     </FullViewport>
   );
 }

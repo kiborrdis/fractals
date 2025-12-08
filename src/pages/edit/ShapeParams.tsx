@@ -15,6 +15,7 @@ import {
   TbRepeat,
   TbZoomScan,
 } from "react-icons/tb";
+import { ModeEdit } from "./ModeEdit";
 
 const SettingsSection = ({ children }: { children: ReactNode }) => {
   return (
@@ -68,7 +69,7 @@ export const ShapeParams = React.memo(() => {
       <SettingsSection>
         <StaticRuleEdit name='formula' />
 
-        <StaticRuleEdit name='invert' />
+        <ModeEdit />
       </SettingsSection>
       <Tabs value={activeTab} onChange={setActiveTab}>
         <Tabs.List grow>

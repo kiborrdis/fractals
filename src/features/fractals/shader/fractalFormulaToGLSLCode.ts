@@ -5,11 +5,13 @@ import {
 } from "@/shared/libs/calcGraph";
 import { parseFormula, validateFormula } from "../formula/parseFormula";
 import { calcTypesOfNodes } from "../formula/trackTypes";
-import { CalcNodeResultType, CalcNodeResultTypeMap } from "../formula/types";
+import { CalcNodeResultTypeMap } from "../formula/types";
+import { VarNameToTypeMap } from "../formula/fnAndVarDescr";
 
 export const fractalFormulaToGLSLCode = (
   formula: string,
-  customVars: Record<string, CalcNodeResultType> = {},
+  vars: VarNameToTypeMap,
+  customVars: VarNameToTypeMap = {},
 ) => {
   let node: CalcNode | null;
   try {
@@ -23,14 +25,14 @@ export const fractalFormulaToGLSLCode = (
   }
   const [valid, msg] = validateFormula(
     node,
-    customVars ? new Set(Object.keys(customVars)) : new Set(),
+    new Set([...Object.keys(customVars ?? {}), ...Object.keys(vars)]),
   );
 
   if (!valid) {
     throw new Error('fractalFormulaToGLSLCode: invalid formula "' + msg + '"');
   }
 
-  const typeMap = calcTypesOfNodes(node, customVars);
+  const typeMap = calcTypesOfNodes(node, { ...vars, ...customVars });
   const pow = getMaxZPower(node) || 0;
 
   if (typeMap.get(node) !== "vector2") {
@@ -57,7 +59,6 @@ export const fractalFormulaToGLSLCode = (
     }
     return varName;
   });
-
   return [res, pow] as const;
 };
 

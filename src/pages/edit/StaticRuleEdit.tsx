@@ -37,12 +37,16 @@ const ruleConfigs: RuleRenderers = {
   formula: (props) => (
     <FormulaInput
       value={props.value as string}
-      onChange={(newValue) =>
+      onChange={(newValue) => {
+        if (newValue.trim() === "") {
+          return "";
+        }
+
         props.onChange(
           props.name,
           newValue as FractalParamsBuildRules[typeof props.name],
         )
-      }
+      }}
     />
   ),
 

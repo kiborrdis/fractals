@@ -123,7 +123,6 @@ const DisplayEditFractal = () => {
   return (
     <SelectArea enable={selectAreaActive} onSelect={zoomToArea}>
       <DisplayFractal
-        formula={fractal.formula}
         params={fractal}
         play={play}
         timeMultiplier={parseFloat(timeMultiplier)}

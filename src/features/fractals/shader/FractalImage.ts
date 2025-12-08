@@ -20,25 +20,31 @@ export class FractalImage {
 
   constructor(
     private context: WebGL2RenderingContext,
-    private formula: string,
     private params: FractalParamsBuildRules,
   ) {
     this.shader = createFractalShader(
       this.context,
-      this.formula,
+      params.formula,
       convertCustomVarsToTypes(params.custom),
+      params.initialZFormula,
+      params.initialCFormula,
     );
   }
 
   updateParams(newParams: FractalParamsBuildRules) {
     if (
       Object.keys(newParams.custom).length !==
-      Object.keys(this.params.custom).length
+      Object.keys(this.params.custom).length ||
+      this.params.formula !== newParams.formula ||
+      this.params.initialCFormula !== newParams.initialCFormula ||
+      this.params.initialZFormula !== newParams.initialZFormula
     ) {
       this.shader = createFractalShader(
         this.context,
-        this.formula,
+        newParams.formula,
         convertCustomVarsToTypes(newParams.custom),
+        newParams.initialZFormula,
+        newParams.initialCFormula,
       );
     }
 

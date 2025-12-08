@@ -122,7 +122,7 @@ export function RandomFractal() {
 
   return (
     <FullViewport>
-      <DisplayFractal formula={params.formula} params={params} play />
+      <DisplayFractal params={params} play />
     </FullViewport>
   );
 }

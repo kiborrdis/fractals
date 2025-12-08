@@ -110,6 +110,28 @@ const ruleConfigs: RuleRenderers = {
     />
   ),
 
+  cxPerDistChange: (props) => (
+    <NumberRuleEdit
+      label='C(Real) Distance based change'
+      min={-3}
+      max={3}
+      step={0.001}
+      minRange={0.001}
+      {...props}
+    />
+  ),
+
+  cyPerDistChange: (props) => (
+    <NumberRuleEdit
+      label='C(Imaginary) Distance based change'
+      min={-3}
+      max={3}
+      step={0.001}
+      minRange={0.001}
+      {...props}
+    />
+  ),
+
   r: (props) => (
     <NumberRuleEdit
       label='Escape Radius'
@@ -154,28 +176,6 @@ const ruleConfigs: RuleRenderers = {
     />
   ),
 
-  cxPerDistChange: (props) => (
-    <NumberRuleEdit
-      label='C(Real) Distance based change'
-      min={-3}
-      max={3}
-      step={0.001}
-      minRange={0.001}
-      {...props}
-    />
-  ),
-
-  cyPerDistChange: (props) => (
-    <NumberRuleEdit
-      label='C(Imaginary) Distance based change'
-      min={-3}
-      max={3}
-      step={0.001}
-      minRange={0.001}
-      {...props}
-    />
-  ),
-
   rPerDistChange: (props) => (
     <NumberRuleEdit
       label='Distance based change'
@@ -206,16 +206,10 @@ export const DynamicRuleEdit = ({
 }) => {
   const [rule, setRule] = useDynamicRule(name);
 
-  return ruleConfigs[name]({
-    // It's probably better with explicit validation. But not now
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    name,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    value: rule,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    onChange: setRule,
-  });
+  const Component = ruleConfigs[name];
+
+  // Could probably do it little more cleanly, but not today
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  return <Component name={name} value={rule} onChange={setRule} />;
 };

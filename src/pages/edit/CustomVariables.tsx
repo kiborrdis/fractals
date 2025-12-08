@@ -91,7 +91,6 @@ export const CustomVariables = memo(() => {
 
   const handleCreateVariable = useCallback(
     (name: string, type: VariableType) => {
-      console.log("Creating variable:", name, type);
       customVariableCreate(name, type);
       setSelectedVar(name);
     },

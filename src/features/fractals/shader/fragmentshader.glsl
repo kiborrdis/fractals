@@ -354,10 +354,10 @@ float generateFractalIntensity(vec2 point) {
   vec2 fractEnd = u_fractal_r_range_end;
   vec2 fractStartEndDelta = (fractEnd - fractStart) / 2.0f;
   vec2 fractalCoords = fractStartEndDelta * (coord) + fractStart + fractStartEndDelta;
+  vec2 fCoord = fractalCoords;
 
   float cx = u_fractal_c.x;
   float cy = u_fractal_c.y;
-
   float r = u_fractal_r;
   int maxIteration = int(u_max_iterations);
 
@@ -366,26 +366,36 @@ float generateFractalIntensity(vec2 point) {
   cy = u_fractal_c.y + u_cy_split_per_dist_change * normLenFromCenter;
   r = u_fractal_r + u_r_split_per_dist_change * normLenFromCenter;
 
+  vec2 c0 = vec2(cx, cy);
+
   // Increase max iterations based on the distance from the center
   maxIteration = maxIteration + int(u_iterations_split_per_dist_change * normLenFromCenter);
+  vec2 c = vec2(0.0, 0.0);
 
+  //@INITIAL_C_FORMULA_PLACEHOLDER@
+
+  vec2 z0 = vec2(0.0, 0.0);
+
+  //@INITIAL_Z_FORMULA_PLACEHOLDER@
+
+  // Mandelbrot
   // float zx = cx;
   // float zy = cy;
   // cx = fractalCoords.x;
   // cy = fractalCoords.y;
-  // float zx = 0.0;
-  // float zy = 0.0;
-  float zx = fractalCoords.x;
-  float zy = fractalCoords.y;
-  vec2 zInit = vec2(zx, zy);
-  vec2 z = zInit;
-  // vec2 c = vec2(fractalCoords.x, fractalCoords.y);
-  vec2 c = vec2(cx, cy);
 
-  float zxPrev = zx * zx;
-  float zyPrev = zy * zy;
-  float xSqrd = z.x * z.x;
-  float ySqrd = z.y * z.y;
+  // Julia
+  // float zx = fractalCoords.x;
+  // float zy = fractalCoords.y;
+  // cx = cx
+  // cy = cy;
+
+  vec2 z = z0;
+
+  float zxPrev = z.x * z.x;
+  float zyPrev = z.y * z.y;
+  float xSqrd = zxPrev;
+  float ySqrd = zyPrev;
   float Rsqrd = r * r;
   int iteration = 0;
   float distToTrap = 1000.0f;

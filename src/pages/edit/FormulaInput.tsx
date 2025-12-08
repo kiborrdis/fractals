@@ -2,41 +2,54 @@ import {
   parseFormula,
   validateFormula,
   calcTypesOfNodes,
+  VarNameToTypeMap,
 } from "@/features/fractals";
 import { TextInput } from "@mantine/core";
 import { useMemo, useState } from "react";
 import { useCustomVars } from "./store/data/useCustomVars";
-import { CalcNodeResultType } from "@/features/fractals/formula/types";
+
+const defaultVars: VarNameToTypeMap = {
+  z: "vector2",
+  c: "vector2",
+};
 
 export const FormulaInput = ({
   value,
   onChange,
+  vars = defaultVars,
+  placeholder = "Fractal formula",
+  label,
 }: {
   value: string;
   onChange: (newFormula: string) => void;
+  vars?: VarNameToTypeMap;
+  label?: string;
+  placeholder?: string;
 }) => {
   const customVars = useCustomVars();
 
   const [formula, setFormula] = useState(value);
   const [error, setError] = useState<string | null>(null);
 
-  const customVarTypes: Record<string, CalcNodeResultType> = useMemo(() => {
+  const customVarTypes: VarNameToTypeMap = useMemo(() => {
     return Object.entries(customVars).reduce(
       (acc, [key, type]) => {
         acc[key] = Array.isArray(type) ? "vector2" : "number";
         return acc;
       },
-      {} as Record<string, CalcNodeResultType>,
+      { ...vars },
     );
-  }, [customVars]);
-
+  }, [customVars, vars]);
   const customVarsSet = useMemo(() => {
-    return new Set(Object.keys(customVars));
-  }, [customVars]);
+    return new Set(Object.keys(customVarTypes));
+  }, [customVarTypes]);
 
   return (
     <TextInput
-    size="sm"
+      label={label}
+      placeholder={placeholder}
+      
+      size='sm'
       onBlur={() => {
         if (error) {
           setFormula(value);
@@ -45,7 +58,6 @@ export const FormulaInput = ({
           onChange(formula);
         }
       }}
-      placeholder='Fractal formula'
       error={error ? error : undefined}
       value={formula}
       onChange={(e) => {

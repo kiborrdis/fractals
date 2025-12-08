@@ -7,6 +7,9 @@ export type FractalParams = {
   invert: boolean;
 
   formula: string;
+  initialZFormula?: string;
+  initialCFormula?: string;
+
   gradient: GradientStop[];
 
   mirroringType: "off" | "hex" | "square" | "radial";
