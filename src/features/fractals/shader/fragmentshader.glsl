@@ -430,7 +430,7 @@ float generateFractalIntensity(vec2 point) {
   float x = sqrt(abs_z) - u_fractal_r;
   float iterationSmooth = float(iteration);
 
-  if (u_smooth_pow >= 2) {
+  if (u_smooth_pow >= 4) {
     powZ = float(u_smooth_pow);
   }
 
