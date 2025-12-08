@@ -4,13 +4,9 @@ import {
   AppShell,
   AppShellAside,
   AppShellMain,
-  Box,
-  Divider,
   Group,
-  Paper,
   SegmentedControl,
   Stack,
-  Text,
 } from "@mantine/core";
 import {
   DisplayFractal,
@@ -29,7 +25,6 @@ import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
 import { Vector2 } from "@/shared/libs/vectors";
 import { ShapeParams } from "./ShapeParams";
-import { FormulaInput } from "./FormulaInput";
 import { FiDownload, FiShare2 } from "react-icons/fi";
 
 const defaultRules = getDefaultFractalRules();
@@ -91,7 +86,7 @@ export function EditFractalLoaded() {
               <ActionIcon variant='subtle' onClick={toggleAnimation}>
                 {play ? <FaPause /> : <FaPlay />}
               </ActionIcon>
-              <SegmentedControl size='xs' data={["0.5x", "1x", "2x", "10x"]} />
+              <SegmentedControl size='xs' value={timeMultiplier} data={["0.5x", "1x", "2x", "10x"]} onChange={changeAnimationSpeed} />
             </Group>
             <Group gap='sm' >
               <ActionIcon variant='subtle'>

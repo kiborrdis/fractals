@@ -24,7 +24,6 @@ const theme = createTheme({
   },
 });
 
-console.log('theme colors', theme.colors);
 
 function RootComponent() {
   return (

@@ -10,7 +10,7 @@
     "test": "vitest",
     "test:validate": "vitest --run",
     "lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
-    "validate": "yarn lint && yarn typecheck && yarn test:validate",
+    "validate": "yarn lint && yarn typecheck && yarn test:validate && yarn format:validate",
     "preview": "vite preview",
     "format": "prettier --write ./src",
     "format:validate": "prettier --check ./src"
@@ -18,7 +18,7 @@
   "dependencies": {
     "@mantine/core": "^8.2.8",
     "@mantine/form": "^8.2.8",
-    "@mantine/hooks": "^8.2.5",
+    "@mantine/hooks": "^8.3.9",
     "@tanstack/react-router": "^1.139.14",
     "@tanstack/react-router-devtools": "^1.139.14",
     "@types/node": "^24.7.0",

@@ -1,4 +1,4 @@
-import { Button, Group, Stack, Tabs, Tooltip } from "@mantine/core";
+import { Button, Group, Stack, Tabs, ThemeIcon, Tooltip } from "@mantine/core";
 import React, { ReactNode } from "react";
 import { StaticRuleEdit } from "./StaticRuleEdit";
 import { DynamicRuleEdit } from "./DynamicRuleEdit";
@@ -6,7 +6,15 @@ import { useActions } from "./store/data/useActions";
 import { useStaticRule } from "./store/data/useStaticRule";
 import { useSelectAreaActive } from "./store/data/useSelectAreaActive";
 import { CustomVariables } from "./CustomVariables";
-import { TbAdjustments, TbCircle, TbFlipHorizontal, TbMathFunction, TbPalette, TbRepeat, TbZoomScan } from "react-icons/tb";
+import {
+  TbAdjustments,
+  TbCircle,
+  TbFlipHorizontal,
+  TbMathFunction,
+  TbPalette,
+  TbRepeat,
+  TbZoomScan,
+} from "react-icons/tb";
 
 const SettingsSection = ({ children }: { children: ReactNode }) => {
   return (
@@ -16,10 +24,44 @@ const SettingsSection = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const TabWithIcon = ({
+  value,
+  label,
+  icon: Icon,
+  activeTab,
+}: {
+  value: string;
+  label: string;
+  icon: React.ElementType;
+  activeTab: string | null;
+}) => (
+  <Tooltip label={label} position='bottom' withArrow>
+    <Tabs.Tab
+      value={value}
+      size='xs'
+      px='sm'
+      py='xs'
+      style={{
+        textAlign: 'center'
+      }}
+    >
+      <ThemeIcon
+          p={0}
+          size='xs'
+          color={activeTab !== value ? "gray" : undefined}
+          variant='transparent'
+        >
+          <Icon size={14} />
+        </ThemeIcon>
+    </Tabs.Tab>
+  </Tooltip>
+);
+
 export const ShapeParams = React.memo(() => {
   const { resetViewport, toggleAreaSelection, magnifyViewport } = useActions();
   const [mirroringType] = useStaticRule("mirroringType");
   const selectAreaActive = useSelectAreaActive();
+  const [activeTab, setActiveTab] = React.useState<string | null>("c");
 
   return (
     <Stack gap='sm'>
@@ -28,39 +70,50 @@ export const ShapeParams = React.memo(() => {
 
         <StaticRuleEdit name='invert' />
       </SettingsSection>
-      <Tabs defaultValue='c'>
-        <Tabs.List>
-          <Tooltip label='Complex constant (c)' position='right'>
-            <Tabs.Tab value='c' leftSection={<TbMathFunction size={16} />} />
-          </Tooltip>
-          <Tooltip label='Escape radius' position='right'>
-            <Tabs.Tab value='r' leftSection={<TbCircle size={16} />} />
-          </Tooltip>
-          <Tooltip label='Max iterations' position='bottom' withArrow>
-            <Tabs.Tab value='Iterations'>
-              <TbRepeat size={18} />
-            </Tabs.Tab>
-          </Tooltip>
-          <Tooltip label='Mirroring & symmetry' position='bottom' withArrow>
-            <Tabs.Tab value='Mirroring'>
-              <TbFlipHorizontal size={18} />
-            </Tabs.Tab>
-          </Tooltip>
-          <Tooltip label='Viewport & zoom' position='bottom' withArrow>
-            <Tabs.Tab value='Viewport'>
-              <TbZoomScan size={18} />
-            </Tabs.Tab>
-          </Tooltip>
-          <Tooltip label='Coloring & gradient' position='bottom' withArrow>
-            <Tabs.Tab value='Coloring'>
-              <TbPalette size={18} />
-            </Tabs.Tab>
-          </Tooltip>
-          <Tooltip label='Custom variables' position='bottom' withArrow>
-            <Tabs.Tab value='Custom'>
-              <TbAdjustments size={18} />
-            </Tabs.Tab>
-          </Tooltip>
+      <Tabs value={activeTab} onChange={setActiveTab}>
+        <Tabs.List grow>
+          <TabWithIcon
+            value='c'
+            label='Complex constant (c)'
+            icon={TbMathFunction}
+            activeTab={activeTab}
+          />
+          <TabWithIcon
+            value='r'
+            label='Escape radius'
+            icon={TbCircle}
+            activeTab={activeTab}
+          />
+          <TabWithIcon
+            value='Iterations'
+            label='Max iterations'
+            icon={TbRepeat}
+            activeTab={activeTab}
+          />
+          <TabWithIcon
+            value='Mirroring'
+            label='Mirroring & symmetry'
+            icon={TbFlipHorizontal}
+            activeTab={activeTab}
+          />
+          <TabWithIcon
+            value='Viewport'
+            label='Viewport & zoom'
+            icon={TbZoomScan}
+            activeTab={activeTab}
+          />
+          <TabWithIcon
+            value='Coloring'
+            label='Coloring & gradient'
+            icon={TbPalette}
+            activeTab={activeTab}
+          />
+          <TabWithIcon
+            value='Custom'
+            label='Custom variables'
+            icon={TbAdjustments}
+            activeTab={activeTab}
+          />
         </Tabs.List>
         <Tabs.Panel value='c'>
           <SettingsSection>
