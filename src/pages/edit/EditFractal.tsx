@@ -27,7 +27,7 @@ import { useFractalParamsData } from "./store/data/useFractalParamsData";
 import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
 import { ShapeParams } from "./SidebarSettings/SidebarSettings";
-import { FiDownload, FiShare2 } from "react-icons/fi";
+import { FiShare2 } from "react-icons/fi";
 import { SelectArea } from "./SelectArea";
 
 const defaultRules = getDefaultFractalRules();
@@ -70,7 +70,7 @@ export function EditFractal({
   );
 }
 
-const copyToClipboard = (text: string) => {
+export const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text).catch((err) => {
     console.error("Could not copy text: ", err);
   });
@@ -103,12 +103,11 @@ export function EditFractalLoaded() {
               <SegmentedControl
                 size='xs'
                 value={timeMultiplier}
-                data={["0.5x", "1x", "2x", "10x"]}
+                data={["0.5x", "1.0x", "2.0x", "10x"]}
                 onChange={changeAnimationSpeed}
               />
             </Group>
             <Group gap='sm'>
-              <CopyButton />
               <ShareButton />
             </Group>
           </Group>
@@ -140,21 +139,6 @@ const ShareButton = () => {
       }}
     >
       <FiShare2 />
-    </ActionIcon>
-  );
-};
-
-const CopyButton = () => {
-  const fractal = useEditStore((state) => state.fractal);
-
-  return (
-    <ActionIcon
-      variant='subtle'
-      onClick={() => {
-        copyToClipboard(JSON.stringify(fractal, null, 2));
-      }}
-    >
-      <FiDownload />
     </ActionIcon>
   );
 };

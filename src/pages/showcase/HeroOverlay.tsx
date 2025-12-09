@@ -22,10 +22,15 @@ export const HeroOverlay = () => {
           Real-time GPU-rendered fractal art with custom animations.
         </p>
         <div className={styles.buttons}>
-          <a href='/edit' className={styles.primaryButton + ' ' + styles.editorButton}>
+          <a
+            href='/edit'
+            className={styles.primaryButton + " " + styles.editorButton}
+          >
             Create Your Own
           </a>
-          <p className={styles.description + ' ' +styles.usePCNote}>Use a Desktop or a Laptop to create your own</p>
+          <p className={styles.description + " " + styles.usePCNote}>
+            Use a Desktop or a Laptop to create your own
+          </p>
         </div>
       </div>
     </div>
