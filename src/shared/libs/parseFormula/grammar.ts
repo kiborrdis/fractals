@@ -117,6 +117,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
       );
 
       if (!result) {
+        this.lastIndex = index;
         return null;
       }
 
@@ -146,6 +147,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
       );
 
       if (!result) {
+        this.lastIndex = index;
         orArgs.push(undefined);
 
         continue;

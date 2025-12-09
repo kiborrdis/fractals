@@ -2,13 +2,8 @@ import { SegmentedControl, Stack } from "@mantine/core";
 import { useStaticRule } from "./store/data/useStaticRule";
 import { useEffect, useRef, useState } from "react";
 import { FormulaInput } from "./FormulaInput";
-import { VarNameToTypeMap } from "@/features/fractals";
 import { useFractalMode } from "./store/data/useFractalMode";
-
-const vars: VarNameToTypeMap = {
-  c0: "vector2",
-  fCoord: "vector2",
-};
+import { initialCFormulaVars, initialZFormulaVars } from "@/features/fractals";
 
 export const ModeEdit = () => {
   const [initialZFormula, setInitialZFormula] =
@@ -53,7 +48,7 @@ export const ModeEdit = () => {
             }
           }}
           label='Initial Z Formula'
-          vars={vars}
+          vars={initialZFormulaVars}
         />
         <FormulaInput
           value={initialCFormula || ""}
@@ -63,7 +58,7 @@ export const ModeEdit = () => {
             }
           }}
           label='Initial C Formula'
-          vars={vars}
+          vars={initialCFormulaVars}
         />
       </Stack>
     );

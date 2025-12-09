@@ -8,3 +8,4 @@ export * from "./ruleConversion";
 export { DisplayFractal } from "./DisplayFractal";
 export type * from "./types";
 export { getDynamicParamLabel } from "./fractalParamLabels";
+export * from "./shader/allowedVars";

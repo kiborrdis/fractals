@@ -4,24 +4,7 @@ import vertex from "./vertexshader.glsl?raw";
 import fragment from "./fragmentshader.glsl?raw";
 import { createProgram, createShader } from "@/shared/libs/webgl";
 import { setupUniformLocations } from "./prepareFractalUniforms";
-import { VarNameToTypeMap } from "../formula/fnAndVarDescr";
-
-const formulaVars: VarNameToTypeMap = {
-  z: "vector2",
-  c: "vector2",
-  fCoord: "vector2",
-  zp: "vector2",
-};
-
-const initialZFormulaVars: VarNameToTypeMap = {
-  c0: "vector2",
-  fCoord: "vector2",
-};
-
-const initialCFormulaVars: VarNameToTypeMap = {
-  c0: "vector2",
-  fCoord: "vector2",
-};
+import { formulaVars, initialCFormulaVars, initialZFormulaVars } from "./allowedVars";
 
 export const createFractalShader = (
   context: WebGL2RenderingContext,

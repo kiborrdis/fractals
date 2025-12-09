@@ -8,11 +8,7 @@ import { TextInput } from "@mantine/core";
 import { useMemo, useState } from "react";
 import { useCustomVars } from "./store/data/useCustomVars";
 
-const defaultVars: VarNameToTypeMap = {
-  z: "vector2",
-  c: "vector2",
-  zp: "vector2",
-};
+const defaultVars: VarNameToTypeMap = {};
 
 export const FormulaInput = ({
   value,
@@ -68,12 +64,13 @@ export const FormulaInput = ({
         try {
           const node = parseFormula(newFormula);
           const typeMap = calcTypesOfNodes(node, customVarTypes);
-
+          
           const [valid, message] = validateFormula(node, customVarsSet);
           if (!valid) {
             setError(message);
             return;
           }
+
 
           if (
             [...typeMap.entries()].some(([, type]) => {
@@ -81,6 +78,13 @@ export const FormulaInput = ({
             })
           ) {
             setError("Mismatched types");
+            return;
+          }
+
+          if (
+            typeMap.get(node) !== "vector2"
+          ) {
+            setError("Resulting type must be vector");
             return;
           }
 

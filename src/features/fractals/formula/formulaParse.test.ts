@@ -178,6 +178,19 @@ describe("parseFormula", () => {
     expect(transformCalcNodeToString(calcNode)).eq("(a^a)");
   });
 
+  test("throws when ends in open bracket", () => {
+    let err: Error | null = null;
+    try {
+      parseFormula(" 21 + 23 + c(");
+    } catch (e) {
+      if (e instanceof Error) {
+        err = e;
+      }
+    }
+
+    expect(err).toBeTruthy();
+  });
+
   test("throws when unknown symbol instead of operator", () => {
     let err: Error | null = null;
     try {

@@ -41,4 +41,34 @@ describe("GrammarBuilder", () => {
     expect(result[0]).toBe(null);
     expect(result[1].lastIndex).toBe(9);
   });
+
+  it("does not return lastIndex from partial parsed term with variants", () => {
+    const grammar = new Grammar()
+      .addTerminal("(", regex(/\(/))
+      .addTerminal(")", regex(/\)/))
+      .addTerminal("num", regex(/[0-9]+/), (str) => parseInt(str, 10))
+      .addRule("expr", ["(", "num", ")"], (_, n, __) => n)
+      .addRuleVariant("expr", ["num"], (n) => n)
+      .setRootRule("expr");
+    const parser = new GrammarParser(grammar);
+
+    const result = parser.parse("(123");
+    expect(result[0]).toBe(null);
+    expect(result[1].lastIndex).toBe(0);
+  });
+
+  it("does not return lastIndex from partial parsed term without variants", () => {
+    const grammar = new Grammar()
+      .addTerminal("(", regex(/\(/))
+      .addTerminal(")", regex(/\)/))
+      .addTerminal("var", regex(/[a-z]+/))
+      .addTerminal("num", regex(/[0-9]+/), (str) => parseInt(str, 10))
+      .addRule("expr", ["(", "num", ")"], (_, n, __) => n)
+      .setRootRule("expr");
+    const parser = new GrammarParser(grammar);
+
+    const result = parser.parse("(123");
+    expect(result[0]).toBe(null);
+    expect(result[1].lastIndex).toBe(0);
+  })
 });

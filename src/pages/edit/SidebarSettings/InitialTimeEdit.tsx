@@ -12,7 +12,7 @@ export const InitialTimeEdit = ({
 }) => {
   const currentTime = useCurrentTime();
   const { initialLoopStateChange } = useActions();
-  console.log('itialTime', initialTime, currentTime);
+
   return (
     <Stack>
       <Label>Initial Time</Label>

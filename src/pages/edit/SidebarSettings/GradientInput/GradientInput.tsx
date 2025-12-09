@@ -104,7 +104,7 @@ export const GradientInput = ({
             />
           </Tooltip.Floating>
           <Tooltip.Floating
-            label='Full gradient without proportion'
+            label='Gradient aligned with stops'
             position='left'
           >
           <div

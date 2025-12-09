@@ -1,4 +1,4 @@
-import { FractalParamsBuildRules, GradientStop } from "@/features/fractals";
+import { formulaVars, FractalParamsBuildRules, GradientStop } from "@/features/fractals";
 import { useStaticRule } from "../store/data/useStaticRule";
 import { ReactNode } from "react";
 import {
@@ -33,6 +33,7 @@ type RuleRenderers = {
 const ruleConfigs: RuleRenderers = {
   formula: (props) => (
     <FormulaInput
+      vars={formulaVars}
       value={props.value as string}
       onChange={(newValue) => {
         if (newValue.trim() === "") {
