@@ -1,20 +1,16 @@
 import { FractalParamsBuildRules, GradientStop } from "@/features/fractals";
-import { useStaticRule } from "./store/data/useStaticRule";
-import { ReactNode, useState } from "react";
+import { useStaticRule } from "../store/data/useStaticRule";
+import { ReactNode } from "react";
 import {
-  Button,
   Checkbox,
-  NumberInput,
+  Divider,
   SegmentedControl,
-  Stack,
-  Text,
 } from "@mantine/core";
-import { FormulaInput } from "./FormulaInput";
-import { randomRange } from "@/features/fractals/utils";
-import { GradientInput } from "./GradientInput";
-import { useDynamicRule } from "./store/data/useDynamicRule";
-import { extractMaxValueFromRule } from "@/shared/libs/numberRule";
+import { FormulaInput } from "../FormulaInput";
+import { GradientInput } from "./GradientInput/GradientInput";
 import { InitialTimeEdit } from "./InitialTimeEdit";
+import { BandSmoothingOptions } from "./BandSmoothingOptions";
+import { GradientGenerator } from "./GradientGenerator";
 
 type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
   {
@@ -81,7 +77,7 @@ const ruleConfigs: RuleRenderers = {
 
   gradient: (props) => (
     <>
-      <GenerateGradient
+      <GradientGenerator
         onChange={(newStops) =>
           props.onChange(
             props.name,
@@ -89,6 +85,7 @@ const ruleConfigs: RuleRenderers = {
           )
         }
       />
+      <Divider orientation="horizontal" />
       <GradientInput
         stops={props.value as GradientStop[]}
         onChange={(newStops) =>
@@ -119,116 +116,6 @@ const ruleConfigs: RuleRenderers = {
       }
     />
   ),
-};
-
-const GenerateGradient = ({
-  onChange,
-}: {
-  onChange: (val: GradientStop[]) => void;
-}) => {
-  const [val, setValue] = useState(0);
-  const [iterations] = useDynamicRule("maxIterations");
-
-  let maxValue = 10;
-  if (Array.isArray(iterations)) {
-    maxValue = extractMaxValueFromRule(iterations[1]);
-  } else {
-    maxValue = extractMaxValueFromRule(iterations);
-  }
-
-  return (
-    <>
-      <NumberInput
-        value={val}
-        onChange={(newVal) => {
-          if (isNaN(Number(newVal))) {
-            setValue(0);
-          }
-
-          setValue(Number(newVal));
-        }}
-      />
-      <Button
-        onClick={() => {
-          if (val < 2) {
-            return;
-          }
-
-          const stops: GradientStop[] = [];
-          for (let i = 0; i <= val; i++) {
-            const position = (maxValue * i) / val;
-            const r = randomRange(0, 1);
-            const g = randomRange(0, 1);
-            const b = randomRange(0, 1);
-            stops.push([position, r, g, b, 1]);
-          }
-
-          onChange(stops);
-        }}
-      >
-        Generate
-      </Button>
-    </>
-  );
-};
-
-const BandSmoothingOptions = ({
-  value = 0,
-  onChange,
-}: {
-  value?: number;
-  onChange: (value: number) => void;
-}) => {
-  let smoothingType: "auto" | "disabled" | "custom" = "auto";
-
-  if (value >= 2) {
-    smoothingType = "custom";
-  } else if (value < 0) {
-    smoothingType = "disabled";
-  }
-
-  return (
-    <Stack>
-      <Text size='sm' fw={600}>
-        Band Smoothing
-      </Text>
-      <SegmentedControl
-        value={smoothingType}
-        data={[
-          { value: "auto", label: "Auto" },
-          { value: "disabled", label: "Disabled" },
-          { value: "custom", label: "Custom" },
-        ]}
-        size='sm'
-        onChange={(newValue) => {
-          let smoothingValue = 0;
-          if (newValue === "custom") {
-            smoothingValue = 2;
-          } else if (newValue === "disabled") {
-            smoothingValue = -1;
-          }
-
-          onChange(smoothingValue);
-        }}
-      />
-      {smoothingType === "custom" && (
-        <NumberInput
-          value={value}
-          min={2}
-          step={1}
-          disabled={smoothingType !== "custom"}
-          onChange={(newValue) => {
-            if (isNaN(Number(newValue))) {
-              onChange(2);
-              return;
-            }
-
-            onChange(Number(newValue));
-          }}
-        />
-      )}
-    </Stack>
-  );
 };
 
 export const StaticRuleEdit = ({

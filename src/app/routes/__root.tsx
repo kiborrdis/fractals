@@ -19,7 +19,9 @@ const theme = createTheme({
   },
   components: {
     Button: { defaultProps: { size: 'xs' } },
-    TextInput: { defaultProps: { size: 'sm' } },
+    TextInput: { defaultProps: { size: 'xs' } },
+    NumberInput: { defaultProps: { size: 'xs' } },
+    Select: { defaultProps: { size: 'xs' } },
     Paper: { defaultProps: { radius: 'md', p: 'md' } },
   },
 });

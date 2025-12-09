@@ -1,10 +1,11 @@
 import { Button, Chip, Group, Stack, TextInput, Select } from "@mantine/core";
 import { memo, useCallback, useState } from "react";
-import { useActions } from "./store/data/useActions";
-import { useFractalRules } from "./store/data/useFractalParamsData";
+import { useActions } from "../store/data/useActions";
+import { useFractalRules } from "../store/data/useFractalParamsData";
 import { NumberRuleEdit } from "./NumberRuleEdit";
 import { Vector2RuleEdit } from "./Vector2RuleEdit";
 import { NumberBuildRule } from "@/shared/libs/numberRule";
+import { Label } from "@/shared/ui/Label/Label";
 
 type VariableType = "number" | "vector2";
 
@@ -20,58 +21,6 @@ const isVector2Rule = (
   return Array.isArray(value);
 };
 
-const CreateVariableForm = memo(
-  ({
-    onComplete,
-    existingNames,
-  }: {
-    onComplete: (name: string, type: VariableType) => void;
-    existingNames: string[];
-  }) => {
-    const [newVarName, setNewVarName] = useState("");
-    const [newVarType, setNewVarType] = useState<VariableType>("number");
-
-    const handleCreate = useCallback(() => {
-      if (!newVarName.trim()) {
-        return;
-      }
-
-      if (existingNames.includes(newVarName)) {
-        alert("Variable with this name already exists");
-        return;
-      }
-
-      onComplete(newVarName, newVarType);
-      setNewVarName("");
-      setNewVarType("number");
-    }, [newVarName, newVarType, onComplete, existingNames]);
-
-    return (
-      <Stack gap='sm'>
-        <TextInput
-          label='Variable Name'
-          placeholder='Enter variable name'
-          value={newVarName}
-          onChange={(e) => setNewVarName(e.currentTarget.value)}
-        />
-        <Select
-          label='Variable Type'
-          value={newVarType}
-          onChange={(value) => setNewVarType(value as VariableType)}
-          data={[
-            { value: "number", label: "Number" },
-            { value: "vector2", label: "Vector2" },
-          ]}
-        />
-        <Button onClick={handleCreate} size='sm'>
-          Create Variable
-        </Button>
-      </Stack>
-    );
-  },
-);
-CreateVariableForm.displayName = "CreateVariableForm";
-
 export const CustomVariables = memo(() => {
   const { customVariableCreate, customVariableDelete, customRuleChange } =
     useActions();
@@ -82,27 +31,6 @@ export const CustomVariables = memo(() => {
 
   const variableNames = Object.keys(customVars);
   const isCreatingNew = selectedVar === "__create_new__";
-
-  const handleChipChange = useCallback((value: string | string[]) => {
-    if (typeof value === "string") {
-      setSelectedVar(value);
-    }
-  }, []);
-
-  const handleCreateVariable = useCallback(
-    (name: string, type: VariableType) => {
-      customVariableCreate(name, type);
-      setSelectedVar(name);
-    },
-    [customVariableCreate],
-  );
-
-  const handleDeleteVariable = useCallback(() => {
-    if (selectedVar && selectedVar !== "__create_new__") {
-      customVariableDelete(selectedVar);
-      setSelectedVar(null);
-    }
-  }, [selectedVar, customVariableDelete]);
 
   const handleNumberRuleChange = useCallback(
     (_name: string, value: NumberBuildRule) => {
@@ -126,7 +54,15 @@ export const CustomVariables = memo(() => {
 
   return (
     <Stack gap='md'>
-      <Chip.Group value={selectedVar || undefined} onChange={handleChipChange}>
+      <Label>Custom Variables</Label>
+      <Chip.Group
+        value={selectedVar || undefined}
+        onChange={(value: string | string[]) => {
+          if (typeof value === "string") {
+            setSelectedVar(value);
+          }
+        }}
+      >
         <Group gap='xs'>
           {variableNames.map((varName) => (
             <Chip key={varName} value={varName}>
@@ -139,8 +75,11 @@ export const CustomVariables = memo(() => {
 
       {isCreatingNew && (
         <CreateVariableForm
-          onComplete={handleCreateVariable}
           existingNames={variableNames}
+          onComplete={(name: string, type: VariableType) => {
+            customVariableCreate(name, type);
+            setSelectedVar(name);
+          }}
         />
       )}
 
@@ -152,7 +91,7 @@ export const CustomVariables = memo(() => {
               label={selectedVar}
               min={-100}
               max={100}
-              step={0.1}
+              step={0.01}
               minRange={1}
               value={selectedValue}
               onChange={handleNumberRuleChange}
@@ -163,14 +102,22 @@ export const CustomVariables = memo(() => {
               sublabels={["X", "Y"]}
               min={-100}
               max={100}
-              step={0.1}
+              step={0.01}
               minRange={1}
               value={selectedValue}
               onChange={handleVector2RuleChange}
             />
           ) : null}
 
-          <Button color='red' onClick={handleDeleteVariable} size='sm'>
+          <Button
+            color='red'
+            onClick={() => {
+              if (selectedVar && selectedVar !== "__create_new__") {
+                customVariableDelete(selectedVar);
+                setSelectedVar(null);
+              }
+            }}
+          >
             Delete Variable
           </Button>
         </Stack>
@@ -179,3 +126,62 @@ export const CustomVariables = memo(() => {
   );
 });
 CustomVariables.displayName = "CustomVariables";
+
+const CreateVariableForm = memo(
+  ({
+    onComplete,
+    existingNames,
+  }: {
+    onComplete: (name: string, type: VariableType) => void;
+    existingNames: string[];
+  }) => {
+    const [newVarName, setNewVarName] = useState("");
+    const [newVarType, setNewVarType] = useState<VariableType>("number");
+    const [err, setErr] = useState<string | null>(null);
+    const handleCreate = useCallback(() => {
+      if (!newVarName.trim()) {
+        return;
+      }
+
+      if (existingNames.includes(newVarName)) {
+        setErr("Variable with this name already exists");
+        return;
+      }
+
+      setErr(null);
+
+      onComplete(newVarName, newVarType);
+      setNewVarName("");
+      setNewVarType("number");
+    }, [newVarName, newVarType, onComplete, existingNames]);
+
+    return (
+      <Stack gap='sm'>
+        <Group align='flex-start'>
+          <TextInput
+            flex={2}
+            label='Variable Name'
+            placeholder='Enter variable name'
+            value={newVarName}
+            error={err}
+            onChange={(e) => setNewVarName(e.currentTarget.value)}
+          />
+          <Select
+            flex={1}
+            label='Variable Type'
+            value={newVarType}
+            onChange={(value) => setNewVarType(value as VariableType)}
+            data={[
+              { value: "number", label: "Number" },
+              { value: "vector2", label: "Vector2" },
+            ]}
+          />
+        </Group>
+        <Button onClick={handleCreate} variant='outline'>
+          Create Variable
+        </Button>
+      </Stack>
+    );
+  },
+);
+CreateVariableForm.displayName = "CreateVariableForm";

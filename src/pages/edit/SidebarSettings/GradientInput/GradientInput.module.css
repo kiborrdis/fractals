@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 4fr 11fr 1fr;
+  justify-items: stretch;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.gradientPreviewContainer {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  justify-content: flex-start; /* Move lines to the left */
+}
+
+.gradientPreview {
+  width: 12px;
+  border-radius: 6px;
+  min-height: 100px;
+}

@@ -1,5 +1,5 @@
 import { FractalDynamicParamsBuildRules } from "@/features/fractals/types";
-import { useDynamicRule } from "./store/data/useDynamicRule";
+import { useDynamicRule } from "../store/data/useDynamicRule";
 import { NumberRuleEdit } from "./NumberRuleEdit";
 import { Vector2RuleEdit } from "./Vector2RuleEdit";
 import { ReactNode } from "react";

@@ -207,7 +207,7 @@ export const TimelineTool = () => {
             rules={activeRules}
             onClick={(t) => {
               if (!editingRule && period !== 0) {
-                initialLoopStateChange(t);
+                initialLoopStateChange(t - initialTime);
               }
             }}
             onDynamicParamOverrideReset={() => {

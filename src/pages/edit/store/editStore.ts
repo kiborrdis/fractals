@@ -72,6 +72,10 @@ export type EditStoreActions = {
   ) => void;
   resetViewport: () => void;
   magnifyViewport: (factor: number) => void;
+  /**
+   * @description amountPerc - percent of current visible range to move
+   */
+  moveViewport: (dir: "l" | "r" | "u" | "d", amountPerc: number) => void;
 
   updateCurrentTime: (time: number) => void;
   initialLoopStateChange: (time: number) => void;
@@ -117,7 +121,9 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
 
           initialLoopStateChange: (time: number) => {
             set((prev) => {
-              prev.initialLoopState = { time: time - (prev.fractal.initialTime ?? 0) };
+              prev.initialLoopState = {
+                time: time,
+              };
             });
           },
 
@@ -309,8 +315,8 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
               ];
 
               prev.fractal.dynamic.imVisibleRange = [
-                { t: RuleType.StaticNumber, value: fractalEnd[1] },
                 { t: RuleType.StaticNumber, value: fractalStart[1] },
+                { t: RuleType.StaticNumber, value: fractalEnd[1] },
               ];
 
               prev.selectAreaActive = false;
@@ -332,7 +338,6 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
           },
           presetPicked: (presetId: string) => {
             set((prev) => {
-              console.log('Picking preset', presetId);
               const preset = fractalPresets[presetId];
               if (preset) {
                 prev.fractal = preset;
@@ -355,6 +360,39 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
               prev.fractal.dynamic.imVisibleRange.forEach((e) => {
                 if (e.t === RuleType.StaticNumber) {
                   e.value *= factor;
+                }
+              });
+            });
+          },
+          moveViewport: (dir: "l" | "r" | "u" | "d", amountPerc: number) => {
+            set((prev) => {
+              let visibleRange: [NumberBuildRule, NumberBuildRule] = prev.fractal.dynamic.rlVisibleRange;
+              let dirSign: 1 | -1 = 1;
+
+              switch (dir) {
+                case "l":
+                case "r": {
+                  dirSign = dir === "l" ? -1 : 1;
+                  break;
+                }
+                case "u":
+                case "d": {
+                  dirSign = dir === "u" ? -1 : 1;
+                  visibleRange = prev.fractal.dynamic.imVisibleRange;
+                  break;
+                }
+              }
+
+              const numRange = makeArrayFromRules(
+                    visibleRange,
+                    0,
+                  );
+              const span = Math.abs(numRange[1] - numRange[0]);
+              const move = span * amountPerc * dirSign;
+
+              visibleRange.forEach((e) => {
+                if (e.t === RuleType.StaticNumber) {
+                  e.value += move;
                 }
               });
             });

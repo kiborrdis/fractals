@@ -1,10 +1,8 @@
-import { Button, Group, Stack, Tabs, ThemeIcon, Tooltip } from "@mantine/core";
-import React, { ReactNode } from "react";
+import { Button, Divider, Group, Stack, Tabs, ThemeIcon, Tooltip } from "@mantine/core";
+import React, { ReactNode, useState } from "react";
 import { StaticRuleEdit } from "./StaticRuleEdit";
 import { DynamicRuleEdit } from "./DynamicRuleEdit";
-import { useActions } from "./store/data/useActions";
-import { useStaticRule } from "./store/data/useStaticRule";
-import { useSelectAreaActive } from "./store/data/useSelectAreaActive";
+import { useStaticRule } from "../store/data/useStaticRule";
 import { CustomVariables } from "./CustomVariables";
 import {
   TbAdjustments,
@@ -15,68 +13,25 @@ import {
   TbRepeat,
   TbZoomScan,
 } from "react-icons/tb";
-import { ModeEdit } from "./ModeEdit";
-import { PresetModal } from "./PresetModal";
-import { useState } from "react";
-
-const SettingsSection = ({ children }: { children: ReactNode }) => {
-  return (
-    <Stack p='md' gap='md'>
-      {children}
-    </Stack>
-  );
-};
-
-const TabWithIcon = ({
-  value,
-  label,
-  icon: Icon,
-  activeTab,
-}: {
-  value: string;
-  label: string;
-  icon: React.ElementType;
-  activeTab: string | null;
-}) => (
-  <Tooltip label={label} position='bottom' withArrow>
-    <Tabs.Tab
-      value={value}
-      size='xs'
-      px='sm'
-      py='xs'
-      style={{
-        textAlign: "center",
-      }}
-    >
-      <ThemeIcon
-        p={0}
-        size='xs'
-        color={activeTab !== value ? "gray" : undefined}
-        variant='transparent'
-      >
-        <Icon size={14} />
-      </ThemeIcon>
-    </Tabs.Tab>
-  </Tooltip>
-);
+import { ModeEdit } from "../ModeEdit";
+import { PresetModal } from "../PresetModal";
+import { ViewportSettings } from "./ViewportSettings";
 
 export const ShapeParams = React.memo(() => {
-  const { resetViewport, toggleAreaSelection, magnifyViewport } = useActions();
   const [mirroringType] = useStaticRule("mirroringType");
-  const selectAreaActive = useSelectAreaActive();
   const [activeTab, setActiveTab] = React.useState<string | null>("c");
   const [presetModalOpen, setPresetModalOpen] = useState(false);
 
   return (
     <Stack gap='sm'>
       <SettingsSection>
-        <Group align="flex-start" gap="sm">
+        <Group align='flex-start' gap='sm'>
           <div style={{ flex: 1 }}>
             <StaticRuleEdit name='formula' />
           </div>
           <Button
-            size="sm"
-            variant="light"
+            size='sm'
+            variant='light'
             onClick={() => setPresetModalOpen(true)}
           >
             Presets
@@ -85,7 +40,7 @@ export const ShapeParams = React.memo(() => {
 
         <ModeEdit />
       </SettingsSection>
-      <Tabs value={activeTab} onChange={setActiveTab}>
+      <Tabs keepMounted={false} value={activeTab} onChange={setActiveTab}>
         <Tabs.List grow>
           <TabWithIcon
             value='c'
@@ -184,35 +139,7 @@ export const ShapeParams = React.memo(() => {
         </Tabs.Panel>
         <Tabs.Panel value='Viewport'>
           <SettingsSection>
-            <Group>
-              <Button size='xs' variant='outline' onClick={resetViewport}>
-                Reset
-              </Button>
-              <Button
-                size='xs'
-                variant='outline'
-                onClick={() => magnifyViewport(0.5)}
-              >
-                x0.5
-              </Button>
-              <Button
-                size='xs'
-                variant='outline'
-                onClick={() => magnifyViewport(2)}
-              >
-                x2
-              </Button>
-              <Button
-                size='xs'
-                variant='outline'
-                color='green'
-                onClick={toggleAreaSelection}
-              >
-                {selectAreaActive ? "Selecting area" : "Select area"}
-              </Button>
-            </Group>
-            <DynamicRuleEdit name='rlVisibleRange' />
-            <DynamicRuleEdit name='imVisibleRange' />
+            <ViewportSettings />
           </SettingsSection>
         </Tabs.Panel>
         <Tabs.Panel value='Coloring'>
@@ -224,11 +151,12 @@ export const ShapeParams = React.memo(() => {
         <Tabs.Panel value='Rest'>
           <SettingsSection>
             <StaticRuleEdit name='initialTime' />
+            <Divider />
             <CustomVariables />
           </SettingsSection>
         </Tabs.Panel>
       </Tabs>
-      
+
       <PresetModal
         opened={presetModalOpen}
         onClose={() => setPresetModalOpen(false)}
@@ -237,3 +165,44 @@ export const ShapeParams = React.memo(() => {
   );
 });
 ShapeParams.displayName = "ShapeParams";
+
+const SettingsSection = ({ children }: { children: ReactNode }) => {
+  return (
+    <Stack p='md' gap='md'>
+      {children}
+    </Stack>
+  );
+};
+
+const TabWithIcon = ({
+  value,
+  label,
+  icon: Icon,
+  activeTab,
+}: {
+  value: string;
+  label: string;
+  icon: React.ElementType;
+  activeTab: string | null;
+}) => (
+  <Tooltip label={label} position='bottom' withArrow>
+    <Tabs.Tab
+      value={value}
+      size='xs'
+      px='sm'
+      py='xs'
+      style={{
+        textAlign: "center",
+      }}
+    >
+      <ThemeIcon
+        p={0}
+        size='xs'
+        color={activeTab !== value ? "gray" : undefined}
+        variant='transparent'
+      >
+        <Icon size={14} />
+      </ThemeIcon>
+    </Tabs.Tab>
+  </Tooltip>
+);

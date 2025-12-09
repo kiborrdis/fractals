@@ -1,6 +1,7 @@
 import { Stack, Text, Group, Button } from "@mantine/core";
-import { useCurrentTime } from "./store/data/useCurrentTime";
-import { useActions } from "./store/data/useActions";
+import { useCurrentTime } from "../store/data/useCurrentTime";
+import { useActions } from "../store/data/useActions";
+import { Label } from "@/shared/ui/Label/Label";
 
 export const InitialTimeEdit = ({
   value: initialTime,
@@ -11,16 +12,17 @@ export const InitialTimeEdit = ({
 }) => {
   const currentTime = useCurrentTime();
   const { initialLoopStateChange } = useActions();
-
+  console.log('itialTime', initialTime, currentTime);
   return (
     <Stack>
-      <Text fw={500}>Initial Animation Time</Text>
+      <Label>Initial Time</Label>
       <Group justify="space-between">
-        <Text>Now: {formatMsToHumanReadable(initialTime ?? 0)}</Text>
+        <Text size='sm'>{formatMsToHumanReadable(initialTime ?? 0)}</Text>
         <Button
+          variant="outline"
           onClick={() => {
             initialLoopStateChange(0);
-            setInitialTime(currentTime);
+            setInitialTime(currentTime + (initialTime ?? 0));
           }}
         >
           Set to current time

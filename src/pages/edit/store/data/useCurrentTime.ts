@@ -8,7 +8,7 @@ export const useCurrentTime = () => {
 
 
 export const useInitialTime = () => {
-  const currentTime = useEditStore((state) => state.fractal.initialTime ?? 0);
+  const initialTime = useEditStore((state) => state.fractal.initialTime ?? 0);
 
-  return currentTime;
+  return initialTime;
 };
