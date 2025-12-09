@@ -1,16 +1,17 @@
 # Fractal Visualizer
 
+🌐 **[Live Demo](https://fractals.lightless.work)** — Explore fractals in real-time!
+
 A real-time, interactive fractal visualization and editing application built with WebGL2 and React. Create, animate, and share beautiful mathematical fractals with custom formulas and color gradients.
 
 ## ✨ Features
 
 - **Custom Fractal Formulas** — Write mathematical expressions like `z^2 + c`, `sin(z)^2 + z^-1 + c`, or any complex formula
-- **Real-time WebGL2 Rendering** — Hardware-accelerated GPU rendering for smooth performance
+- **Real-time WebGL2 Rendering** — Hardware-accelerated GPU rendering
 - **Animated Parameters** — Animate any parameter over time with cycling ranges, keyframes, and easing functions
 - **Mirroring Effects** — Apply hex, square, or radial symmetry transformations
 - **Custom Gradients** — Design your own color schemes with multiple gradient stops
 - **Shareable URLs** — Every fractal configuration is encoded in the URL for instant sharing
-- **Preset Gallery** — Browse and explore pre-made fractal configurations
 
 ## 🚀 Getting Started
 
@@ -45,8 +46,6 @@ Fractals are defined by iterative formulas operating on complex numbers. The for
 |----------|-------------|
 | `z` | Current complex value (iterates each step) |
 | `c` | Complex constant (typically the pixel coordinate) |
-| `fCoord` | Fragment/pixel coordinate in complex plane |
-| `c0` | Initial value of c |
 
 ### Operators
 
@@ -73,7 +72,6 @@ Fractals are defined by iterative formulas operating on complex numbers. The for
 | `cmpl(a, b)` | Create complex from reals | `cmpl(im(z), re(z))` |
 | `abs(n)` | Absolute value (number) | `abs(re(z))` |
 | `rotate(z, θ)` | Rotate by angle θ | `rotate(z, 0.5)` |
-| `mirror(z)` | Mirror transformation | `mirror(sin(z))^-2 + c` |
 | `conjugate(z)` | Complex conjugate | `conjugate(z) + c` |
 
 ### Example Formulas
@@ -82,12 +80,12 @@ Fractals are defined by iterative formulas operating on complex numbers. The for
 z^2 + c                          # Classic Mandelbrot
 z^2 + z^-2/10 + c                # Burning ship variant
 sin(z)^2 + z^-1 + c              # Trigonometric fractal
-1/(1-z^-2)^2 + c                 # Rational function fractal
-PLog(sin(z^2))^-2 + c            # Logarithmic spiral
+1/(1-z^-2)^2 + c                 # If you now how to name it, please make PR
+PLog(sin(z^2))^-2 + c            # Something with principal log
 swap*(z^2) + (1-swap)*sin(z)^2 + c  # Morphing between fractals
 ```
 
-## 🎨 Editor Features
+## Editor Features
 
 ### Animation System
 
@@ -95,7 +93,7 @@ Parameters can be animated using different rule types:
 
 - **Static** — Fixed value
 - **Range** — Oscillates between min/max over a cycle period
-- **Step** — Keyframe-based animation with custom easing between steps
+- **Step** — Keyframe-based animation with customizable easing between steps
 
 ### Mirroring Modes
 
@@ -110,38 +108,6 @@ Parameters can be animated using different rule types:
 
 Define your own variables (like `swap` in the examples) and animate them independently. This enables smooth morphing between different fractal types.
 
-## 🛠 Tech Stack
-
-- **Frontend**: React 19, TypeScript
-- **Build**: Vite
-- **UI**: Mantine 8
-- **Routing**: TanStack Router
-- **State**: Zustand with Immer
-- **Graphics**: WebGL2, Custom GLSL Shaders
-- **Deployment**: Cloudflare Workers (optional)
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                    # Routes and app setup
-│   └── routes/            # TanStack Router pages
-├── features/
-│   └── fractals/          # Core fractal logic
-│       ├── formula/       # Math expression parser
-│       └── shader/        # WebGL/GLSL rendering
-├── pages/
-│   ├── edit/              # Fractal editor UI
-│   │   ├── store/         # Editor state management
-│   │   └── TimelineTool/  # Animation timeline
-│   ├── showcase/          # Homepage with fractal grid
-│   └── view/              # View-only fractal display
-└── shared/
-    ├── hooks/             # React hooks
-    ├── libs/              # Utility libraries
-    └── ui/                # Reusable components
-```
-
 ## 🔗 URL Sharing
 
 Fractal configurations are serialized to base64 and stored in the URL query parameter `s`. This means:
@@ -151,23 +117,13 @@ Fractal configurations are serialized to base64 and stored in the URL query para
 - Bookmarkable states
 - Browser history navigation works
 
-Example: `https://yoursite.com/edit?s=eyJmb3JtdWxhIjoiel4yICsgYyIs...`
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## 📄 License
 
-This project is open source. See the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Inspired by the beauty of mathematical fractals
-- Built with love for generative art and creative coding
+This project was inspired by and built upon knowledge from:
+
+- **[Inigo Quilez's Smooth Mandelbrot Article](https://iquilezles.org/articles/msetsmooth/)** — Essential techniques for smooth fractal coloring
+- **[Julia Set Mathematics](https://en.wikipedia.org/wiki/Julia_set)** — Mathematical foundation for fractal iteration
