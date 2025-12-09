@@ -1,6 +1,6 @@
 {
-  "name": "Fractal Explorer",
-  "short_name": "Fractal Explorer",
+  "name": "Fractal Playground",
+  "short_name": "Fractal Playground",
   "icons": [
     {
       "src": "/fav/web-app-manifest-192x192.png",

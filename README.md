@@ -1,4 +1,4 @@
-# Fractal Visualizer
+# Fractal Playground
 
 🌐 **[Live Demo](https://fractals.lightless.work)** — Explore fractals in real-time!
 
