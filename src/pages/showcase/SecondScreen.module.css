@@ -54,6 +54,8 @@
 @media (max-width: 768px) {
   .secondScreen {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
   }
 
   .secondScreenLeft {
@@ -70,5 +72,9 @@
 
   .secondScreenContent p {
     font-size: 1rem;
+  }
+
+  .demonstrationContent {
+    display: none;
   }
 }

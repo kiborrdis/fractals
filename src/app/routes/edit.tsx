@@ -1,8 +1,14 @@
 import { EditFractal } from "@/pages/edit/EditFractal";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
+import { isMobile } from "@/shared/libs/isMobile";
 
 export const Route = createFileRoute("/edit")({
+  beforeLoad: () => {
+    if (isMobile()) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: EditPage,
   validateSearch: (search): { s: string | undefined } => {
     return {

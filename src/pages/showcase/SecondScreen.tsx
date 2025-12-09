@@ -113,21 +113,23 @@ const SecondScreen = () => {
             resulting iteration count is used to color the pixel.
           </p>
 
-          <p>
+          <p className={styles.demonstrationContent}>
             Use the slider below to change the maximum iterations. More
             iterations reveal finer details and deeper structures.
           </p>
-          <GradientLine
-            gradient={exampleFractal.gradient}
-            maxIterations={maxIter}
-            currentIteration={makeNumberFromRangeRule(
-              exampleFractal.dynamic.maxIterations,
-              time + fractalInitialTime,
-            )}
-            minValue={minTime}
-            maxValue={maxTime}
-            onChange={setTime}
-          />
+          <div className={styles.demonstrationContent}>
+            <GradientLine
+              gradient={exampleFractal.gradient}
+              maxIterations={maxIter}
+              currentIteration={makeNumberFromRangeRule(
+                exampleFractal.dynamic.maxIterations,
+                time + fractalInitialTime,
+              )}
+              minValue={minTime}
+              maxValue={maxTime}
+              onChange={setTime}
+            />
+          </div>
           <p>
             By tweaking formulas, parameters, and coloring schemes, you can
             create infinite varieties of intricate, self-similar patterns.
