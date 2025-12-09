@@ -1,0 +1,74 @@
+.secondScreen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background-color: #1a1b1e;
+}
+
+.secondScreenLeft {
+  flex: 1;
+  background-color: #141517;
+}
+
+.secondScreenRight {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.secondScreenContent {
+  height: 100%;
+  max-width: 600px;
+  color: #c1c2c5;
+  width: 100%;
+}
+
+.secondScreenContent h2 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.secondScreenContent p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+.secondScreenContent code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #a6e3a1;
+}
+
+@media (max-width: 768px) {
+  .secondScreen {
+    flex-direction: column;
+  }
+
+  .secondScreenLeft {
+    display: none;
+  }
+
+  .secondScreenRight {
+    padding: 2rem;
+  }
+
+  .secondScreenContent h2 {
+    font-size: 2rem;
+  }
+
+  .secondScreenContent p {
+    font-size: 1rem;
+  }
+}

@@ -53,7 +53,7 @@ vec3 createGradient(float part, int maxIterations) {
     return vec3(1.0f, 0.0f, 1.0f);
   }
 
-  if (part >= 1.0f) {
+  if (abs(1.0f - part) < 0.00001f) {
     vec4 lastTexel = texture(uSampler, getTexCoord(vec2(numColors - 2, 0), vec2(numColors, numColors)));
     return lastTexel.xyz;
   }
@@ -63,7 +63,7 @@ vec3 createGradient(float part, int maxIterations) {
 
   vec4 color = prevTexel;
   float prevPos = (prevPosTexel.x * 255.0f * 255.0f + prevPosTexel.y * 255.0f) / float(maxIterations);
-
+  bool nextBailOut = false;
   for (int i = 2; i < 256; i += 2) {
     if (i >= numColors) {
       break;
@@ -75,8 +75,11 @@ vec3 createGradient(float part, int maxIterations) {
     float curPos = curPosInt / float(maxIterations);
 
     if (curPosInt > float(maxIterations)) {
-      curPos = 1.0f;
-      texel = texture(uSampler, getTexCoord(vec2(numColors - 2, 0), vec2(numColors, numColors)));
+      if (nextBailOut) {
+        curPos = 1.0f;
+        texel = texture(uSampler, getTexCoord(vec2(numColors - 2, 0), vec2(numColors, numColors)));
+      }
+      nextBailOut = true;
     }
 
     color = mix(color, texel, smoothstep(prevPos, curPos, part));

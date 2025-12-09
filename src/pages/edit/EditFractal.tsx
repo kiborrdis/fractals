@@ -27,7 +27,7 @@ import { useFractalParamsData } from "./store/data/useFractalParamsData";
 import { TimelineTool } from "./TimelineTool/TimelineTool";
 import { useInitialLoopState } from "./store/data/useInitialLoopState";
 import { ShapeParams } from "./SidebarSettings/SidebarSettings";
-import { FiShare2 } from "react-icons/fi";
+import { FiDownload, FiShare2 } from "react-icons/fi";
 import { SelectArea } from "./SelectArea";
 
 const defaultRules = getDefaultFractalRules();
@@ -76,23 +76,6 @@ const copyToClipboard = (text: string) => {
   });
 };
 
-export const ShareButton = () => {
-  const fractal = useEditStore((state) => state.fractal);
-
-  return (
-    <ActionIcon
-      variant='subtle'
-      onClick={() => {
-        copyToClipboard(
-          window.location.origin + "/view?s=" + defaultStringify(fractal),
-        );
-      }}
-    >
-      <FiShare2 />
-    </ActionIcon>
-  );
-};
-
 export function EditFractalLoaded() {
   const { play, timeMultiplier } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed } = useActions();
@@ -125,6 +108,7 @@ export function EditFractalLoaded() {
               />
             </Group>
             <Group gap='sm'>
+              <CopyButton />
               <ShareButton />
             </Group>
           </Group>
@@ -142,6 +126,38 @@ export function EditFractalLoaded() {
     </>
   );
 }
+
+const ShareButton = () => {
+  const fractal = useEditStore((state) => state.fractal);
+
+  return (
+    <ActionIcon
+      variant='subtle'
+      onClick={() => {
+        copyToClipboard(
+          window.location.origin + "/view?s=" + defaultStringify(fractal),
+        );
+      }}
+    >
+      <FiShare2 />
+    </ActionIcon>
+  );
+};
+
+const CopyButton = () => {
+  const fractal = useEditStore((state) => state.fractal);
+
+  return (
+    <ActionIcon
+      variant='subtle'
+      onClick={() => {
+        copyToClipboard(JSON.stringify(fractal, null, 2));
+      }}
+    >
+      <FiDownload />
+    </ActionIcon>
+  );
+};
 
 const DisplayEditFractal = () => {
   const selectAreaActive = useSelectAreaActive();

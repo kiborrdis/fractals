@@ -4,21 +4,50 @@ import { DisplayFractals } from "./DisplayFractals";
 import { fractals } from "./fractalStrings";
 import { HeroOverlay } from "./HeroOverlay";
 import styles from "./Showcase.module.css";
+import { useEffect, useRef, useState } from "react";
+import SecondScreen from "./SecondScreen";
 
 export const Showcase = () => {
   const rows = 4;
   const cols = 4;
+  const [play, setPlay] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Stop playing when less than 50% is visible
+        setPlay(entry.intersectionRatio >= 0.5);
+      },
+      {
+        threshold: [0.5],
+      },
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <div className={styles.showcaseContainer}>
-      <DisplayFractals
-        fractals={toGrid(
-          fractals.map((f) => defaultParse(f) as FractalParamsBuildRules),
-          rows,
-          cols,
-        )}
-      />
-      <BoxShadowGrid rows={rows} cols={cols} />
-      <HeroOverlay />
+    <div>
+      <div className={styles.showcaseContainer} ref={containerRef}>
+        <DisplayFractals
+          play={play}
+          fractals={toGrid(
+            fractals.map((f) => defaultParse(f) as FractalParamsBuildRules),
+            rows,
+            cols,
+          )}
+        />
+        <BoxShadowGrid rows={rows} cols={cols} />
+        <HeroOverlay />
+      </div>
+      <SecondScreen />
     </div>
   );
 };

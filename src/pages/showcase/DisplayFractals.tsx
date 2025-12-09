@@ -4,14 +4,20 @@ import { createShowcaseFractalsVisualizer } from "@/features/fractals/fractals";
 import { FractalParamsBuildRules } from "@/features/fractals";
 
 export const DisplayFractals = ({
+  play,
   fractals,
 }: {
+  play: boolean;
   fractals: FractalParamsBuildRules[][];
 }) => {
   const [[width, height], setSize] = useState([0, 0]);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const visualizerRef = useRef<{
     resize: (newSize: [number, number]) => void;
+    loop: {
+      stop: () => void;
+      run: () => void;
+    };
   } | null>(null);
 
   useEffect(() => {
@@ -37,6 +43,16 @@ export const DisplayFractals = ({
       visualizerRef.current.resize([width, height]);
     }
   }, [width, height]);
+
+  useEffect(() => {
+    if (visualizerRef.current) {
+      if (play) {
+        visualizerRef.current.loop.run();
+      } else {
+        visualizerRef.current.loop.stop();
+      }
+    }
+  }, [play]);
 
   return (
     <DisplayCanvas
