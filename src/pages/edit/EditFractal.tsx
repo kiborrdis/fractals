@@ -83,7 +83,9 @@ export const ShareButton = () => {
     <ActionIcon
       variant='subtle'
       onClick={() => {
-        copyToClipboard(window.location.origin + "/view?s=" + defaultStringify(fractal));
+        copyToClipboard(
+          window.location.origin + "/view?s=" + defaultStringify(fractal),
+        );
       }}
     >
       <FiShare2 />
@@ -111,7 +113,7 @@ export function EditFractalLoaded() {
             justify='space-between'
             style={{ position: "sticky", top: 0, zIndex: 10 }}
           >
-            <Group gap='sm' >
+            <Group gap='sm'>
               <ActionIcon variant='subtle' onClick={toggleAnimation}>
                 {play ? <FaPause /> : <FaPlay />}
               </ActionIcon>
@@ -161,4 +163,3 @@ const DisplayEditFractal = () => {
     </SelectArea>
   );
 };
-

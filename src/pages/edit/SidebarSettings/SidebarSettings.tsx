@@ -1,4 +1,12 @@
-import { Button, Divider, Group, Stack, Tabs, ThemeIcon, Tooltip } from "@mantine/core";
+import {
+  Button,
+  Divider,
+  Group,
+  Stack,
+  Tabs,
+  ThemeIcon,
+  Tooltip,
+} from "@mantine/core";
 import React, { ReactNode, useState } from "react";
 import { StaticRuleEdit } from "./StaticRuleEdit";
 import { DynamicRuleEdit } from "./DynamicRuleEdit";

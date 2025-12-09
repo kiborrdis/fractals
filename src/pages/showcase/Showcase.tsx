@@ -17,7 +17,7 @@ export const Showcase = () => {
           cols,
         )}
       />
-      {/* <BoxShadowGrid rows={rows} cols={cols} /> */}
+      <BoxShadowGrid rows={rows} cols={cols} />
       <HeroOverlay />
     </div>
   );
@@ -60,4 +60,3 @@ const BoxShadowGrid = ({ rows, cols }: { rows: number; cols: number }) => {
     </div>
   );
 };
-

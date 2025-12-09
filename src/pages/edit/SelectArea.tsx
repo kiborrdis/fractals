@@ -2,14 +2,16 @@ import { Vector2 } from "@/shared/libs/vectors";
 import { ReactNode, useState, useCallback } from "react";
 
 export const SelectArea = ({
-  enable = false, children, onSelect,
+  enable = false,
+  children,
+  onSelect,
 }: {
   enable?: boolean;
   children: ReactNode;
   onSelect: (
     startCoord: Vector2,
     size: Vector2,
-    containerSize: Vector2
+    containerSize: Vector2,
   ) => void;
 }) => {
   const [startCoords, setStartCoord] = useState<Vector2>([0, 0]);
@@ -31,16 +33,18 @@ export const SelectArea = ({
         setContainerOffset([bound.left, bound.top]);
         setContainerSize([bound.width, bound.height]);
       }, [])}
-      onMouseDown={enable
-        ? (e) => {
-          setStartCoord([
-            e.clientX - containerOffset[0],
-            e.clientY - containerOffset[1],
-          ]);
-          setDims([0, 0]);
-          setSelectionInProgress(true);
-        }
-        : undefined}
+      onMouseDown={
+        enable
+          ? (e) => {
+              setStartCoord([
+                e.clientX - containerOffset[0],
+                e.clientY - containerOffset[1],
+              ]);
+              setDims([0, 0]);
+              setSelectionInProgress(true);
+            }
+          : undefined
+      }
       onMouseMove={(e) => {
         if (!selectionInProgress) {
           return;
@@ -62,7 +66,7 @@ export const SelectArea = ({
         setSelectionInProgress(false);
         const { pos, dims: dimensions } = transformToPositiveDims(
           startCoords,
-          dims
+          dims,
         );
         onSelect(pos, dimensions, containerSize);
       }}
@@ -81,7 +85,8 @@ export const SelectArea = ({
             backgroundColor: "rgba(112, 0, 204, 0.1)",
             pointerEvents: "none",
             zIndex: 1,
-          }} />
+          }}
+        />
       )}
       {children}
     </div>

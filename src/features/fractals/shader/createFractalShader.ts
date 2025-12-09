@@ -4,7 +4,11 @@ import vertex from "./vertexshader.glsl?raw";
 import fragment from "./fragmentshader.glsl?raw";
 import { createProgram, createShader } from "@/shared/libs/webgl";
 import { setupUniformLocations } from "./prepareFractalUniforms";
-import { formulaVars, initialCFormulaVars, initialZFormulaVars } from "./allowedVars";
+import {
+  formulaVars,
+  initialCFormulaVars,
+  initialZFormulaVars,
+} from "./allowedVars";
 
 export const createFractalShader = (
   context: WebGL2RenderingContext,
@@ -13,9 +17,21 @@ export const createFractalShader = (
   initialZFormula: string = "fCoord",
   initialCFormula: string = "c0",
 ) => {
-  const [glslCodeFormula, pow] = fractalFormulaToGLSLCode(formula, formulaVars, customVars);
-  const [glslCodeInitialZFormula] = fractalFormulaToGLSLCode(initialZFormula, initialZFormulaVars, customVars);
-  const [glslCodeInitialCFormula] = fractalFormulaToGLSLCode(initialCFormula, initialCFormulaVars, customVars);
+  const [glslCodeFormula, pow] = fractalFormulaToGLSLCode(
+    formula,
+    formulaVars,
+    customVars,
+  );
+  const [glslCodeInitialZFormula] = fractalFormulaToGLSLCode(
+    initialZFormula,
+    initialZFormulaVars,
+    customVars,
+  );
+  const [glslCodeInitialCFormula] = fractalFormulaToGLSLCode(
+    initialCFormula,
+    initialCFormulaVars,
+    customVars,
+  );
 
   const powPlaceholder = pow >= 2 ? `powZ = ${pow}.0;` : "";
   const glslInitialZFormula = `z0 = ${glslCodeInitialZFormula};`;

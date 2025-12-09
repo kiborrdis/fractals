@@ -6,7 +6,6 @@ export const useCurrentTime = () => {
   return currentTime;
 };
 
-
 export const useInitialTime = () => {
   const initialTime = useEditStore((state) => state.fractal.initialTime ?? 0);
 

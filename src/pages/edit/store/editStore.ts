@@ -366,7 +366,8 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
           },
           moveViewport: (dir: "l" | "r" | "u" | "d", amountPerc: number) => {
             set((prev) => {
-              let visibleRange: [NumberBuildRule, NumberBuildRule] = prev.fractal.dynamic.rlVisibleRange;
+              let visibleRange: [NumberBuildRule, NumberBuildRule] =
+                prev.fractal.dynamic.rlVisibleRange;
               let dirSign: 1 | -1 = 1;
 
               switch (dir) {
@@ -383,10 +384,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
                 }
               }
 
-              const numRange = makeArrayFromRules(
-                    visibleRange,
-                    0,
-                  );
+              const numRange = makeArrayFromRules(visibleRange, 0);
               const span = Math.abs(numRange[1] - numRange[0]);
               const move = span * amountPerc * dirSign;
 

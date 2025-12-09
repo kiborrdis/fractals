@@ -19,7 +19,7 @@ export function PresetModal({
 }) {
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const { presetPicked } = useActions();
-  
+
   const handleClose = () => {
     setSelectedPreset(null);
     onClose();
@@ -54,7 +54,7 @@ export function PresetModal({
           <Button
             disabled={!selectedPreset}
             onClick={() => {
-              if (selectedPreset ) {
+              if (selectedPreset) {
                 presetPicked(selectedPreset);
               }
 

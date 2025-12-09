@@ -422,151 +422,109 @@ const tricorn: FractalParamsBuildRules = {
 };
 
 const multibrot: FractalParamsBuildRules = {
-  "formula": "z^5 + c",
-  "gradient": [
-    [
-      0,
-      0,
-      0,
-      0,
-      1
-    ],
-    [
-      10,
-      0.8,
-      0,
-      0,
-      1
-    ],
-    [
-      30,
-      1,
-      0.6666666666666666,
-      0,
-      1
-    ],
-    [
-      40,
-      1,
-      0.9490196078431372,
-      0,
-      1
-    ],
-    [
-      70,
-      0.9921568627450981,
-      1,
-      0.6,
-      1
-    ],
-    [
-      100,
-      1,
-      0.9372549019607843,
-      0.8392156862745098,
-      1
-    ]
+  formula: "z^5 + c",
+  gradient: [
+    [0, 0, 0, 0, 1],
+    [10, 0.8, 0, 0, 1],
+    [30, 1, 0.6666666666666666, 0, 1],
+    [40, 1, 0.9490196078431372, 0, 1],
+    [70, 0.9921568627450981, 1, 0.6, 1],
+    [100, 1, 0.9372549019607843, 0.8392156862745098, 1],
   ],
-  "invert": false,
-  "mirroringType": "off",
-  "custom": {},
-  "dynamic": {
-    "hexMirroringFactor": {
-      "t": 0,
-      "value": 0
+  invert: false,
+  mirroringType: "off",
+  custom: {},
+  dynamic: {
+    hexMirroringFactor: {
+      t: 0,
+      value: 0,
     },
-    "hexMirroringPerDistChange": {
-      "t": 0,
-      "value": 0
+    hexMirroringPerDistChange: {
+      t: 0,
+      value: 0,
     },
-    "linearMirroringFactor": {
-      "t": 0,
-      "value": 2000
+    linearMirroringFactor: {
+      t: 0,
+      value: 2000,
     },
-    "time": {
-      "t": 0,
-      "value": 0
+    time: {
+      t: 0,
+      value: 0,
     },
-    "c": [
+    c: [
       {
-        "t": 1,
-        "range": [
-          -1,
-          1
-        ],
-        "cycleSeconds": 10,
-        "phaseSeconds": 0
+        t: 1,
+        range: [-1, 1],
+        cycleSeconds: 10,
+        phaseSeconds: 0,
       },
       {
-        "t": 1,
-        "range": [
-          -1,
-          1
-        ],
-        "cycleSeconds": 20,
-        "phaseSeconds": 0
-      }
+        t: 1,
+        range: [-1, 1],
+        cycleSeconds: 20,
+        phaseSeconds: 0,
+      },
     ],
-    "r": {
-      "t": 0,
-      "value": 2
+    r: {
+      t: 0,
+      value: 2,
     },
-    "rlVisibleRange": [
+    rlVisibleRange: [
       {
-        "t": 0,
-        "value": -2
+        t: 0,
+        value: -2,
       },
       {
-        "t": 0,
-        "value": 2
-      }
+        t: 0,
+        value: 2,
+      },
     ],
-    "imVisibleRange": [
+    imVisibleRange: [
       {
-        "t": 0,
-        "value": -2
+        t: 0,
+        value: -2,
       },
       {
-        "t": 0,
-        "value": 2
-      }
+        t: 0,
+        value: 2,
+      },
     ],
-    "maxIterations": {
-      "t": 0,
-      "value": 100
+    maxIterations: {
+      t: 0,
+      value: 100,
     },
-    "linearMirroringPerDistChange": {
-      "t": 0,
-      "value": 0
+    linearMirroringPerDistChange: {
+      t: 0,
+      value: 0,
     },
-    "radialMirroringPerDistChange": {
-      "t": 0,
-      "value": 0
+    radialMirroringPerDistChange: {
+      t: 0,
+      value: 0,
     },
-    "cxPerDistChange": {
-      "t": 0,
-      "value": 0
+    cxPerDistChange: {
+      t: 0,
+      value: 0,
     },
-    "cyPerDistChange": {
-      "t": 0,
-      "value": 0
+    cyPerDistChange: {
+      t: 0,
+      value: 0,
     },
-    "rPerDistChange": {
-      "t": 0,
-      "value": 0
+    rPerDistChange: {
+      t: 0,
+      value: 0,
     },
-    "iterationsPerDistChange": {
-      "t": 0,
-      "value": 0
+    iterationsPerDistChange: {
+      t: 0,
+      value: 0,
     },
-    "radialMirroringAngle": {
-      "t": 0,
-      "value": 181
-    }
+    radialMirroringAngle: {
+      t: 0,
+      value: 181,
+    },
   },
-  "initialZFormula": "c0",
-  "initialCFormula": "fCoord",
-  "bandSmoothing": 0
+  initialZFormula: "c0",
+  initialCFormula: "fCoord",
+  bandSmoothing: 0,
 };
 
 export const fractalPresets: Record<string, FractalParamsBuildRules> = {

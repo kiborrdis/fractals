@@ -103,14 +103,11 @@ export const GradientInput = ({
               style={{ background: generateGradientString() }}
             />
           </Tooltip.Floating>
-          <Tooltip.Floating
-            label='Gradient aligned with stops'
-            position='left'
-          >
-          <div
-            className={styles.gradientPreview}
-            style={{ background: generateAlignedGradientString() }}
-          />
+          <Tooltip.Floating label='Gradient aligned with stops' position='left'>
+            <div
+              className={styles.gradientPreview}
+              style={{ background: generateAlignedGradientString() }}
+            />
           </Tooltip.Floating>
         </div>
         <div className={styles.gridContainer}>

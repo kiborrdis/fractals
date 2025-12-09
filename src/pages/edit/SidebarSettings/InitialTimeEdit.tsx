@@ -16,10 +16,10 @@ export const InitialTimeEdit = ({
   return (
     <Stack>
       <Label>Initial Time</Label>
-      <Group justify="space-between">
+      <Group justify='space-between'>
         <Text size='sm'>{formatMsToHumanReadable(initialTime ?? 0)}</Text>
         <Button
-          variant="outline"
+          variant='outline'
           onClick={() => {
             initialLoopStateChange(0);
             setInitialTime(currentTime + (initialTime ?? 0));
@@ -46,4 +46,4 @@ const formatMsToHumanReadable = (ms: number) => {
   parts.push(`${seconds}s.${milliseconds}ms`);
 
   return parts.join(" ");
-}
+};

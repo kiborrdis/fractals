@@ -1,11 +1,11 @@
-import { formulaVars, FractalParamsBuildRules, GradientStop } from "@/features/fractals";
+import {
+  formulaVars,
+  FractalParamsBuildRules,
+  GradientStop,
+} from "@/features/fractals";
 import { useStaticRule } from "../store/data/useStaticRule";
 import { ReactNode } from "react";
-import {
-  Checkbox,
-  Divider,
-  SegmentedControl,
-} from "@mantine/core";
+import { Checkbox, Divider, SegmentedControl } from "@mantine/core";
 import { FormulaInput } from "../FormulaInput";
 import { GradientInput } from "./GradientInput/GradientInput";
 import { InitialTimeEdit } from "./InitialTimeEdit";
@@ -86,7 +86,7 @@ const ruleConfigs: RuleRenderers = {
           )
         }
       />
-      <Divider orientation="horizontal" />
+      <Divider orientation='horizontal' />
       <GradientInput
         stops={props.value as GradientStop[]}
         onChange={(newStops) =>

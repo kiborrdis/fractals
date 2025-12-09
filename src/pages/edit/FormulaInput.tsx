@@ -45,7 +45,6 @@ export const FormulaInput = ({
     <TextInput
       label={label}
       placeholder={placeholder}
-      
       size='sm'
       onBlur={() => {
         if (error) {
@@ -64,13 +63,12 @@ export const FormulaInput = ({
         try {
           const node = parseFormula(newFormula);
           const typeMap = calcTypesOfNodes(node, customVarTypes);
-          
+
           const [valid, message] = validateFormula(node, customVarsSet);
           if (!valid) {
             setError(message);
             return;
           }
-
 
           if (
             [...typeMap.entries()].some(([, type]) => {
@@ -81,9 +79,7 @@ export const FormulaInput = ({
             return;
           }
 
-          if (
-            typeMap.get(node) !== "vector2"
-          ) {
+          if (typeMap.get(node) !== "vector2") {
             setError("Resulting type must be vector");
             return;
           }

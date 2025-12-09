@@ -125,5 +125,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This project was inspired by and built upon knowledge from:
 
-- **[Inigo Quilez's Smooth Mandelbrot Article](https://iquilezles.org/articles/msetsmooth/)** — Essential techniques for smooth fractal coloring
+- **[Inigo Quilez's Smooth Mandelbrot Article](https://iquilezles.org/articles/msetsmooth/)** — Band smoothing for fractal coloring
 - **[Julia Set Mathematics](https://en.wikipedia.org/wiki/Julia_set)** — Mathematical foundation for fractal iteration

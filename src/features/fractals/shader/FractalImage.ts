@@ -34,7 +34,7 @@ export class FractalImage {
   updateParams(newParams: FractalParamsBuildRules) {
     if (
       Object.keys(newParams.custom).length !==
-      Object.keys(this.params.custom).length ||
+        Object.keys(this.params.custom).length ||
       this.params.formula !== newParams.formula ||
       this.params.initialCFormula !== newParams.initialCFormula ||
       this.params.initialZFormula !== newParams.initialZFormula
@@ -54,7 +54,10 @@ export class FractalImage {
   getRenderData(time: number) {
     return [
       this.shader,
-      makeFractalParamsFromRules(this.params, time + (this.params.initialTime ?? 0)),
+      makeFractalParamsFromRules(
+        this.params,
+        time + (this.params.initialTime ?? 0),
+      ),
     ] as const;
   }
 }

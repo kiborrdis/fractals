@@ -12,7 +12,7 @@ export const HeroOverlay = () => {
           Real-time GPU-rendered fractal art with custom animations.
         </p>
         <div className={styles.buttons}>
-          <a href="/edit" className={styles.primaryButton}>
+          <a href='/edit' className={styles.primaryButton}>
             Create Your Own
           </a>
         </div>

@@ -70,5 +70,5 @@ describe("GrammarBuilder", () => {
     const result = parser.parse("(123");
     expect(result[0]).toBe(null);
     expect(result[1].lastIndex).toBe(0);
-  })
+  });
 });

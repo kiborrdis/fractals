@@ -13,7 +13,7 @@ export const Route = createFileRoute("/edit")({
 
 function EditPage() {
   const navigate = useNavigate();
-  
+
   const search = Route.useSearch();
   const ref = useRef(search);
   ref.current = search;

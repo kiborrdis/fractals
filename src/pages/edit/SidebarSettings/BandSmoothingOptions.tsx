@@ -2,7 +2,8 @@ import { Label } from "@/shared/ui/Label/Label";
 import { Stack, SegmentedControl, NumberInput } from "@mantine/core";
 
 export const BandSmoothingOptions = ({
-  value = 0, onChange,
+  value = 0,
+  onChange,
 }: {
   value?: number;
   onChange: (value: number) => void;
@@ -35,7 +36,8 @@ export const BandSmoothingOptions = ({
           }
 
           onChange(smoothingValue);
-        }} />
+        }}
+      />
       {smoothingType === "custom" && (
         <NumberInput
           value={value}
@@ -49,7 +51,8 @@ export const BandSmoothingOptions = ({
             }
 
             onChange(Number(newValue));
-          }} />
+          }}
+        />
       )}
     </Stack>
   );
