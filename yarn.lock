@@ -3595,9 +3595,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fractals-tests@workspace:.":
+"fractals@workspace:.":
   version: 0.0.0-use.local
-  resolution: "fractals-tests@workspace:."
+  resolution: "fractals@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.19.0"
     "@mantine/core": "npm:^8.2.8"
