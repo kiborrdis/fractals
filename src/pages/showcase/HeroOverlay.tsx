@@ -15,9 +15,6 @@ export const HeroOverlay = () => {
           <a href="/edit" className={styles.primaryButton}>
             Create Your Own
           </a>
-          <a href="/random" className={styles.secondaryButton}>
-            Surprise Me
-          </a>
         </div>
       </div>
     </div>

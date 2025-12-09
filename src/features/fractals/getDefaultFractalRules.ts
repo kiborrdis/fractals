@@ -18,7 +18,7 @@ export const getDefaultFractalRules = () => {
 
     mirroringType: "off",
 
-    initialTime: 2000,
+    initialTime: 1425,
 
     dynamic: {
       hexMirroringFactor: 1,

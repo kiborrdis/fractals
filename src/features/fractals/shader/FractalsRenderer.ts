@@ -6,6 +6,7 @@ import { FractalImage } from "./FractalImage";
 export class FractalsRenderer {
   private canvasSize: Vector2;
   private canvasParams: FractalCanvasParams;
+  private lastRenderTime: number = 0;
 
   constructor(
     private context: WebGL2RenderingContext,
@@ -18,9 +19,11 @@ export class FractalsRenderer {
 
   public resize(newSize: Vector2) {
     this.canvasSize = newSize;
+    this.render(this.lastRenderTime);
   }
 
   public render(time: number) {
+    this.lastRenderTime = time;
     const context = this.canvasParams.context;
 
     context.viewport(0, 0, ...this.canvasSize);

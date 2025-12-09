@@ -1,0 +1,25 @@
+/* Showcase.module.css */
+
+.showcaseContainer {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.boxShadowGrid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.boxShadowRow {
+  display: flex;
+  height: var(--row-height);
+}
+
+.boxShadowCell {
+  flex: 1;
+  box-shadow: inset 0px 0px 31px 18px rgba(0, 0, 0, 0.4);
+}

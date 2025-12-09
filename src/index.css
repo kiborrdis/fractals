@@ -1,3 +1,7 @@
 #root {
   width: 100vw;
 }
+
+html {
+  overflow: hidden;
+}
