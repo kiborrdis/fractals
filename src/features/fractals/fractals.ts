@@ -4,6 +4,8 @@ import { FractalsRenderer } from "./shader/FractalsRenderer";
 import { Vector2 } from "@/shared/libs/vectors";
 import { FractalImage } from "./shader/FractalImage";
 
+const BUDGET = 500;
+
 export const createFractalVisualizer = (
   canvas: HTMLCanvasElement,
   canvasSize: Vector2,
@@ -24,7 +26,18 @@ export const createFractalVisualizer = (
   const loop = createRenderLoop({
     params: loopParams,
     loopIterationCallback: async ({ timeSinceStart }) => {
-      renderer.render(timeSinceStart);
+      renderer.render(timeSinceStart).then((renderTimeMs: number) => {
+        if (renderTimeMs < 0) {
+          loop.setMaxFps(30);
+          return;
+        }
+
+        loop.setMaxFps(
+          renderTimeMs > 0
+            ? Math.min(60, Math.floor(BUDGET / renderTimeMs))
+            : 60,
+        );
+      });
 
       if (renderCallback) {
         renderCallback(timeSinceStart);
@@ -71,7 +84,17 @@ export const createShowcaseFractalsVisualizer = (
       timeMultiplier: 1,
     },
     loopIterationCallback: async ({ timeSinceStart }) => {
-      renderer.render(timeSinceStart);
+      renderer.render(timeSinceStart).then((renderTimeMs: number) => {
+        if (renderTimeMs < 0) {
+          return;
+        }
+
+        loop.setMaxFps(
+          renderTimeMs > 0
+            ? Math.min(60, Math.floor(BUDGET / renderTimeMs))
+            : 60,
+        );
+      });
     },
   });
 

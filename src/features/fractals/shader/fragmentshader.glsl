@@ -413,7 +413,6 @@ float generateFractalIntensity(vec2 point) {
   float powZ = 0.0f;
   //@FORMULA_POW_PLACEHOLDER@
   int period = 0;
-  float ar = 0.0f; // average of reciprocals
 
   for (int iter = 0; iter < 10000; iter += 1) {
 
