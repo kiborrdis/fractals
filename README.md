@@ -13,7 +13,7 @@ A real-time, interactive fractal visualization and editing application built wit
 - **Custom Gradients** — Design your own color schemes with multiple gradient stops
 - **Shareable URLs** — Every fractal configuration is encoded in the URL for instant sharing
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -108,7 +108,7 @@ Parameters can be animated using different rule types:
 
 Define your own variables (like `swap` in the examples) and animate them independently. This enables smooth morphing between different fractal types.
 
-## 🔗 URL Sharing
+## URL Sharing
 
 Fractal configurations are serialized to base64 and stored in the URL query parameter `s`. This means:
 
@@ -117,11 +117,11 @@ Fractal configurations are serialized to base64 and stored in the URL query para
 - Bookmarkable states
 - Browser history navigation works
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 This project was inspired by and built upon knowledge from:
 
