@@ -14,6 +14,48 @@
   pointer-events: none;
 }
 
+.githubLink {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  pointer-events: auto;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.githubLink:hover {
+  color: white;
+  transform: scale(1.1);
+}
+
+.githubIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 768px) {
+  .githubLink {
+    top: 1.5rem;
+    right: 1.5rem;
+  }
+  
+  .githubIcon {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .githubLink {
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .githubIcon {
+    font-size: 1.5rem;
+  }
+}
+
 .content {
   text-align: center;
   color: white;

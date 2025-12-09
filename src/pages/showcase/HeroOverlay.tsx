@@ -1,8 +1,18 @@
+import { FaGithub } from "react-icons/fa";
 import styles from "./HeroOverlay.module.css";
 
 export const HeroOverlay = () => {
   return (
     <div className={styles.overlay}>
+      <a
+        href='https://github.com/kiborrdis/fractals'
+        target='_blank'
+        rel='noopener noreferrer'
+        className={styles.githubLink}
+        aria-label='View on GitHub'
+      >
+        <FaGithub className={styles.githubIcon} />
+      </a>
       <div className={styles.content}>
         <h1 className={styles.title}>Fractals</h1>
         <div className={styles.divider} />
