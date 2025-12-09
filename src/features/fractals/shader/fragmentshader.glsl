@@ -405,6 +405,7 @@ float generateFractalIntensity(vec2 point) {
   int iteration = 0;
   float distToTrap = 1000.0f;
   vec2 zPrev = z;
+  vec2 zp = vec2(0.0f, 0.0f);
 
   float powZ = 0.0f;
   //@FORMULA_POW_PLACEHOLDER@
@@ -418,10 +419,9 @@ float generateFractalIntensity(vec2 point) {
     if (xSqrd + ySqrd >= Rsqrd || maxIteration <= iter) {
       break;
     }
-
     //@FORMULA_PLACEHOLDER@
-    // z = complexMul(z, z);
-    // z = complexAdd(z, c);
+
+    zp = z;
 
     zxPrev = xSqrd;
     zyPrev = ySqrd;

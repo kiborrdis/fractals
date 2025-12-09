@@ -11,6 +11,7 @@ import { useCustomVars } from "./store/data/useCustomVars";
 const defaultVars: VarNameToTypeMap = {
   z: "vector2",
   c: "vector2",
+  zp: "vector2",
 };
 
 export const FormulaInput = ({

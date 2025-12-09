@@ -10,6 +10,7 @@ const formulaVars: VarNameToTypeMap = {
   z: "vector2",
   c: "vector2",
   fCoord: "vector2",
+  zp: "vector2",
 };
 
 const initialZFormulaVars: VarNameToTypeMap = {
