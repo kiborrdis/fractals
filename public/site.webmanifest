@@ -1,7 +1,29 @@
 {
   "name": "Fractal Playground",
   "short_name": "Fractal Playground",
+  "description": "Create, explore, and share beautiful mathematical fractals in real-time. Interactive WebGL-powered fractal visualizer with custom formulas, animations, and color gradients.",
   "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/fav/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
     {
       "src": "/fav/web-app-manifest-192x192.png",
       "sizes": "192x192",
@@ -17,5 +39,7 @@
   ],
   "theme_color": "#000000",
   "background_color": "#000000",
-  "display": "standalone"
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/"
 }
