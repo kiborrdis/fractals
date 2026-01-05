@@ -1,0 +1,11 @@
+.hoverCrossPoint {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crossIcon {
+  position: absolute;
+  opacity: 0.8;
+}

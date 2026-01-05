@@ -1,0 +1,12 @@
+.dimmedPointOuter {
+  padding: 4px;
+}
+
+.dimmedPointInner {
+  height: 6px;
+  width: 6px;
+  background-color: var(--draggable-point-dimmed-color, #808080);
+  border-radius: 50%;
+  box-shadow: 0 0 4px
+    var(--draggable-point-dimmed-glow, rgba(100, 100, 100, 0.6));
+}

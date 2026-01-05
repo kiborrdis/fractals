@@ -1,0 +1,11 @@
+.defaultPointOuter {
+  padding: 6px;
+}
+
+.defaultPointInner {
+  height: 5px;
+  width: 5px;
+  background-color: var(--draggable-point-color);
+  border-radius: 50%;
+  box-shadow: 0 0 4px var(--draggable-point-glow);
+}

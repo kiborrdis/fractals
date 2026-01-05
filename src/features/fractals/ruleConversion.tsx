@@ -3,6 +3,7 @@ import {
   makeRuleFromArray,
   makeRuleFromNumber,
   makeScalarFromRule,
+  RuleType,
 } from "@/shared/libs/numberRule";
 import {
   FractalDynamicParamsBuildRules,
@@ -31,8 +32,8 @@ export const makeRulesBasedOnParams = ({
     }, {} as FractalCustomRules),
     dynamic: {
       hexMirroringFactor: makeRuleFromNumber(params.hexMirroringFactor),
-      hexMirroringPerDistChange: makeRuleFromNumber(
-        params.hexMirroringPerDistChange,
+      hexMirroringDistVariation: makeRuleFromNumber(
+        params.hexMirroringDistVariation,
       ),
       linearMirroringFactor: makeRuleFromNumber(params.linearMirroringFactor),
       time: makeRuleFromNumber(params.time),
@@ -41,17 +42,16 @@ export const makeRulesBasedOnParams = ({
       rlVisibleRange: makeRuleFromArray(params.rlVisibleRange),
       imVisibleRange: makeRuleFromArray(params.imVisibleRange),
       maxIterations: makeRuleFromNumber(params.maxIterations),
-      linearMirroringPerDistChange: makeRuleFromNumber(
-        params.linearMirroringPerDistChange,
+      linearMirroringDistVariation: makeRuleFromNumber(
+        params.linearMirroringDistVariation,
       ),
-      radialMirroringPerDistChange: makeRuleFromNumber(
-        params.radialMirroringPerDistChange,
+      radialMirroringDistVariation: makeRuleFromNumber(
+        params.radialMirroringDistVariation,
       ),
-      cxPerDistChange: makeRuleFromNumber(params.cxPerDistChange),
-      cyPerDistChange: makeRuleFromNumber(params.cyPerDistChange),
-      rPerDistChange: makeRuleFromNumber(params.rPerDistChange),
-      iterationsPerDistChange: makeRuleFromNumber(
-        params.iterationsPerDistChange,
+      cDistVariation: makeRuleFromArray(params.cDistVariation),
+      rDistVariation: makeRuleFromNumber(params.rDistVariation),
+      iterationsDistVariation: makeRuleFromNumber(
+        params.iterationsDistVariation,
       ),
       radialMirroringAngle: makeRuleFromNumber(params.radialMirroringAngle),
     },
@@ -77,7 +77,11 @@ const makeCustomFractalParamsFromRules = (
 ): { [key: string]: number | [number, number] } => {
   const params = Object.entries(rules).reduce(
     (acc, [key, value]) => {
-      if (Array.isArray(value)) {
+      if (
+        Array.isArray(value) ||
+        value.t === RuleType.StepNVector ||
+        value.t === RuleType.Vector2BSpline
+      ) {
         acc[key] = makeArrayFromRules(value, time);
         return acc;
       }
@@ -97,7 +101,11 @@ const makeFractalDynamicParamsFromRules = (
   time: number = 0,
 ): FractalDynamicParams => {
   const params = Object.entries(rules).reduce((acc, [key, value]) => {
-    if (Array.isArray(value)) {
+    if (
+      Array.isArray(value) ||
+      value.t === RuleType.StepNVector ||
+      value.t === RuleType.Vector2BSpline
+    ) {
       acc[key as keyof FractalDynamicParams] = makeArrayFromRules(
         value,
         time,

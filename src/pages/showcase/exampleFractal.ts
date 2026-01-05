@@ -19,14 +19,15 @@ export const exampleFractal: FractalParamsBuildRules = {
   ],
   invert: false,
   mirroringType: "off",
-  initialTime: 93,
+  initialTime: 150,
   custom: {},
+  borderColoringEnabled: false,
   dynamic: {
     hexMirroringFactor: {
       t: 0,
       value: 1,
     },
-    hexMirroringPerDistChange: {
+    hexMirroringDistVariation: {
       t: 0,
       value: 0,
     },
@@ -103,27 +104,29 @@ export const exampleFractal: FractalParamsBuildRules = {
         },
       ],
     },
-    linearMirroringPerDistChange: {
+    linearMirroringDistVariation: {
       t: 0,
       value: 0,
     },
-    radialMirroringPerDistChange: {
+    radialMirroringDistVariation: {
       t: 0,
       value: 0,
     },
-    cxPerDistChange: {
+    cDistVariation: [
+      {
+        t: 0,
+        value: 0,
+      },
+      {
+        t: 0,
+        value: 0,
+      },
+    ],
+    rDistVariation: {
       t: 0,
       value: 0,
     },
-    cyPerDistChange: {
-      t: 0,
-      value: 0,
-    },
-    rPerDistChange: {
-      t: 0,
-      value: 0,
-    },
-    iterationsPerDistChange: {
+    iterationsDistVariation: {
       t: 0,
       value: 0,
     },

@@ -1,10 +1,10 @@
 # Fractal Playground
 
-🌐 **[Live Demo](https://fractals.lightless.work)** — Explore fractals in real-time!
+**[Live Demo](https://fractals.lightless.work)** — Explore fractals in real-time!
 
 A real-time, interactive fractal visualization and editing application built with WebGL2 and React. Create, animate, and share beautiful mathematical fractals with custom formulas and color gradients.
 
-## ✨ Features
+## Features
 
 - **Custom Fractal Formulas** — Write mathematical expressions like `z^2 + c`, `sin(z)^2 + z^-1 + c`, or any complex formula
 - **Real-time WebGL2 Rendering** — Hardware-accelerated GPU rendering
@@ -36,7 +36,7 @@ yarn dev
 
 The app will be available at `http://localhost:5173`
 
-## 📖 Formula Syntax
+## Formula Syntax
 
 Fractals are defined by iterative formulas operating on complex numbers. The formula determines how each point in the complex plane evolves.
 
@@ -119,7 +119,7 @@ Fractal configurations are serialized to base64 and stored in the URL query para
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 

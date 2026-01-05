@@ -1,4 +1,4 @@
-import { CalcNodeResultType } from "./types";
+import { CalcNodeResultType } from "@/shared/libs/complexVariableFormula/types";
 
 export type VarNameToTypeMap = Record<string, CalcNodeResultType>;
 
@@ -17,14 +17,10 @@ export const funcNameToSignature: Record<
   },
   im: {
     params: ["vector2"],
-    return: "number",
+    return: "vector2",
   },
   re: {
     params: ["vector2"],
-    return: "number",
-  },
-  cmpl: {
-    params: ["number", "number"],
     return: "vector2",
   },
   sin: {
@@ -70,9 +66,5 @@ export const funcNameToSignature: Record<
   conjugate: {
     params: ["vector2"],
     return: "vector2",
-  },
-  abs: {
-    params: ["number"],
-    return: "number",
   },
 };

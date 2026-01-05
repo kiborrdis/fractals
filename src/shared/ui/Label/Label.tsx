@@ -10,7 +10,13 @@ export const Label = ({
   size?: "sm" | "xs";
 }) => {
   return (
-    <Text component='label' size={size} fw={500} htmlFor={htmlFor}>
+    <Text
+      component={htmlFor ? "label" : "span"}
+      lineClamp={2}
+      size={size}
+      fw={500}
+      htmlFor={htmlFor}
+    >
       {children}
     </Text>
   );

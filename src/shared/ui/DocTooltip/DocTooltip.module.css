@@ -1,0 +1,80 @@
+.anchor {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooltipContent {
+  max-width: 300px;
+}
+
+.tooltipContent p {
+  margin: 0;
+}
+
+.modalContent {
+  line-height: 1.6;
+}
+
+.modalContent h1 {
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.modalContent h2 {
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.modalContent h3 {
+  font-size: 1.1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.modalContent p {
+  margin: 0.5rem 0;
+}
+
+.modalContent ul,
+.modalContent ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.modalContent code {
+  background: var(--mantine-color-dark-6);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.modalContent pre {
+  background: var(--mantine-color-dark-6);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.modalContent pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.modalContent a {
+  color: var(--mantine-color-blue-4);
+  text-decoration: none;
+}
+
+.modalContent a:hover {
+  text-decoration: underline;
+}
+
+.modalContent img {
+  max-width: 100%;
+  border-radius: 4px;
+}

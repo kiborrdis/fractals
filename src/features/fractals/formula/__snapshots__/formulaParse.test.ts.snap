@@ -6,20 +6,22 @@ exports[`parseFormula > parses add and mul operations with proper order of opera
     {
       "c": [
         {
+          "im": 0,
           "r": [
             1,
             2,
           ],
+          "re": 21,
           "t": 3,
-          "v": 21,
         },
         {
+          "im": 0,
           "r": [
             6,
             7,
           ],
+          "re": 23,
           "t": 3,
-          "v": 23,
         },
       ],
       "r": [
@@ -51,22 +53,24 @@ exports[`parseFormula > parses add and mul operations with proper order of opera
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         2,
       ],
+      "re": 21,
       "t": 3,
-      "v": 21,
     },
     {
       "c": [
         {
+          "im": 0,
           "r": [
             6,
             7,
           ],
+          "re": 23,
           "t": 3,
-          "v": 23,
         },
         {
           "c": [
@@ -82,12 +86,13 @@ exports[`parseFormula > parses add and mul operations with proper order of opera
               "n": "pow",
               "o": [
                 {
+                  "im": 0,
                   "r": [
                     20,
                     20,
                   ],
+                  "re": 2,
                   "t": 3,
-                  "v": 2,
                 },
                 {
                   "r": [
@@ -140,20 +145,22 @@ exports[`parseFormula > parses add operation minus 2`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         3,
       ],
+      "re": 123,
       "t": 3,
-      "v": 123,
     },
     {
+      "im": 0,
       "r": [
         7,
         9,
       ],
+      "re": 456,
       "t": 3,
-      "v": 456,
     },
   ],
   "r": [
@@ -173,12 +180,13 @@ exports[`parseFormula > parses add operation with diffrent operands 3`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         2,
       ],
+      "re": 24,
       "t": 3,
-      "v": 24,
     },
     {
       "r": [
@@ -210,12 +218,13 @@ exports[`parseFormula > parses add operation with diffrent operands 4`] = `
       "v": "cd",
     },
     {
+      "im": 0,
       "r": [
         6,
         7,
       ],
+      "re": 24,
       "t": 3,
-      "v": 24,
     },
   ],
   "r": [
@@ -233,20 +242,22 @@ exports[`parseFormula > parses add operation with number operands 2`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         3,
       ],
+      "re": 123,
       "t": 3,
-      "v": 123,
     },
     {
+      "im": 0,
       "r": [
         7,
         9,
       ],
+      "re": 456,
       "t": 3,
-      "v": 456,
     },
   ],
   "r": [
@@ -264,20 +275,22 @@ exports[`parseFormula > parses add operation with number operands, one of them n
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         3,
       ],
+      "re": 123,
       "t": 3,
-      "v": 123,
     },
     {
+      "im": 0,
       "r": [
         7,
         10,
       ],
+      "re": -456,
       "t": 3,
-      "v": -456,
     },
   ],
   "r": [
@@ -328,20 +341,22 @@ exports[`parseFormula > parses add, mul and pow operations with proper order of 
         {
           "c": [
             {
+              "im": 0,
               "r": [
                 1,
                 2,
               ],
+              "re": 21,
               "t": 3,
-              "v": 21,
             },
             {
+              "im": 0,
               "r": [
                 4,
                 4,
               ],
+              "re": 3,
               "t": 3,
-              "v": 3,
             },
           ],
           "r": [
@@ -352,12 +367,13 @@ exports[`parseFormula > parses add, mul and pow operations with proper order of 
           "v": "^",
         },
         {
+          "im": 0,
           "r": [
             8,
             9,
           ],
+          "re": 23,
           "t": 3,
-          "v": 23,
         },
       ],
       "r": [
@@ -378,12 +394,13 @@ exports[`parseFormula > parses add, mul and pow operations with proper order of 
           "v": "ab",
         },
         {
+          "im": 0,
           "r": [
             16,
             16,
           ],
+          "re": 2,
           "t": 3,
-          "v": 2,
         },
       ],
       "r": [
@@ -405,16 +422,48 @@ exports[`parseFormula > parses add, mul and pow operations with proper order of 
 
 exports[`parseFormula > parses add, mul and pow operations with proper order of operations 2`] = `"(((21^3)*23)+(ab^2))"`;
 
+exports[`parseFormula > parses complex number expression 1`] = `
+{
+  "c": [
+    {
+      "im": 0,
+      "r": [
+        0,
+        0,
+      ],
+      "re": 2,
+      "t": 3,
+    },
+    {
+      "im": 3,
+      "r": [
+        4,
+        5,
+      ],
+      "re": 0,
+      "t": 3,
+    },
+  ],
+  "r": [
+    2,
+    2,
+  ],
+  "t": 1,
+  "v": "+",
+}
+`;
+
 exports[`parseFormula > parses empty string 1`] = `"0"`;
 
 exports[`parseFormula > parses empty string 2`] = `
 {
+  "im": 0,
   "r": [
     0,
     0,
   ],
+  "re": 0,
   "t": 3,
-  "v": 0,
 }
 `;
 
@@ -422,23 +471,25 @@ exports[`parseFormula > parses funcCall 1`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         0,
         2,
       ],
+      "re": 123,
       "t": 3,
-      "v": 123,
     },
     {
       "n": "sin",
       "o": [
         {
+          "im": 0,
           "r": [
             10,
             10,
           ],
+          "re": 3,
           "t": 3,
-          "v": 3,
         },
       ],
       "r": [
@@ -463,31 +514,34 @@ exports[`parseFormula > parses funcCall with 2 params 2`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         0,
         2,
       ],
+      "re": 123,
       "t": 3,
-      "v": 123,
     },
     {
       "n": "pow",
       "o": [
         {
+          "im": 0,
           "r": [
             10,
             10,
           ],
+          "re": 3,
           "t": 3,
-          "v": 3,
         },
         {
+          "im": 0,
           "r": [
             13,
             13,
           ],
+          "re": 2,
           "t": 3,
-          "v": 2,
         },
       ],
       "r": [
@@ -506,26 +560,40 @@ exports[`parseFormula > parses funcCall with 2 params 2`] = `
 }
 `;
 
+exports[`parseFormula > parses imaginary number 1`] = `
+{
+  "im": 3,
+  "r": [
+    0,
+    1,
+  ],
+  "re": 0,
+  "t": 3,
+}
+`;
+
 exports[`parseFormula > parses mul operation division 1`] = `"(123/456)"`;
 
 exports[`parseFormula > parses mul operation division 2`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         3,
       ],
+      "re": 123,
       "t": 3,
-      "v": 123,
     },
     {
+      "im": 0,
       "r": [
         7,
         9,
       ],
+      "re": 456,
       "t": 3,
-      "v": 456,
     },
   ],
   "r": [
@@ -545,12 +613,13 @@ exports[`parseFormula > parses mul operation with diffrent operands 3`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         2,
       ],
+      "re": 24,
       "t": 3,
-      "v": 24,
     },
     {
       "r": [
@@ -582,12 +651,13 @@ exports[`parseFormula > parses mul operation with diffrent operands 4`] = `
       "v": "cd",
     },
     {
+      "im": 0,
       "r": [
         6,
         7,
       ],
+      "re": 24,
       "t": 3,
-      "v": 24,
     },
   ],
   "r": [
@@ -605,20 +675,22 @@ exports[`parseFormula > parses mul operation with number operands 2`] = `
 {
   "c": [
     {
+      "im": 0,
       "r": [
         1,
         3,
       ],
+      "re": 123,
       "t": 3,
-      "v": 123,
     },
     {
+      "im": 0,
       "r": [
         7,
         9,
       ],
+      "re": 456,
       "t": 3,
-      "v": 456,
     },
   ],
   "r": [
@@ -661,16 +733,29 @@ exports[`parseFormula > parses mul operation with variable operands 2`] = `
 }
 `;
 
+exports[`parseFormula > parses negative imaginary number 1`] = `
+{
+  "im": -2.5,
+  "r": [
+    0,
+    4,
+  ],
+  "re": 0,
+  "t": 3,
+}
+`;
+
 exports[`parseFormula > parses single float number 1`] = `"222.232"`;
 
 exports[`parseFormula > parses single float number 2`] = `
 {
+  "im": 0,
   "r": [
     0,
     6,
   ],
+  "re": 222.232,
   "t": 3,
-  "v": 222.232,
 }
 `;
 
@@ -678,12 +763,13 @@ exports[`parseFormula > parses single negative float number 1`] = `"-222.2"`;
 
 exports[`parseFormula > parses single negative float number 2`] = `
 {
+  "im": 0,
   "r": [
     0,
     5,
   ],
+  "re": -222.2,
   "t": 3,
-  "v": -222.2,
 }
 `;
 
@@ -691,12 +777,13 @@ exports[`parseFormula > parses single negative number 1`] = `"-222"`;
 
 exports[`parseFormula > parses single negative number 2`] = `
 {
+  "im": 0,
   "r": [
     0,
     3,
   ],
+  "re": -222,
   "t": 3,
-  "v": -222,
 }
 `;
 
@@ -704,23 +791,25 @@ exports[`parseFormula > parses single number 1`] = `"222"`;
 
 exports[`parseFormula > parses single number 2`] = `
 {
+  "im": 0,
   "r": [
     0,
     2,
   ],
+  "re": 222,
   "t": 3,
-  "v": 222,
 }
 `;
 
 exports[`parseFormula > parses single number with spaces 1`] = `
 {
+  "im": 0,
   "r": [
     7,
     10,
   ],
+  "re": 2323,
   "t": 3,
-  "v": 2323,
 }
 `;
 

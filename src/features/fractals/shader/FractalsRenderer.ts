@@ -1,9 +1,16 @@
 import { Vector2 } from "@/shared/libs/vectors";
 import { FractalCanvasParams, initFractalCanvas } from "./initFractalCanvas";
-import { renderFractalOnCanvas } from "./renderFractalOnCanvas";
 import { FractalImage } from "./FractalImage";
 
 export class FractalsRenderer {
+  private lastCamera: {
+    offset: Vector2;
+    scale: number;
+  } = {
+    offset: [0, 0],
+    scale: 1,
+  };
+
   private canvasSize: Vector2;
   private canvasParams: FractalCanvasParams;
   private lastRenderTime: number = 0;
@@ -29,10 +36,19 @@ export class FractalsRenderer {
 
   public resize(newSize: Vector2) {
     this.canvasSize = newSize;
-    this.render(this.lastRenderTime);
+    this.render(this.lastRenderTime, this.lastCamera);
   }
 
-  public render(time: number): Promise<number> {
+  public render(
+    time: number,
+    camera: {
+      offset: Vector2;
+      scale: number;
+    },
+    applyInitialTime: boolean = false,
+  ): Promise<number> {
+    this.lastCamera = camera;
+
     let resolve: (value: number) => void = () => {};
     const renderPromise = new Promise<number>((newResolve) => {
       resolve = newResolve;
@@ -64,17 +80,16 @@ export class FractalsRenderer {
           continue;
         }
 
-        const [shader, params] = fractalImage.getRenderData(time);
-
-        renderFractalOnCanvas(
-          this.canvasParams,
+        fractalImage.render(
+          time,
+          camera,
           [this.canvasSize[0], this.canvasSize[1]],
-          shader,
           [
             [col / gridCols, row / gridRows],
             [(col + 1) / gridCols, (row + 1) / gridRows],
           ],
-          params,
+          this.canvasParams,
+          applyInitialTime,
         );
       }
     }
@@ -100,7 +115,6 @@ export class FractalsRenderer {
           );
 
           clearInterval(interval);
-
           resolve(timeElapsed / 1000000);
           return;
         }

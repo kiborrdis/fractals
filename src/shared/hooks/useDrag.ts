@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { throttle } from "../libs/fn-modifiers";
 
 type Vector2 = [number, number];
 
@@ -28,6 +29,14 @@ export const useDrag = <ID = undefined>({
   const prevPosRef = useRef<Vector2 | null>(null);
   const [dragEnabled, setDragEnabled] = useState(false);
 
+  const dragEnabledRef = useRef(dragEnabled);
+  dragEnabledRef.current = dragEnabled;
+
+  const dragMoveRef = useRef<typeof onDragMove>(onDragMove);
+  dragMoveRef.current = onDragMove;
+  const dragStopRef = useRef<typeof onDragStop | undefined>(onDragStop);
+  dragStopRef.current = onDragStop;
+
   useEffect(() => {
     const handler = () => {
       clearTimeout(startTimeoutRef.current);
@@ -36,6 +45,7 @@ export const useDrag = <ID = undefined>({
     window.addEventListener("mouseup", handler);
 
     return () => {
+      document.body.style.userSelect = "auto";
       window.removeEventListener("mouseup", handler);
     };
   }, []);
@@ -45,7 +55,7 @@ export const useDrag = <ID = undefined>({
       return;
     }
 
-    const handler = (e: MouseEvent) => {
+    const handler = throttle((e: MouseEvent) => {
       const coords: Vector2 = [e.clientX, e.clientY];
 
       if (withRAF) {
@@ -58,7 +68,7 @@ export const useDrag = <ID = undefined>({
             return;
           }
 
-          intermediateDataRef.current = onDragMove(
+          intermediateDataRef.current = dragMoveRef.current(
             coords,
             [
               coords[0] - prevPosRef.current[0],
@@ -76,8 +86,8 @@ export const useDrag = <ID = undefined>({
         return;
       }
 
-      if (prevPosRef.current) {
-        intermediateDataRef.current = onDragMove(
+      if (prevPosRef.current && dragEnabledRef.current) {
+        intermediateDataRef.current = dragMoveRef.current(
           [e.clientX, e.clientY],
           [
             e.clientX - prevPosRef.current[0],
@@ -88,15 +98,17 @@ export const useDrag = <ID = undefined>({
       }
 
       prevPosRef.current = [e.clientX, e.clientY];
-    };
+    }, 25);
 
     const handlerUp = () => {
-      if (onDragStop) {
-        onDragStop(prevPosRef.current || [0, 0], intermediateDataRef.current!);
+      if (dragStopRef.current) {
+        dragStopRef.current(
+          prevPosRef.current || [0, 0],
+          intermediateDataRef.current!,
+        );
+        document.body.style.userSelect = "auto";
         intermediateDataRef.current = undefined;
       }
-
-      prevPosRef.current = null;
 
       setDragEnabled(false);
     };
@@ -107,20 +119,26 @@ export const useDrag = <ID = undefined>({
       window.removeEventListener("mousemove", handler);
       window.removeEventListener("mouseup", handlerUp);
     };
-  }, [dragEnabled, onDragMove, onDragStop, withRAF]);
+  }, [dragEnabled, withRAF]);
 
   const onMouseDown = useCallback(
     (e: ReactMouseEvent) => {
       if (canStartDrag) {
-        if (onDragStart) {
-          intermediateDataRef.current = onDragStart(e.currentTarget, [
-            e.clientX,
-            e.clientY,
-          ]);
-        }
+        prevPosRef.current = null;
 
-        startTimeoutRef.current = setTimeout(() => setDragEnabled(true), 250);
+        startTimeoutRef.current = setTimeout(() => {
+          if (onDragStart) {
+            intermediateDataRef.current = onDragStart(e.currentTarget, [
+              e.clientX,
+              e.clientY,
+            ]);
+            document.body.style.userSelect = "none !important";
+          }
+
+          setDragEnabled(true);
+        }, 250);
         e.stopPropagation();
+        e.preventDefault();
       }
     },
     [canStartDrag, onDragStart],

@@ -1,8 +1,72 @@
 import { Vector2 } from "@/shared/libs/vectors";
-import { GradientStop } from "../types";
+import { FractalTrap, FractalTrapType, GradientStop } from "../types";
+
+const mapTypeToNumber: Record<FractalTrapType, number> = {
+  point: 1,
+  line: 2,
+  circle: 3,
+};
+
+// Offset shifts the range to [0, 2^32) so negative values can be encoded in unsigned bytes.
+// Supported range: ±2147.483648
+const FLOAT_ENCODE_OFFSET = 2147483648;
+
+export const encodeFloatTo4Bytes = (
+  num: number,
+): [number, number, number, number] => {
+  const intNum = Math.round(num * 1000000) + FLOAT_ENCODE_OFFSET;
+  const byte4 = intNum & 0xff;
+  const byte3 = (intNum >>> 8) & 0xff;
+  const byte2 = (intNum >>> 16) & 0xff;
+  const byte1 = (intNum >>> 24) & 0xff;
+  return [byte1, byte2, byte3, byte4];
+};
+
+export const encodeUnsignedFloatTo4Bytes = (
+  num: number,
+): [number, number, number, number] => {
+  const intNum = Math.round(num * 1000000);
+  const byte4 = intNum & 0xff;
+  const byte3 = (intNum >>> 8) & 0xff;
+  const byte2 = (intNum >>> 16) & 0xff;
+  const byte1 = (intNum >>> 24) & 0xff;
+  return [byte1, byte2, byte3, byte4];
+};
+
+export const MAX_TRAPS = 64;
+
+export function encodeTrapsAsUniforms(traps: FractalTrap[]): {
+  types: Int32Array;
+  data: Float32Array;
+} {
+  const types = new Int32Array(MAX_TRAPS);
+  const data = new Float32Array(MAX_TRAPS * 3);
+
+  traps.slice(0, MAX_TRAPS).forEach((trap, i) => {
+    types[i] = mapTypeToNumber[trap.type];
+    if (trap.type === "point") {
+      data[i * 3 + 0] = trap.position[0];
+      data[i * 3 + 1] = trap.position[1];
+      data[i * 3 + 2] = 0;
+    } else if (trap.type === "line") {
+      data[i * 3 + 0] = trap.a;
+      data[i * 3 + 1] = trap.b;
+      data[i * 3 + 2] = trap.c;
+    } else if (trap.type === "circle") {
+      data[i * 3 + 0] = trap.center[0];
+      data[i * 3 + 1] = trap.center[1];
+      data[i * 3 + 2] = trap.radius;
+    }
+  });
+
+  return { types, data };
+}
 
 // Initialize a texture and load gradient data
-export function loadTexture(gl: WebGLRenderingContext, stops: GradientStop[]) {
+export function encodeGradientInTexture(
+  gl: WebGLRenderingContext,
+  stops: GradientStop[],
+) {
   const textPixels = stops
     .map((s) => {
       return [
@@ -10,10 +74,7 @@ export function loadTexture(gl: WebGLRenderingContext, stops: GradientStop[]) {
         Math.round(s[2] * 255),
         Math.round(s[3] * 255),
         Math.round(s[4] * 255),
-        Math.floor(s[0] / 255),
-        Math.floor(s[0] % 255),
-        Math.round(0),
-        Math.round(0),
+        ...encodeUnsignedFloatTo4Bytes(s[0]),
       ];
     })
     .flat();

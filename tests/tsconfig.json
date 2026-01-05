@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.app.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tests.tsbuildinfo",
+    "paths": {
+      "@/shared/*": ["../src/shared/*"],
+      "@/features/*": ["../src/features/*"],
+      "@/pages/*": ["../src/pages/*"],
+      "/src/features/fractals/shader/FractalsRenderer.ts": ["../src/features/fractals/shader/FractalsRenderer"],
+      "/src/features/fractals/shader/FractalImage.ts": ["../src/features/fractals/shader/FractalImage"],
+      "/src/features/fractals/getDefaultFractalRules.ts": ["../src/features/fractals/getDefaultFractalRules"]
+    }
+  },
+  "include": ["./**/*", "../src/**/*"]
+}

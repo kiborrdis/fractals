@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { MantineProvider, createTheme } from "@mantine/core";
 
 export const Route = createRootRoute({
@@ -42,7 +41,7 @@ function RootComponent() {
         </MantineProvider>
       </React.StrictMode>
 
-      <TanStackRouterDevtools position='bottom-right' />
+      {/* <TanStackRouterDevtools position='bottom-right' /> */}
     </>
   );
 }

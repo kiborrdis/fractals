@@ -25,7 +25,7 @@ const DisplayExampleFractal = ({
     loop: {
       stop: () => void;
       run: () => void;
-      setCurrentTime: (time: number) => void;
+      currentTime: number;
     };
   } | null>(null);
 
@@ -38,8 +38,14 @@ const DisplayExampleFractal = ({
       canvas,
       [width, height],
       fractal,
-      { play: false, time: 0, timeMultiplier: 1 },
+      {
+        play: false,
+        time: fractal.initialTime ?? 0,
+        timeMultiplier: 1,
+        maxFps: 0,
+      },
     );
+
     visualizerRef.current = visializer;
     return () => {
       visializer.loop.stop();
@@ -56,7 +62,7 @@ const DisplayExampleFractal = ({
 
   useEffect(() => {
     if (visualizerRef.current) {
-      visualizerRef.current.loop.setCurrentTime(time);
+      visualizerRef.current.loop.currentTime = time;
     }
   }, [time]);
 

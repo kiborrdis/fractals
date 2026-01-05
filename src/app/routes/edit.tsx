@@ -2,6 +2,12 @@ import { EditFractal } from "@/pages/edit/EditFractal";
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
 import { isMobile } from "@/shared/libs/isMobile";
+import {
+  deserializeBuildRules,
+  FractalParamsBuildRules,
+  serializeBuildRules,
+} from "@/features/fractals";
+import { getDefaultFractalRules } from "@/features/fractals/getDefaultFractalRules";
 
 export const Route = createFileRoute("/edit")({
   beforeLoad: () => {
@@ -9,40 +15,48 @@ export const Route = createFileRoute("/edit")({
       throw redirect({ to: "/" });
     }
   },
-  component: EditPage,
   validateSearch: (search): { s: string | undefined } => {
     return {
       s: search.s as string,
     };
   },
+  loaderDeps: ({ search }) => [search.s],
+  loader: async ({ deps: [s] }) => {
+    if (s) {
+      return deserializeBuildRules(s);
+    }
+
+    return getDefaultFractalRules();
+  },
+  component: EditPage,
 });
 
 function EditPage() {
   const navigate = useNavigate();
-
-  const search = Route.useSearch();
-  const ref = useRef(search);
-  ref.current = search;
-
-  const getParam = useCallback((key: string): string | undefined => {
-    return (ref.current as Record<string, string | undefined>)[key] as
-      | string
-      | undefined;
-  }, []);
-
+  const timeoutIdRef = useRef<null | ReturnType<typeof setTimeout>>(null);
   const saveFractal = useCallback(
-    (_: string, newEncodedF: string) => {
-      navigate({
-        from: Route.id,
-        to: Route.id,
-        search: (old) => ({
-          ...old,
-          s: newEncodedF,
-        }),
-      });
+    (data: FractalParamsBuildRules) => {
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
+      }
+
+      timeoutIdRef.current = setTimeout(async () => {
+        const base64 = await serializeBuildRules(data);
+
+        navigate({
+          from: Route.id,
+          to: Route.id,
+          search: (old) => ({
+            ...old,
+            s: base64,
+          }),
+        });
+      }, 1000);
     },
     [navigate],
   );
 
-  return <EditFractal extractParam={getParam} onSave={saveFractal} />;
+  const data = Route.useLoaderData();
+
+  return <EditFractal data={data} onSave={saveFractal} />;
 }

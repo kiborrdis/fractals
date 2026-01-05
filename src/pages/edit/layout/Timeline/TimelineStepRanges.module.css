@@ -1,0 +1,15 @@
+.stepRange {
+  position: absolute;
+  top: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.stepRangeSelected {
+  background-color: rgba(255, 255, 0, 0.1);
+}
+
+.stepRangeUnselected {
+  background-color: transparent;
+}

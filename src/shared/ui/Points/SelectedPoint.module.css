@@ -1,0 +1,12 @@
+.selectedPointOuter {
+  padding: 6px;
+}
+
+.selectedPointInner {
+  height: 10px;
+  width: 10px;
+  background-color: var(--draggable-point-selected-color, #0066ff);
+  border-radius: 50%;
+  box-shadow: 0 0 8px
+    var(--draggable-point-selected-glow, rgba(0, 102, 255, 0.8));
+}

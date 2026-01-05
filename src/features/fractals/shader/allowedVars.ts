@@ -5,6 +5,8 @@ export const formulaVars: VarNameToTypeMap = {
   c: "vector2",
   fCoord: "vector2",
   zp: "vector2",
+  scoord: "vector2",
+  cdist: "number",
 };
 
 export const initialZFormulaVars: VarNameToTypeMap = {

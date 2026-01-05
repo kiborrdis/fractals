@@ -1,0 +1,20 @@
+.toolbar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 100px;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 4px;
+}
+
+.pointerEventsAll {
+  pointer-events: all;
+}
+
+.dividerFullWidth {
+  width: 100%;
+}

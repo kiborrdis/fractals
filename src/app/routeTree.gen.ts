@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as ViewRouteImport } from "./routes/view"
+import { Route as SimRouteImport } from "./routes/sim"
 import { Route as RandomRouteImport } from "./routes/random"
 import { Route as EditRouteImport } from "./routes/edit"
 import { Route as SplatRouteImport } from "./routes/$"
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from "./routes/index"
 const ViewRoute = ViewRouteImport.update({
   id: "/view",
   path: "/view",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimRoute = SimRouteImport.update({
+  id: "/sim",
+  path: "/sim",
   getParentRoute: () => rootRouteImport,
 } as any)
 const RandomRoute = RandomRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   "/$": typeof SplatRoute
   "/edit": typeof EditRoute
   "/random": typeof RandomRoute
+  "/sim": typeof SimRoute
   "/view": typeof ViewRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   "/$": typeof SplatRoute
   "/edit": typeof EditRoute
   "/random": typeof RandomRoute
+  "/sim": typeof SimRoute
   "/view": typeof ViewRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,15 @@ export interface FileRoutesById {
   "/$": typeof SplatRoute
   "/edit": typeof EditRoute
   "/random": typeof RandomRoute
+  "/sim": typeof SimRoute
   "/view": typeof ViewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/$" | "/edit" | "/random" | "/view"
+  fullPaths: "/" | "/$" | "/edit" | "/random" | "/sim" | "/view"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/$" | "/edit" | "/random" | "/view"
-  id: "__root__" | "/" | "/$" | "/edit" | "/random" | "/view"
+  to: "/" | "/$" | "/edit" | "/random" | "/sim" | "/view"
+  id: "__root__" | "/" | "/$" | "/edit" | "/random" | "/sim" | "/view"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +85,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   EditRoute: typeof EditRoute
   RandomRoute: typeof RandomRoute
+  SimRoute: typeof SimRoute
   ViewRoute: typeof ViewRoute
 }
 
@@ -86,6 +96,13 @@ declare module "@tanstack/react-router" {
       path: "/view"
       fullPath: "/view"
       preLoaderRoute: typeof ViewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/sim": {
+      id: "/sim"
+      path: "/sim"
+      fullPath: "/sim"
+      preLoaderRoute: typeof SimRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/random": {
@@ -124,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   EditRoute: EditRoute,
   RandomRoute: RandomRoute,
+  SimRoute: SimRoute,
   ViewRoute: ViewRoute,
 }
 export const routeTree = rootRouteImport

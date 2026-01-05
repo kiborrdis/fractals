@@ -1,21 +1,24 @@
 import {
   CalcNode,
   CalcNodeType,
-  forEachNodeChild,
-} from "@/shared/libs/calcGraph";
-import { parseFormula, validateFormula } from "../formula/parseFormula";
-import { calcTypesOfNodes } from "../formula/trackTypes";
-import { CalcNodeResultTypeMap } from "../formula/types";
+  simplify,
+} from "@/shared/libs/complexVariableFormula";
+import {
+  parseFormula,
+  validateFormula,
+} from "@/shared/libs/complexVariableFormula/parseFormula";
 import { VarNameToTypeMap } from "../formula/fnAndVarDescr";
 
 export const fractalFormulaToGLSLCode = (
   formula: string,
   vars: VarNameToTypeMap,
   customVars: VarNameToTypeMap = {},
+  parseFormulaFn = parseFormula,
 ) => {
   let node: CalcNode | null;
   try {
-    node = parseFormula(formula);
+    node = parseFormulaFn(formula);
+    node = simplify(node);
   } catch (e) {
     throw new Error("fractalFormulaToGLSLCode: failed to parse formula " + e);
   }
@@ -32,33 +35,22 @@ export const fractalFormulaToGLSLCode = (
     throw new Error('fractalFormulaToGLSLCode: invalid formula "' + msg + '"');
   }
 
-  const typeMap = calcTypesOfNodes(node, { ...vars, ...customVars });
   const pow = getMaxZPower(node) || 0;
 
-  if (typeMap.get(node) !== "vector2") {
-    throw new Error(
-      'fractalFormulaToGLSLCode: invalid result type of formula, must be "vector2", got "' +
-        typeMap.get(node) +
-        '"',
-    );
-  }
-  let allNodesWithTypes = true;
+  const res = transformToGLSLCode(
+    node,
+    {
+      ...vars,
+      ...customVars,
+    },
+    (varName: string) => {
+      if (customVars[varName]) {
+        return `u_cstm_${varName}`;
+      }
+      return varName;
+    },
+  );
 
-  forEachNodeChild(node, (n) => {
-    allNodesWithTypes = typeMap.has(n) && allNodesWithTypes;
-  });
-
-  if (!allNodesWithTypes) {
-    throw new Error(
-      'fractalFormulaToGLSLCode: types for some nodes have not been calculated"',
-    );
-  }
-  const res = transformToGLSLCode(node, typeMap, (varName: string) => {
-    if (customVars[varName]) {
-      return `u_cstm_${varName}`;
-    }
-    return varName;
-  });
   return [res, pow] as const;
 };
 
@@ -81,7 +73,7 @@ const getMaxZPower = (node: CalcNode): number | null => {
           base.v === "z" &&
           exponent.t === CalcNodeType.Number
         ) {
-          return exponent.v;
+          return exponent.re;
         }
       }
       const leftPower = getMaxZPower(node.c[0]);
@@ -118,42 +110,40 @@ const getMaxZPower = (node: CalcNode): number | null => {
 
 const transformToGLSLCode = (
   node: CalcNode,
-  map: CalcNodeResultTypeMap,
+  map: VarNameToTypeMap,
   variableTransform = (varName: string) => varName,
 ): string => {
   switch (node.t) {
-    case CalcNodeType.Number:
-      return String(node.v).includes(".")
-        ? String(node.v)
-        : `${String(node.v)}.0`;
+    case CalcNodeType.Number: {
+      const im = String(node.im).includes(".")
+        ? String(node.im)
+        : `${String(node.im)}.0`;
+      const re = String(node.re).includes(".")
+        ? String(node.re)
+        : `${String(node.re)}.0`;
+
+      return `vec2(${re}, ${im})`;
+    }
     case CalcNodeType.Variable:
+      if (map[node.v] === "number") {
+        return `vec2(${variableTransform(node.v)}, 0.0)`;
+      }
+
       return `${variableTransform(node.v)}`;
     case CalcNodeType.Operation: {
-      const leftT = map.get(node.c[0])!;
-      const rightT = map.get(node.c[1])!;
-
-      if (
-        (leftT === "vector2" && rightT === "vector2") ||
-        (node.v === "^" && leftT === "vector2")
-      ) {
+      if (node.v !== "^") {
         return `${operationToFnMap[node.v]}(${transformToGLSLCode(
           node.c[0],
           map,
           variableTransform,
         )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
-      }
-
-      if (node.v === "^") {
-        return `pow(${transformToGLSLCode(
+      } else {
+        return `${operationToFnMap[node.v]}(${transformToGLSLCode(
           node.c[0],
           map,
           variableTransform,
-        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
+        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)}.x)`;
       }
-
-      return `(${transformToGLSLCode(node.c[0], map, variableTransform)}${
-        node.v
-      }${transformToGLSLCode(node.c[1], map, variableTransform)})`;
     }
     case CalcNodeType.FuncCall:
       return `${fnNameToFnMap[node.n]}(${node.o

@@ -89,7 +89,7 @@ export class GrammarParser<G extends Grammar<any, any, any, any>> {
 
     if (matchResult) {
       return [
-        transform(matchResult[0], [index, matchResult[1] - 1]),
+        transform(matchResult[0], [index, matchResult[1]]),
         matchResult[1],
       ];
     }

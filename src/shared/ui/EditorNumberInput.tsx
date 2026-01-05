@@ -38,6 +38,17 @@ export const EditorNumberInput = ({
 
   return (
     <NumberInput
+      styles={{
+        controls: {
+          display: "none",
+        },
+        section: {
+          display: "none",
+        },
+        input: {
+          paddingInlineEnd: "var(--input-padding-inline-start)",
+        },
+      }}
       w={w}
       id={id}
       label={label}
@@ -83,7 +94,7 @@ export const EditorNumberInput = ({
 
         setLocalValue(String(newValue));
 
-        if (!isNaN(num)) {
+        if (!isNaN(num) && num >= min && num <= max) {
           onChange(num);
         }
       }}

@@ -1,0 +1,42 @@
+.heading {
+  margin: 0.5em 0;
+}
+
+.paragraph {
+  margin: 0.5em 0;
+}
+
+.list {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.code {
+  background: var(--mantine-color-dark-6);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.pre {
+  background: var(--mantine-color-dark-6);
+  padding: 1em;
+  border-radius: 4px;
+  overflow: auto;
+  margin: 0.5em 0;
+}
+
+.blockquote {
+  border-left: 4px solid var(--mantine-color-gray-6);
+  padding-left: 1em;
+  margin: 0.5em 0;
+}
+
+.image {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+.link {
+  color: var(--mantine-color-blue-4);
+}

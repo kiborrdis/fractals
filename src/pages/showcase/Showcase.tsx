@@ -1,13 +1,15 @@
 import { FractalParamsBuildRules } from "@/features/fractals";
-import { defaultParse } from "@/shared/hooks/useQueryPersistense";
 import { DisplayFractals } from "./DisplayFractals";
-import { fractals } from "./fractalStrings";
 import { HeroOverlay } from "./HeroOverlay";
 import styles from "./Showcase.module.css";
 import { useEffect, useRef, useState } from "react";
 import SecondScreen from "./SecondScreen";
 
-export const Showcase = () => {
+export const Showcase = ({
+  fractals,
+}: {
+  fractals: FractalParamsBuildRules[];
+}) => {
   const rows = 4;
   const cols = 4;
   const [play, setPlay] = useState(true);
@@ -39,7 +41,9 @@ export const Showcase = () => {
         <DisplayFractals
           play={play}
           fractals={toGrid(
-            fractals.map((f) => defaultParse(f) as FractalParamsBuildRules),
+            fractals.length > rows * cols
+              ? fractals.slice(0, rows * cols)
+              : fractals,
             rows,
             cols,
           )}

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActionIcon,
   AppShell,
@@ -7,50 +7,38 @@ import {
   Group,
   SegmentedControl,
   Stack,
+  Tooltip,
 } from "@mantine/core";
 import {
-  DisplayFractal,
   FractalParamsBuildRules,
-  getDefaultFractalRules,
+  serializeBuildRules,
 } from "@/features/fractals";
-import {
-  defaultStringify,
-  useQueryPersistentValue,
-} from "@/shared/hooks/useQueryPersistense";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { EditStoreProvider, useEditStore } from "./store/provider";
-import { createEditStore } from "./store/editStore";
-import { useActions } from "./store/data/useActions";
-import { useAnimationData } from "./store/data/useAnimationData";
-import { useSelectAreaActive } from "./store/data/useSelectAreaActive";
-import { useFractalParamsData } from "./store/data/useFractalParamsData";
-import { TimelineTool } from "./TimelineTool/TimelineTool";
-import { useInitialLoopState } from "./store/data/useInitialLoopState";
-import { ShapeParams } from "./SidebarSettings/SidebarSettings";
+import { EditStoreProvider, useEditStore } from "./stores/editStore/provider";
+import { createEditStore } from "./stores/editStore/editStore";
+import { useActions } from "./stores/editStore/data/useActions";
+import { useAnimationData } from "./stores/editStore/data/useAnimationData";
+import { TimelineTool } from "./layout/Timeline/TimelineTool";
+import { ShapeParams } from "./layout/SidebarSettings/SidebarSettings";
 import { FiShare2 } from "react-icons/fi";
-import { SelectArea } from "./SelectArea";
-
-const defaultRules = getDefaultFractalRules();
+import styles from "./EditFractal.module.css";
+import { DocModalProvider } from "@/shared/ui/DocTooltip";
+import { TbVideo } from "react-icons/tb";
+import { RecordingScreen } from "./Recording/RecordingScreen";
+import { SettingsProvider } from "./stores/settings";
+import { ContentArea } from "./layout/ContentArea/ContentArea";
 
 export function EditFractal({
+  data,
   onSave,
-  extractParam,
 }: {
-  extractParam?: (key: string) => string | null | undefined;
-  onSave?: (k: string, s: string) => void;
+  data: FractalParamsBuildRules;
+  onSave?: (data: FractalParamsBuildRules) => void;
 }) {
-  const [value, saveValue] = useQueryPersistentValue<FractalParamsBuildRules>(
-    "s",
-    defaultRules,
-    {
-      extract: extractParam,
-      save: onSave,
-    },
-  );
   const storeRef = useRef<ReturnType<typeof createEditStore>>(null);
 
   if (!storeRef.current) {
-    storeRef.current = createEditStore(value);
+    storeRef.current = createEditStore(data);
   }
 
   useEffect(() => {
@@ -59,14 +47,20 @@ export function EditFractal({
     }
 
     return storeRef.current.subscribe((state) => {
-      saveValue(state.fractal);
+      if (onSave) {
+        onSave(state.fractal);
+      }
     });
-  }, [saveValue]);
+  }, [onSave]);
 
   return (
-    <EditStoreProvider store={storeRef.current}>
-      <EditFractalLoaded />
-    </EditStoreProvider>
+    <SettingsProvider>
+      <DocModalProvider>
+        <EditStoreProvider store={storeRef.current}>
+          <EditFractalLoaded />
+        </EditStoreProvider>
+      </DocModalProvider>
+    </SettingsProvider>
   );
 }
 
@@ -77,11 +71,25 @@ export const copyToClipboard = (text: string) => {
 };
 
 export function EditFractalLoaded() {
+  const [isRecordingMode, setIsRecordingMode] = useState(false);
   const { play, timeMultiplier } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed } = useActions();
 
+  const handleExitRecording = () => {
+    setIsRecordingMode(false);
+    changeAnimationSpeed("1.0x");
+  };
+
+  if (isRecordingMode) {
+    return (
+      <div className={styles.editFractalLoaded}>
+        <RecordingScreen onExit={handleExitRecording} />
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className={styles.editFractalLoaded}>
       <AppShell
         mih='100vh'
         aside={{
@@ -89,12 +97,12 @@ export function EditFractalLoaded() {
           breakpoint: "xs",
         }}
       >
-        <AppShellAside style={{ overflowY: "auto" }}>
+        <AppShellAside className={styles.asideContainer}>
           <Group
             bg='dark.8'
             p='sm'
             justify='space-between'
-            style={{ position: "sticky", top: 0, zIndex: 10 }}
+            className={styles.stickyHeader}
           >
             <Group gap='sm'>
               <ActionIcon variant='subtle' onClick={toggleAnimation}>
@@ -108,6 +116,14 @@ export function EditFractalLoaded() {
               />
             </Group>
             <Group gap='sm'>
+              <Tooltip label='Record Video'>
+                <ActionIcon
+                  variant='subtle'
+                  onClick={() => setIsRecordingMode(true)}
+                >
+                  <TbVideo />
+                </ActionIcon>
+              </Tooltip>
               <ShareButton />
             </Group>
           </Group>
@@ -115,14 +131,14 @@ export function EditFractalLoaded() {
         </AppShellAside>
         <AppShellMain h='100vh'>
           <Stack w='100%' h='100%' gap={0}>
-            <div style={{ flex: 1, overflow: "hidden" }}>
-              <DisplayEditFractal />
+            <div className={styles.contentContainer}>
+              <ContentArea />
             </div>
             <TimelineTool />
           </Stack>
         </AppShellMain>
       </AppShell>
-    </>
+    </div>
   );
 }
 
@@ -132,34 +148,14 @@ const ShareButton = () => {
   return (
     <ActionIcon
       variant='subtle'
-      onClick={() => {
+      onClick={async () => {
+        const encoded = await serializeBuildRules(fractal);
         copyToClipboard(
-          window.location.origin + "/view?s=" + defaultStringify(fractal),
+          window.location.origin + "/view?s=" + encodeURIComponent(encoded),
         );
       }}
     >
       <FiShare2 />
     </ActionIcon>
-  );
-};
-
-const DisplayEditFractal = () => {
-  const selectAreaActive = useSelectAreaActive();
-  const { play, timeMultiplier } = useAnimationData();
-  const fractal = useFractalParamsData();
-  const initialLoopState = useInitialLoopState();
-
-  const { zoomToArea, updateCurrentTime } = useActions();
-
-  return (
-    <SelectArea enable={selectAreaActive} onSelect={zoomToArea}>
-      <DisplayFractal
-        params={fractal}
-        play={play}
-        timeMultiplier={parseFloat(timeMultiplier)}
-        initialLoopState={initialLoopState}
-        onRender={updateCurrentTime}
-      />
-    </SelectArea>
   );
 };

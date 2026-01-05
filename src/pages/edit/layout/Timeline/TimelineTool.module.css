@@ -1,0 +1,16 @@
+.timelinePanel {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.timelineToolContent {
+  position: relative;
+  z-index: 1;
+}
+
+.toolStack {
+  position: relative;
+  width: 100%;
+}

@@ -3,6 +3,27 @@ import { Vector2, Vector4 } from "@/shared/libs/vectors";
 
 export type RGBAVector = Vector4;
 
+type LineTrap = {
+  type: "line";
+  a: number;
+  b: number;
+  c: number;
+};
+
+type PointTrap = {
+  type: "point";
+  position: Vector2;
+};
+
+type CircleTrap = {
+  type: "circle";
+  center: Vector2;
+  radius: number;
+};
+
+export type FractalTrap = LineTrap | PointTrap | CircleTrap;
+export type FractalTrapType = FractalTrap["type"];
+
 export type FractalParams = {
   invert: boolean;
 
@@ -10,8 +31,19 @@ export type FractalParams = {
   initialZFormula?: string;
   initialCFormula?: string;
   initialTime?: number;
+  antialiasingLevel?: number;
+
+  gradientColoringEnabled?: boolean;
+  borderColoringEnabled?: boolean;
+  trapColoringEnabled?: boolean;
+
+  traps?: FractalTrap[];
+  trapIntensity?: number;
+  trapGradient?: GradientStop[];
 
   gradient: GradientStop[];
+  borderColor?: RGBAVector;
+  borderIntensity?: number;
 
   mirroringType: "off" | "hex" | "square" | "radial";
 
@@ -29,21 +61,23 @@ export type FractalParams = {
 
 export type FractalDynamicParams = {
   hexMirroringFactor: number;
-  hexMirroringPerDistChange: number;
   linearMirroringFactor: number;
   radialMirroringAngle: number;
-  time: number;
   c: Vector2;
   r: number;
+  maxIterations: number;
+
+  time: number;
+
   rlVisibleRange: Vector2;
   imVisibleRange: Vector2;
-  maxIterations: number;
-  linearMirroringPerDistChange: number;
-  radialMirroringPerDistChange: number;
-  cxPerDistChange: number;
-  cyPerDistChange: number;
-  rPerDistChange: number;
-  iterationsPerDistChange: number;
+
+  hexMirroringDistVariation: number;
+  linearMirroringDistVariation: number;
+  radialMirroringDistVariation: number;
+  cDistVariation: Vector2;
+  rDistVariation: number;
+  iterationsDistVariation: number;
 };
 
 export type GradientStop = [

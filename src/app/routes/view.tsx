@@ -1,37 +1,29 @@
+import {
+  deserializeBuildRules,
+  getDefaultFractalRules,
+} from "@/features/fractals";
 import { ViewFractal } from "@/pages/view/ViewFractal";
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useRef } from "react";
 
 export const Route = createFileRoute("/view")({
   component: ShowcasePage,
-  validateSearch: (search): { encodedF: string | undefined } => {
+  validateSearch: (search): { s: string | undefined } => {
     return {
-      encodedF: search.encodedF as string,
+      s: search.s as string | undefined,
     };
   },
-  search: {
-    middlewares: [
-      ({ search, next }) => {
-        const result = next(search);
-        return {
-          s: search.encodedF,
-          ...result,
-        };
-      },
-    ],
+  loaderDeps: ({ search }) => [search.s],
+  loader: async ({ deps: [s] }) => {
+    if (s) {
+      return deserializeBuildRules(s);
+    }
+
+    return getDefaultFractalRules();
   },
 });
 
 function ShowcasePage() {
-  const search = Route.useSearch();
-  const ref = useRef(search);
-  ref.current = search;
+  const data = Route.useLoaderData();
 
-  const getParam = useCallback((key: string): string | undefined => {
-    return (ref.current as Record<string, string | undefined>)[key] as
-      | string
-      | undefined;
-  }, []);
-
-  return <ViewFractal extractParam={getParam} />;
+  return <ViewFractal data={data} />;
 }

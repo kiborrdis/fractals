@@ -1,0 +1,29 @@
+.hoverCrossPoint {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+}
+
+.crossIcon {
+  color: #d22;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.hoverCrossPoint:hover .crossIcon {
+  opacity: 1;
+}
+
+.hoverCrossPoint {
+  cursor: pointer;
+}

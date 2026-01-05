@@ -1,0 +1,28 @@
+.wrapper {
+  display: grid;
+  overflow: hidden;
+  transition:
+    grid-template-columns 200ms ease,
+    opacity 200ms ease;
+}
+
+.content {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.entering {
+  grid-template-columns: 0fr;
+  opacity: 0;
+  transition: none;
+}
+
+.present {
+  grid-template-columns: 1fr;
+  opacity: 1;
+}
+
+.exiting {
+  grid-template-columns: 0fr;
+  opacity: 0;
+}

@@ -11,8 +11,12 @@ const routeToLabelMap: {
       ? [string, [string, string]]
       : [string];
 } = {
-  c: ["C", ["C.re", "C.im"]],
-  maxIterations: ["Iterations4444444"],
+  c: [
+    "Complex constant(c)",
+    ["Complex constant(c) Real", "Complex constant(c) Imaginary"],
+  ],
+  maxIterations: ["Max iterations"],
+  r: ["Escape radius"],
 };
 
 export const getDynamicParamLabel = (route: string[]) => {

@@ -1,0 +1,10 @@
+.collapseButton {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 2;
+}
+
+.timelineContent {
+  z-index: 3;
+}
