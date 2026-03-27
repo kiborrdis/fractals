@@ -24,6 +24,11 @@ export const TrapEditor = ({
     onChange([...traps, newTrap]);
   };
 
+  const addSegmentTrap = () => {
+    const newTrap: FractalTrap = { type: "segment", p1: [-0.5, 0], p2: [0.5, 0] };
+    onChange([...traps, newTrap]);
+  };
+
   const removeTrap = (index: number) => {
     const newTraps = [...traps];
     newTraps.splice(index, 1);
@@ -39,6 +44,9 @@ export const TrapEditor = ({
         </Button>
         <Button size='xs' variant='light' onClick={addCircleTrap}>
           Add circle trap
+        </Button>
+        <Button size='xs' variant='light' onClick={addSegmentTrap}>
+          Add segment trap
         </Button>
       </Group>
 

@@ -41,6 +41,11 @@ type UniformArray3FV<Data> = [
   string,
   (data: Data, ctx: WebGL2RenderingContext) => Float32Array | null,
 ];
+type UniformArray4FV<Data> = [
+  "4fv",
+  string,
+  (data: Data, ctx: WebGL2RenderingContext) => Float32Array | null,
+];
 
 export type UniformApplicationRule<Data> =
   | Uniform2F<Data>
@@ -50,7 +55,8 @@ export type UniformApplicationRule<Data> =
   | UniformTexture<Data>
   | UniformArray1IV<Data>
   | UniformArray2IV<Data>
-  | UniformArray3FV<Data>;
+  | UniformArray3FV<Data>
+  | UniformArray4FV<Data>;
 
 export class UniformApplierMemory {
   private nameToTextureIndex: Record<string, number> = {};
@@ -141,6 +147,11 @@ export const createUniformApplier = <Data>(
         const value = rule[2](data, ctx);
         if (value !== null) {
           ctx.uniform3fv(location, value);
+        }
+      } else if (rule[0] === "4fv") {
+        const value = rule[2](data, ctx);
+        if (value !== null) {
+          ctx.uniform4fv(location, value);
         }
       }
     });

@@ -224,6 +224,34 @@ const LineTrapEdit = ({
   );
 };
 
+const SegmentTrapEdit = ({
+  trap,
+  index,
+  onTrapUpdate,
+}: {
+  trap: Extract<FractalTrap, { type: "segment" }>;
+  index: number;
+  onTrapUpdate: (i: number, t: FractalTrap) => void;
+}) => {
+  const segment: [Vector2, Vector2] = [trap.p1, trap.p2];
+
+  return (
+    <>
+      <Graph2DLine lineWidth={2} data={segment} getColor={colorFn} />
+      <PointsEdit
+        points={[trap.p1, trap.p2]}
+        onPointMove={(i, newPos) => {
+          if (i === 0) {
+            onTrapUpdate(index, { ...trap, p1: newPos });
+          } else {
+            onTrapUpdate(index, { ...trap, p2: newPos });
+          }
+        }}
+      />
+    </>
+  );
+};
+
 export const TrapOverlay = ({
   traps,
   onTrapUpdate,
@@ -247,6 +275,16 @@ export const TrapOverlay = ({
         if (trap.type === "line") {
           return (
             <LineTrapEdit
+              key={i}
+              trap={trap}
+              index={i}
+              onTrapUpdate={onTrapUpdate}
+            />
+          );
+        }
+        if (trap.type === "segment") {
+          return (
+            <SegmentTrapEdit
               key={i}
               trap={trap}
               index={i}

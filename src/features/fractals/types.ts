@@ -21,7 +21,13 @@ type CircleTrap = {
   radius: number;
 };
 
-export type FractalTrap = LineTrap | PointTrap | CircleTrap;
+type SegmentTrap = {
+  type: "segment";
+  p1: Vector2;
+  p2: Vector2;
+};
+
+export type FractalTrap = LineTrap | PointTrap | CircleTrap | SegmentTrap;
 export type FractalTrapType = FractalTrap["type"];
 
 export type FractalParams = {

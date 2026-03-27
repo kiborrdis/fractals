@@ -157,7 +157,7 @@ export const createFractalUniformApplier = (
       },
     ],
     [
-      "3fv",
+      "4fv",
       "u_trap_data",
       (data) => {
         const trapEnabled = data.trapColoringEnabled ?? false;

@@ -5,6 +5,7 @@ const mapTypeToNumber: Record<FractalTrapType, number> = {
   point: 1,
   line: 2,
   circle: 3,
+  segment: 4,
 };
 
 // Offset shifts the range to [0, 2^32) so negative values can be encoded in unsigned bytes.
@@ -40,22 +41,30 @@ export function encodeTrapsAsUniforms(traps: FractalTrap[]): {
   data: Float32Array;
 } {
   const types = new Int32Array(MAX_TRAPS);
-  const data = new Float32Array(MAX_TRAPS * 3);
+  const data = new Float32Array(MAX_TRAPS * 4);
 
   traps.slice(0, MAX_TRAPS).forEach((trap, i) => {
     types[i] = mapTypeToNumber[trap.type];
     if (trap.type === "point") {
-      data[i * 3 + 0] = trap.position[0];
-      data[i * 3 + 1] = trap.position[1];
-      data[i * 3 + 2] = 0;
+      data[i * 4 + 0] = trap.position[0];
+      data[i * 4 + 1] = trap.position[1];
+      data[i * 4 + 2] = 0;
+      data[i * 4 + 3] = 0;
     } else if (trap.type === "line") {
-      data[i * 3 + 0] = trap.a;
-      data[i * 3 + 1] = trap.b;
-      data[i * 3 + 2] = trap.c;
+      data[i * 4 + 0] = trap.a;
+      data[i * 4 + 1] = trap.b;
+      data[i * 4 + 2] = trap.c;
+      data[i * 4 + 3] = 0;
     } else if (trap.type === "circle") {
-      data[i * 3 + 0] = trap.center[0];
-      data[i * 3 + 1] = trap.center[1];
-      data[i * 3 + 2] = trap.radius;
+      data[i * 4 + 0] = trap.center[0];
+      data[i * 4 + 1] = trap.center[1];
+      data[i * 4 + 2] = trap.radius;
+      data[i * 4 + 3] = 0;
+    } else if (trap.type === "segment") {
+      data[i * 4 + 0] = trap.p1[0];
+      data[i * 4 + 1] = trap.p1[1];
+      data[i * 4 + 2] = trap.p2[0];
+      data[i * 4 + 3] = trap.p2[1];
     }
   });
 

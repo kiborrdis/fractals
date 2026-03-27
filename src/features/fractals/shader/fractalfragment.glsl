@@ -54,7 +54,7 @@ uniform int u_sampler_wl;
 const int MAX_TRAPS = 64;
 uniform int u_traps_size;
 uniform int u_trap_types[MAX_TRAPS];
-uniform vec3 u_trap_data[MAX_TRAPS];
+uniform vec4 u_trap_data[MAX_TRAPS];
 
 const int MAX_BLEND = 3;
 uniform int u_blend_types_size;
@@ -97,6 +97,13 @@ float distanceToLine(vec3 line, vec2 point) {
   return abs(a * point.x + b * point.y + c) / length(vec2(a, b));
 }
 
+float distanceToSegment(vec2 p1, vec2 p2, vec2 point) {
+  vec2 ab = p2 - p1;
+  vec2 ap = point - p1;
+  float t = clamp(dot(ap, ab) / dot(ab, ab), 0.0f, 1.0f);
+  return length(ap - t * ab);
+}
+
 vec2 getTexCoord(vec2 pixelCoord, vec2 texDim) {
   return (pixelCoord + 0.5f) / texDim;
 }
@@ -106,14 +113,17 @@ float calcDistanceToTraps(vec2 point) {
 
   for (int i = 0; i < u_traps_size; i++) {
     int trapType = u_trap_types[i];
-    vec3 d = u_trap_data[i];
+    vec4 d = u_trap_data[i];
 
     if (trapType == 2) { // Line trap
-      float distToLine = distanceToLine(d, point);
+      float distToLine = distanceToLine(d.xyz, point);
       minDist = min(minDist, distToLine);
     } else if (trapType == 3) { // Circle trap
       float distToEdge = max(distanceToPoint(point, d.xy) - d.z, 0.0f);
       minDist = min(minDist, distToEdge);
+    } else if (trapType == 4) { // Segment trap
+      float distToSeg = distanceToSegment(d.xy, d.zw, point);
+      minDist = min(minDist, distToSeg);
     }
   }
 
