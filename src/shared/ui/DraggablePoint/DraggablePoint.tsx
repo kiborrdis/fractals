@@ -37,6 +37,7 @@ export const DraggablePoint = ({
       onClick={onClick}
       draggable={false}
       style={{
+        display: "flex",
         position: "absolute",
         top: top,
         left: left,

@@ -11,6 +11,10 @@ import {
   toValueSpace,
 } from "@/shared/ui/GraphEdit/coordinateUtils";
 import { Vector2 } from "@/shared/libs/vectors";
+import { AiOutlineDrag } from "react-icons/ai";
+import { FiRotateCcw } from "react-icons/fi";
+import { BiExpandHorizontal } from "react-icons/bi";
+import { ThemeIcon } from "@mantine/core";
 
 const TRAP_COLOR = "rgba(255, 255, 255, 0.8)";
 const TRAP_COLOR_HIGHLIGHTED = "rgba(255, 220, 50, 1.0)";
@@ -68,6 +72,46 @@ function getLineVisibleSegment(
   return [points[0], points[points.length - 1]];
 }
 
+const renderCirclePoints = (i: number) => {
+  if (i === 0) {
+    return (
+      <ThemeIcon color='gray' variant='filled' radius='xl' size={16}>
+        <AiOutlineDrag />
+      </ThemeIcon>
+    );
+  }
+
+  return (
+    <ThemeIcon color='gray' variant='filled' radius='xl' size={16}>
+      <BiExpandHorizontal />
+    </ThemeIcon>
+  );
+};
+
+const renderLinePoints = (i: number) => {
+  if (i === 0) {
+    return (
+      <ThemeIcon color='gray' variant='filled' radius='xl' size={16}>
+        <AiOutlineDrag />
+      </ThemeIcon>
+    );
+  }
+
+  return (
+    <ThemeIcon color='gray' variant='filled' radius='xl' size={16}>
+      <FiRotateCcw />
+    </ThemeIcon>
+  );
+};
+
+const renderSegmentPoints = () => {
+  return (
+    <ThemeIcon color='gray' variant='filled' radius='xl' size={16}>
+      <AiOutlineDrag />
+    </ThemeIcon>
+  );
+};
+
 const CircleTrapEdit = memo(
   ({
     trap,
@@ -94,6 +138,7 @@ const CircleTrapEdit = memo(
         />
         <PointsEdit
           points={[trap.center, resizeHandle]}
+          renderPoint={renderCirclePoints}
           onPointMove={(i, newPos) => {
             if (i === 0) {
               onTrapUpdate(index, { ...trap, center: newPos });
@@ -116,7 +161,7 @@ function segmentCenter(seg: [Vector2, Vector2]): Vector2 {
   return [(seg[0][0] + seg[1][0]) / 2, (seg[0][1] + seg[1][1]) / 2];
 }
 
-const LineTrapEdit = ({
+const LineTrapEdit = memo(({
   trap,
   index,
   highlighted,
@@ -218,6 +263,7 @@ const LineTrapEdit = ({
       )}
       <PointsEdit
         points={[center, rotationHandle]}
+        renderPoint={renderLinePoints}
         onPointMoveStart={(i) => {
           if (i === 1) {
             setRotating(true);
@@ -232,9 +278,10 @@ const LineTrapEdit = ({
       />
     </>
   );
-};
+});
+LineTrapEdit.displayName = "LineTrapEdit";
 
-const SegmentTrapEdit = ({
+const SegmentTrapEdit = memo(({
   trap,
   index,
   highlighted,
@@ -256,6 +303,7 @@ const SegmentTrapEdit = ({
       />
       <PointsEdit
         points={[trap.p1, trap.p2]}
+        renderPoint={renderSegmentPoints}
         onPointMove={(i, newPos) => {
           if (i === 0) {
             onTrapUpdate(index, { ...trap, p1: newPos });
@@ -266,7 +314,8 @@ const SegmentTrapEdit = ({
       />
     </>
   );
-};
+});
+SegmentTrapEdit.displayName = "SegmentTrapEdit";
 
 export const TrapOverlay = ({
   traps,
