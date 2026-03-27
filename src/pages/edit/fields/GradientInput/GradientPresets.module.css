@@ -1,0 +1,27 @@
+.presetItem {
+  width: 100%;
+  border-radius: var(--mantine-radius-sm);
+  padding: 6px 8px;
+  padding-right: 16px;
+  border: 1px solid transparent;
+  text-align: left;
+}
+
+.presetItem:hover {
+  outline: none;
+  background-color: var(--mantine-color-dark-5);
+}
+
+.presetItem:focus {
+  outline: none;
+}
+
+.presetItemSelected {
+  background-color: var(--mantine-color-dark-5);
+}
+
+.gradientBar {
+  height: 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}

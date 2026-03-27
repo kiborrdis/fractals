@@ -7,13 +7,13 @@ import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { ReactNode } from "react";
 import { Checkbox, ColorInput, SegmentedControl, Select } from "@mantine/core";
 import { FormulaInput } from "../../ui/FormulaInput";
-import { GradientRuleEdit } from "./GradientRuleEdit";
 import { InitialTimeEdit } from "../InitialTimeEdit/InitialTimeEdit";
 import { BandSmoothingOptions } from "../BandSmoothingOptions/BandSmoothingOptions";
 import { EditorNumberInput } from "@/shared/ui/EditorNumberInput";
 import { EditorLabel } from "../../ui/EditorLabel";
 import { TrapEditor } from "../TrapEditor/TrapEditor";
 import { TrapColoringGradient } from "../GradientInput/TrapColoringGradient";
+import { EscapeColoringGradient } from "../GradientInput/EscapeColoringGradient";
 
 type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
   {
@@ -102,7 +102,7 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   gradient: (props) => (
-    <GradientRuleEdit
+    <EscapeColoringGradient
       value={props.value as GradientStop[]}
       onChange={props.onChange}
       name={props.name}

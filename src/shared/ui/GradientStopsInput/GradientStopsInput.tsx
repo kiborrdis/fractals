@@ -57,6 +57,7 @@ export const GradientStopsInput = ({
   actions,
   stopNumberInputProps,
   defaultNewStop = [500, 1, 1, 1, 1] as GradientStop,
+  hideAddButton = false,
 }: {
   stops: GradientStop[];
   onChange: (stops: GradientStop[]) => void;
@@ -67,6 +68,7 @@ export const GradientStopsInput = ({
   actions?: ReactNode;
   stopNumberInputProps?: Partial<NumberInputProps>;
   defaultNewStop?: GradientStop;
+  hideAddButton?: boolean;
 }) => {
   const [stopsInternal, setStopsInternal] = useState<GradientStop[]>(
     [...stops].sort((a, b) => a[0] - b[0]),
@@ -156,21 +158,25 @@ export const GradientStopsInput = ({
           ))}
         </div>
       </div>
-      <Group gap='sm' justify='flex-end'>
-        {actions}
-        <Tooltip label='Add stop' position='left'>
-          <ActionIcon
-            size='md'
-            variant='outlined'
-            onClick={() => {
-              const newStops = [...stops, defaultNewStop];
-              setStops(newStops);
-            }}
-          >
-            <FiPlus />
-          </ActionIcon>
-        </Tooltip>
-      </Group>
+      {(!hideAddButton || actions) && (
+        <Group gap='sm' justify='flex-end'>
+          {actions}
+          {!hideAddButton && (
+            <Tooltip label='Add stop' position='left'>
+              <ActionIcon
+                size='md'
+                variant='outlined'
+                onClick={() => {
+                  const newStops = [...stops, defaultNewStop];
+                  setStops(newStops);
+                }}
+              >
+                <FiPlus />
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </Group>
+      )}
     </Stack>
   );
 };

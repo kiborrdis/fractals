@@ -1,5 +1,4 @@
 import { GradientStop, randomRange } from "@/features/fractals";
-import { extractMaxValueFromRule, RuleType } from "@/shared/libs/numberRule";
 import {
   NumberInput,
   Button,
@@ -8,7 +7,6 @@ import {
   SegmentedControl,
   Divider,
 } from "@mantine/core";
-import { useDynamicRule } from "../../stores/editStore/data/useDynamicRule";
 import { useState, useRef } from "react";
 import { EditorLabel } from "../../ui/EditorLabel";
 import { distributeStops, DistributionType } from "./distributeStops";
@@ -18,41 +16,35 @@ export const GradientGenerator = ({
   onApply,
   onCancel,
   onPreview,
+  initialMaxPosition,
+  canEditMaxPosition = false,
+  maxPositionLabel = "Max Position",
 }: {
-  onApply: (previewStops: GradientStop[]) => void;
+  onApply: (stops: GradientStop[]) => void;
   onCancel: () => void;
-  onPreview: (val: GradientStop[]) => void;
+  onPreview: (stops: GradientStop[]) => void;
+  initialMaxPosition: number;
+  canEditMaxPosition?: boolean;
+  maxPositionLabel?: string;
 }) => {
-  const [val, setValue] = useState(5);
+  const [stopsCount, setStopsCount] = useState(5);
+  const [maxPosition, setMaxPosition] = useState(initialMaxPosition);
   const [distributionType, setDistributionType] =
     useState<DistributionType>("linear");
   const previewStopsRef = useRef<GradientStop[]>([]);
   const rawStopsRef = useRef<GradientStop[]>([]);
-  const [iterations] = useDynamicRule("maxIterations");
 
-  let maxValue = 10;
-  if (Array.isArray(iterations)) {
-    maxValue = extractMaxValueFromRule(iterations[1]);
-  } else if (
-    iterations.t === RuleType.RangeNumber ||
-    iterations.t === RuleType.StaticNumber
-  ) {
-    maxValue = extractMaxValueFromRule(iterations);
-  }
-
-  const applyDistribution = (stops: GradientStop[], type: DistributionType) => {
-    const distributedStops = distributeStops(stops, maxValue, type);
+  const applyDistribution = (stops: GradientStop[], type: DistributionType, max = maxPosition) => {
+    const distributedStops = distributeStops(stops, max, type);
     previewStopsRef.current = distributedStops;
     onPreview(distributedStops);
   };
 
   const generateGradient = () => {
-    if (val < 2) {
-      return;
-    }
+    if (stopsCount < 2) return;
 
     const stops: GradientStop[] = [];
-    for (let i = 0; i < val; i++) {
+    for (let i = 0; i < stopsCount; i++) {
       const r = randomRange(0, 1);
       const g = randomRange(0, 1);
       const b = randomRange(0, 1);
@@ -69,8 +61,14 @@ export const GradientGenerator = ({
     if (rawStopsRef.current.length > 0) {
       applyDistribution(rawStopsRef.current, newType);
     } else {
-      // Should not happen really if we generate on mount, but fallback
       generateGradient();
+    }
+  };
+
+  const handleMaxPositionChange = (val: number) => {
+    setMaxPosition(val);
+    if (rawStopsRef.current.length > 0) {
+      applyDistribution(rawStopsRef.current, distributionType, val);
     }
   };
 
@@ -84,15 +82,25 @@ export const GradientGenerator = ({
             size='xs'
             min={2}
             max={100}
-            value={val}
-            onChange={(newVal) => {
-              if (isNaN(Number(newVal))) {
-                setValue(0);
-              }
-              setValue(Number(newVal));
-            }}
+            value={stopsCount}
+            onChange={(val) => setStopsCount(Number(val) || 2)}
           />
         </Group>
+
+        {canEditMaxPosition && (
+          <Group justify='space-between'>
+            <EditorLabel size='xs'>{maxPositionLabel}</EditorLabel>
+            <NumberInput
+              w={80}
+              size='xs'
+              min={0.001}
+              step={0.1}
+              decimalScale={3}
+              value={maxPosition}
+              onChange={(val) => handleMaxPositionChange(Number(val) || 1)}
+            />
+          </Group>
+        )}
 
         <Group>
           <EditorLabel size='xs'>Distribution</EditorLabel>
