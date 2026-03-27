@@ -1,9 +1,13 @@
 import {
   Button,
+  Collapse,
   Divider,
   Group,
+  Paper,
   Stack,
+  Switch,
   Tabs,
+  Text,
   ThemeIcon,
   Tooltip,
 } from "@mantine/core";
@@ -26,8 +30,6 @@ import { ModeEdit } from "../../fields/ModeEdit/ModeEdit";
 import { PresetModal } from "./PresetModal";
 import { EditorLabel } from "../../ui/EditorLabel";
 import styles from "./SidebarSettings.module.css";
-
-const BORDER_COLORING_ENABLED = true;
 
 const TrapColoringSettings = () => {
   const [trapColoringEnabled] = useStaticRule("trapColoringEnabled");
@@ -54,6 +56,83 @@ const TrapColoringSettings = () => {
     </>
   );
 };
+
+const coloringTypeToRule = {
+  gradient: "gradientColoringEnabled",
+  border: "borderColoringEnabled",
+  trap: "trapColoringEnabled",
+} as const;
+
+const coloringLabels = {
+  gradient: "Gradient Coloring",
+  border: "Border Coloring",
+  trap: "Trap Coloring",
+};
+
+const coloringDefaults: Record<"gradient" | "border" | "trap", boolean> = {
+  gradient: true,
+  border: false,
+  trap: false,
+};
+
+const ColoringBlock = ({
+  coloringType,
+  children,
+}: {
+  coloringType: "gradient" | "border" | "trap";
+  children: ReactNode;
+}) => {
+  const ruleName = coloringTypeToRule[coloringType];
+  const [enabled] = useStaticRule(ruleName);
+  const { staticRuleChange } = useActions();
+
+  const isEnabled = enabled ?? coloringDefaults[coloringType];
+
+  const handleToggle = () => {
+    if (!isEnabled) {
+      staticRuleChange("gradientColoringEnabled", false);
+      staticRuleChange("borderColoringEnabled", false);
+      staticRuleChange("trapColoringEnabled", false);
+      staticRuleChange(ruleName, true);
+    }
+  };
+
+  return (
+    <Stack gap='lg'>
+      <Paper withBorder p='xs' style={{ cursor: "pointer" }} onClick={handleToggle}>
+        <Group justify='space-between'>
+          <Text size='sm' fw={600}>{coloringLabels[coloringType]}</Text>
+          <Switch
+            checked={isEnabled}
+            onChange={handleToggle}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Group>
+      </Paper>
+      <Collapse in={isEnabled}>
+        <Stack gap='md' px='sm'>{children}</Stack>
+      </Collapse>
+    </Stack>
+  );
+};
+
+const ColoringSettings = () => (
+  <Stack gap='md'>
+    <ColoringBlock coloringType='gradient'>
+      <StaticRuleEdit name='gradient' />
+      <StaticRuleEdit name='bandSmoothing' />
+    </ColoringBlock>
+    <Divider />
+    <ColoringBlock coloringType='border'>
+      <StaticRuleEdit name='borderColor' />
+      <StaticRuleEdit name='borderIntensity' />
+    </ColoringBlock>
+    <Divider />
+    <ColoringBlock coloringType='trap'>
+      <TrapColoringSettings />
+    </ColoringBlock>
+  </Stack>
+);
 
 export const ShapeParams = React.memo(() => {
   const [mirroringType] = useStaticRule("mirroringType");
@@ -171,21 +250,7 @@ export const ShapeParams = React.memo(() => {
         </Tabs.Panel>
         <Tabs.Panel value='Coloring'>
           <SettingsSection>
-            {BORDER_COLORING_ENABLED && (
-              <StaticRuleEdit name='gradientColoringEnabled' />
-            )}
-            <StaticRuleEdit name='gradient' />
-            <StaticRuleEdit name='bandSmoothing' />
-            {BORDER_COLORING_ENABLED && (
-              <>
-                <StaticRuleEdit name='borderColoringEnabled' />
-                <StaticRuleEdit name='borderColor' />
-                <StaticRuleEdit name='borderIntensity' />
-              </>
-            )}
-            <Divider />
-            <StaticRuleEdit name='trapColoringEnabled' />
-            <TrapColoringSettings />
+            <ColoringSettings />
           </SettingsSection>
         </Tabs.Panel>
         <Tabs.Panel value='Rest'>
