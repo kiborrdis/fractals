@@ -23,10 +23,11 @@ import { ShapeParams } from "./layout/SidebarSettings/SidebarSettings";
 import { FiShare2 } from "react-icons/fi";
 import styles from "./EditFractal.module.css";
 import { DocModalProvider } from "@/shared/ui/DocTooltip";
-import { TbVideo } from "react-icons/tb";
+import { TbSettings, TbVideo } from "react-icons/tb";
 import { RecordingScreen } from "./Recording/RecordingScreen";
 import { SettingsProvider } from "./stores/settings";
 import { ContentArea } from "./layout/ContentArea/ContentArea";
+import { EditorSettings } from "./layout/EditorSettings/EditorSettings";
 
 export function EditFractal({
   data,
@@ -72,6 +73,7 @@ export const copyToClipboard = (text: string) => {
 
 export function EditFractalLoaded() {
   const [isRecordingMode, setIsRecordingMode] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { play, timeMultiplier } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed } = useActions();
 
@@ -124,10 +126,18 @@ export function EditFractalLoaded() {
                   <TbVideo />
                 </ActionIcon>
               </Tooltip>
+              <Tooltip label='Editor Settings'>
+                <ActionIcon
+                  variant={isSettingsOpen ? "light" : "subtle"}
+                  onClick={() => setIsSettingsOpen((v) => !v)}
+                >
+                  <TbSettings />
+                </ActionIcon>
+              </Tooltip>
               <ShareButton />
             </Group>
           </Group>
-          <ShapeParams />
+          {isSettingsOpen ? <EditorSettings onClose={() => setIsSettingsOpen(false)} /> : <ShapeParams />}
         </AppShellAside>
         <AppShellMain h='100vh'>
           <Stack w='100%' h='100%' gap={0}>

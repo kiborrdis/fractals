@@ -30,29 +30,29 @@ const { useSlot, SlotProvider } = createStorageSlot<Settings>({
   },
 });
 
-export const useSetting = (key: keyof Settings) => {
+export const useSetting = (key: keyof Settings['data']) => {
   const [slot] = useSlot();
 
-  return slot[key];
+  return slot.data[key];
 };
 
 export const useSettings = () => {
   const [slot, setSlot] = useSlot();
 
   const setSetting = useCallback(
-    (key: keyof Settings, value: boolean) => {
+    (key: keyof Settings['data'], value: boolean) => {
       setSlot((prev) => ({
         ...prev,
         data: {
           ...prev.data,
           [key]: value,
-        }
+        },
       }));
     },
     [setSlot],
   );
 
-  return [slot, setSetting];
+  return { settings: slot.data, setSetting };
 };
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
