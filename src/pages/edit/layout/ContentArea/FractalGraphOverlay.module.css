@@ -5,3 +5,9 @@
   bottom: 0;
   right: 0;
 }
+
+.toolbarArea {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}

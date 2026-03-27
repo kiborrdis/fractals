@@ -9,11 +9,13 @@ import {
 } from "@/shared/ui/GraphEdit";
 import { useState, useMemo, useCallback } from "react";
 import { FractalViewportToolbar } from "./FractalViewportToolbar";
+import { TrapEditModePanel } from "./TrapEditModePanel";
 import { useActions } from "../../stores/editStore/data/useActions";
 import { useFractalParamsData } from "../../stores/editStore/data/useFractalParamsData";
 import { useTrapEditMode } from "../../stores/editStore/data/useTrapEditMode";
 import { TrapOverlay } from "./TrapOverlay";
 import styles from "./FractalGraphOverlay.module.css";
+import { Stack } from "@mantine/core";
 
 export const FractalGraphOverlay = () => {
   const fractal = useFractalParamsData();
@@ -60,16 +62,19 @@ export const FractalGraphOverlay = () => {
           <TrapOverlay traps={traps} onTrapUpdate={updateTrap} />
         )}
       </GraphEdit>
-      <FractalViewportToolbar
-        zoomValue={axisRangeSizes[0]}
-        panEnabled={panEnabled}
-        onPanToggle={useCallback(() => setPanEnabled((p) => !p), [])}
-        selectAreaActive={selectAreaActive}
-        onSelectAreaToggle={useCallback(
-          () => setSelectAreaActive((s) => !s),
-          [],
-        )}
-      />
+      <Stack gap='sm' align="flex-end" className={styles.toolbarArea}>
+        <FractalViewportToolbar
+          zoomValue={axisRangeSizes[0]}
+          panEnabled={panEnabled}
+          onPanToggle={useCallback(() => setPanEnabled((p) => !p), [])}
+          selectAreaActive={selectAreaActive}
+          onSelectAreaToggle={useCallback(
+            () => setSelectAreaActive((s) => !s),
+            [],
+          )}
+        />
+        {trapEditMode && <TrapEditModePanel />}
+      </Stack>
     </div>
   );
 };
