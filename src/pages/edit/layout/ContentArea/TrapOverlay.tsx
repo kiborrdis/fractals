@@ -13,6 +13,10 @@ import {
 import { Vector2 } from "@/shared/libs/vectors";
 
 const TRAP_COLOR = "rgba(255, 255, 255, 0.8)";
+const TRAP_COLOR_HIGHLIGHTED = "rgba(255, 220, 50, 1.0)";
+
+const colorFn = () => TRAP_COLOR;
+const colorFnHighlighted = () => TRAP_COLOR_HIGHLIGHTED;
 
 function useViewportBounds(): {
   xMin: number;
@@ -68,10 +72,12 @@ const CircleTrapEdit = memo(
   ({
     trap,
     index,
+    highlighted,
     onTrapUpdate,
   }: {
     trap: Extract<FractalTrap, { type: "circle" }>;
     index: number;
+    highlighted: boolean;
     onTrapUpdate: (i: number, t: FractalTrap) => void;
   }) => {
     const resizeHandle: Vector2 = [
@@ -84,7 +90,7 @@ const CircleTrapEdit = memo(
         <Graph2DCircle
           center={trap.center}
           radius={trap.radius}
-          color={TRAP_COLOR}
+          color={highlighted ? TRAP_COLOR_HIGHLIGHTED : TRAP_COLOR}
         />
         <PointsEdit
           points={[trap.center, resizeHandle]}
@@ -110,15 +116,15 @@ function segmentCenter(seg: [Vector2, Vector2]): Vector2 {
   return [(seg[0][0] + seg[1][0]) / 2, (seg[0][1] + seg[1][1]) / 2];
 }
 
-const colorFn = () => TRAP_COLOR;
-
 const LineTrapEdit = ({
   trap,
   index,
+  highlighted,
   onTrapUpdate,
 }: {
   trap: Extract<FractalTrap, { type: "line" }>;
   index: number;
+  highlighted: boolean;
   onTrapUpdate: (i: number, t: FractalTrap) => void;
 }) => {
   const [rotating, setRotating] = useState(false);
@@ -196,7 +202,11 @@ const LineTrapEdit = ({
 
   return (
     <>
-      <Graph2DLine lineWidth={2} data={segment} getColor={colorFn} />
+      <Graph2DLine
+        lineWidth={2}
+        data={segment}
+        getColor={highlighted ? colorFnHighlighted : colorFn}
+      />
       {rotating && (
         <Graph2DCircle
           center={center}
@@ -227,17 +237,23 @@ const LineTrapEdit = ({
 const SegmentTrapEdit = ({
   trap,
   index,
+  highlighted,
   onTrapUpdate,
 }: {
   trap: Extract<FractalTrap, { type: "segment" }>;
   index: number;
+  highlighted: boolean;
   onTrapUpdate: (i: number, t: FractalTrap) => void;
 }) => {
   const segment: [Vector2, Vector2] = [trap.p1, trap.p2];
 
   return (
     <>
-      <Graph2DLine lineWidth={2} data={segment} getColor={colorFn} />
+      <Graph2DLine
+        lineWidth={2}
+        data={segment}
+        getColor={highlighted ? colorFnHighlighted : colorFn}
+      />
       <PointsEdit
         points={[trap.p1, trap.p2]}
         onPointMove={(i, newPos) => {
@@ -255,19 +271,23 @@ const SegmentTrapEdit = ({
 export const TrapOverlay = ({
   traps,
   onTrapUpdate,
+  highlightedTrapIndex,
 }: {
   traps: FractalTrap[];
   onTrapUpdate: (index: number, trap: FractalTrap) => void;
+  highlightedTrapIndex: number | null;
 }) => {
   return (
     <>
       {traps.map((trap, i) => {
+        const highlighted = highlightedTrapIndex === i;
         if (trap.type === "circle") {
           return (
             <CircleTrapEdit
               key={i}
               trap={trap}
               index={i}
+              highlighted={highlighted}
               onTrapUpdate={onTrapUpdate}
             />
           );
@@ -278,6 +298,7 @@ export const TrapOverlay = ({
               key={i}
               trap={trap}
               index={i}
+              highlighted={highlighted}
               onTrapUpdate={onTrapUpdate}
             />
           );
@@ -288,6 +309,7 @@ export const TrapOverlay = ({
               key={i}
               trap={trap}
               index={i}
+              highlighted={highlighted}
               onTrapUpdate={onTrapUpdate}
             />
           );

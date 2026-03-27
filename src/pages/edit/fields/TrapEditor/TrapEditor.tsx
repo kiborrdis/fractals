@@ -1,80 +1,30 @@
-import { Stack, Button, Group, Text, ActionIcon, Badge } from "@mantine/core";
-import { FractalTrap } from "@/features/fractals";
-import { FiTrash } from "react-icons/fi";
+import { Stack, Button, Group, Text } from "@mantine/core";
 import { EditorLabel } from "../../ui/EditorLabel";
+import { useActions } from "../../stores/editStore/data/useActions";
+import { useTrapEditMode } from "../../stores/editStore/data/useTrapEditMode";
+import { useFractalTraps } from "../../stores/editStore/data/useFractalTraps";
 
-export const TrapEditor = ({
-  traps,
-  onChange,
-}: {
-  traps: FractalTrap[];
-  onChange: (traps: FractalTrap[]) => void;
-}) => {
-  const addLineTrap = () => {
-    const newTrap: FractalTrap = { type: "line", a: 0, b: 1, c: 0 };
-    onChange([...traps, newTrap]);
-  };
-
-  const addCircleTrap = () => {
-    const newTrap: FractalTrap = {
-      type: "circle",
-      center: [0, 0],
-      radius: 0.5,
-    };
-    onChange([...traps, newTrap]);
-  };
-
-  const addSegmentTrap = () => {
-    const newTrap: FractalTrap = { type: "segment", p1: [-0.5, 0], p2: [0.5, 0] };
-    onChange([...traps, newTrap]);
-  };
-
-  const removeTrap = (index: number) => {
-    const newTraps = [...traps];
-    newTraps.splice(index, 1);
-    onChange(newTraps);
-  };
+export const TrapEditor = () => {
+  const { toggleTrapEditMode } = useActions();
+  const trapEditMode = useTrapEditMode();
+  const traps = useFractalTraps();
 
   return (
     <Stack gap='xs'>
-      <EditorLabel>Traps</EditorLabel>
-      <Group gap='xs'>
-        <Button size='xs' variant='light' onClick={addLineTrap}>
-          Add line trap
-        </Button>
-        <Button size='xs' variant='light' onClick={addCircleTrap}>
-          Add circle trap
-        </Button>
-        <Button size='xs' variant='light' onClick={addSegmentTrap}>
-          Add segment trap
-        </Button>
-      </Group>
-
-      {traps.length === 0 && (
+      <Group justify='space-between' align='center'>
+        <EditorLabel size="xs">Traps</EditorLabel>
         <Text size='xs' c='dimmed'>
-          No traps added
+          {traps.length} trap{traps.length !== 1 ? "s" : ""}
         </Text>
-      )}
-
-      <Stack gap={4}>
-        {traps.map((trap, index) => (
-          <Group key={index} justify='space-between' gap='xs'>
-            <Group gap='xs'>
-              <Badge size='sm' variant='light'>
-                {trap.type}
-              </Badge>
-            </Group>
-            <ActionIcon
-              size='sm'
-              variant='transparent'
-              color='red'
-              onClick={() => removeTrap(index)}
-            >
-              <FiTrash />
-            </ActionIcon>
-          </Group>
-        ))}
-      </Stack>
+      </Group>
+      <Button
+        size='xs'
+        variant={trapEditMode ? "filled" : "light"}
+        color={trapEditMode ? "red" : undefined}
+        onClick={toggleTrapEditMode}
+      >
+        {trapEditMode ? "Exit edit mode" : "Edit traps"}
+      </Button>
     </Stack>
   );
 };

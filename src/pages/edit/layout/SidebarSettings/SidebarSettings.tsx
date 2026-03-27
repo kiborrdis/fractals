@@ -16,7 +16,6 @@ import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
 import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { useActions } from "../../stores/editStore/data/useActions";
-import { useTrapEditMode } from "../../stores/editStore/data/useTrapEditMode";
 import { CustomVariables } from "../../fields/CustomVariables/CustomVariables";
 import {
   TbAdjustments,
@@ -33,8 +32,6 @@ import styles from "./SidebarSettings.module.css";
 
 const TrapColoringSettings = () => {
   const [trapColoringEnabled] = useStaticRule("trapColoringEnabled");
-  const trapEditMode = useTrapEditMode();
-  const { toggleTrapEditMode } = useActions();
 
   if (!trapColoringEnabled) {
     return null;
@@ -42,14 +39,6 @@ const TrapColoringSettings = () => {
 
   return (
     <>
-      <Button
-        size='xs'
-        variant={trapEditMode ? "filled" : "light"}
-        color={trapEditMode ? "red" : undefined}
-        onClick={toggleTrapEditMode}
-      >
-        {trapEditMode ? "Exit trap edit mode" : "Edit traps"}
-      </Button>
       <StaticRuleEdit name='traps' />
       <StaticRuleEdit name='trapIntensity' />
       <StaticRuleEdit name='trapGradient' />
@@ -110,7 +99,7 @@ const ColoringBlock = ({
         </Group>
       </Paper>
       <Collapse in={isEnabled}>
-        <Stack gap='md' px='sm'>{children}</Stack>
+        <Stack gap='md' px='0'>{children}</Stack>
       </Collapse>
     </Stack>
   );

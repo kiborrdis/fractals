@@ -1,7 +1,6 @@
 import {
   formulaVars,
   FractalParamsBuildRules,
-  FractalTrap,
   GradientStop,
 } from "@/features/fractals";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
@@ -135,6 +134,7 @@ const ruleConfigs: RuleRenderers = {
     return (
       <ColorInput
         label='Border Color'
+        size="xs"
         format='rgba'
         onChange={(color) => {
           // Convert rgba(255, 255, 255, 1) to [1,1,1,255]
@@ -163,6 +163,7 @@ const ruleConfigs: RuleRenderers = {
 
   borderIntensity: (props) => (
     <EditorNumberInput
+      label="Border Distance Multiplier"
       min={0}
       max={1000000}
       step={1}
@@ -183,22 +184,12 @@ const ruleConfigs: RuleRenderers = {
     />
   ),
 
-  traps: (props) => (
-    <TrapEditor
-      traps={(props.value as FractalTrap[]) ?? []}
-      onChange={(traps) =>
-        props.onChange(
-          props.name,
-          traps as FractalParamsBuildRules[typeof props.name],
-        )
-      }
-    />
-  ),
+  traps: (_props) => <TrapEditor />,
 
   trapIntensity: (props) => (
     <>
-      <EditorLabel>Trap Intensity</EditorLabel>
       <EditorNumberInput
+        label="Trap Distance Multiplier"
         min={0}
         max={1000000}
         step={1}

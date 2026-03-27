@@ -22,6 +22,9 @@ export const FractalGraphOverlay = () => {
   const [selectAreaActive, setSelectAreaActive] = useState(false);
   const trapEditMode = useTrapEditMode();
   const traps = (fractal.traps as FractalTrap[] | undefined) ?? [];
+  const [highlightedTrapIndex, setHighlightedTrapIndex] = useState<
+    number | null
+  >(null);
 
   const offset: Vector2 = useMemo(() => {
     const imRange = makeArrayFromRules(fractal.dynamic.imVisibleRange, 0);
@@ -59,7 +62,11 @@ export const FractalGraphOverlay = () => {
           <GraphViewportControls onViewportChange={panAndZoomViewport} />
         )}
         {trapEditMode && !selectAreaActive && (
-          <TrapOverlay traps={traps} onTrapUpdate={updateTrap} />
+          <TrapOverlay
+            traps={traps}
+            onTrapUpdate={updateTrap}
+            highlightedTrapIndex={highlightedTrapIndex}
+          />
         )}
       </GraphEdit>
       <Stack gap='sm' align="flex-end" className={styles.toolbarArea}>
@@ -73,7 +80,15 @@ export const FractalGraphOverlay = () => {
             [],
           )}
         />
-        {trapEditMode && <TrapEditModePanel />}
+        {trapEditMode && (
+          <TrapEditModePanel
+            traps={traps}
+            offset={offset}
+            axisRangeSizes={axisRangeSizes}
+            highlightedTrapIndex={highlightedTrapIndex}
+            onHighlightChange={setHighlightedTrapIndex}
+          />
+        )}
       </Stack>
     </div>
   );

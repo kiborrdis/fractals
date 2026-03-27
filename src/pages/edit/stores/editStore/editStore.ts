@@ -82,6 +82,8 @@ export type EditStoreActions = {
   initialLoopStateChange: (time: number) => void;
   toggleTrapEditMode: () => void;
   updateTrap: (index: number, trap: FractalTrap) => void;
+  addTrap: (trap: FractalTrap) => void;
+  removeTrap: (index: number) => void;
 };
 
 export type EditStore = EditStoreData & { actions: EditStoreActions };
@@ -143,6 +145,29 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
                 | undefined;
               if (traps && index >= 0 && index < traps.length) {
                 traps[index] = trap;
+              }
+            });
+          },
+
+          addTrap: (trap: FractalTrap) => {
+            set((prev) => {
+              const fractal = prev.fractal as Record<string, unknown>;
+              const traps = fractal.traps as FractalTrap[] | undefined;
+              if (traps) {
+                traps.push(trap);
+              } else {
+                fractal.traps = [trap];
+              }
+            });
+          },
+
+          removeTrap: (index: number) => {
+            set((prev) => {
+              const traps = (prev.fractal as Record<string, unknown>).traps as
+                | FractalTrap[]
+                | undefined;
+              if (traps && index >= 0 && index < traps.length) {
+                traps.splice(index, 1);
               }
             });
           },

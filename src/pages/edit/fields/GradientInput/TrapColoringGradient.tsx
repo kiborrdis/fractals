@@ -20,7 +20,7 @@ export const TrapColoringGradient = ({
 
   return (
     <>
-      <EditorLabel>Trap Gradient</EditorLabel>
+      <EditorLabel size="xs">Trap Gradient</EditorLabel>
       <TrapGradientInput
         stops={value}
         onChange={(newStops) => onChange(name, newStops)}
