@@ -1,6 +1,6 @@
 import { useDrag } from "@/shared/hooks/useDrag";
 import { mul, sum, Vector2 } from "@/shared/libs/vectors";
-import { fromCanvasPixels, toValueSpaceSize } from "./coordinateUtils";
+import { fromCanvasPixels, fromCanvasPixelsSize, toValueSpaceSize } from "./coordinateUtils";
 import { useGraphEditContext, useGraphEditRegisterHandler } from "./context";
 
 export const GraphViewportControls = ({
@@ -12,7 +12,7 @@ export const GraphViewportControls = ({
   zoomSensitivity?: number;
   priority?: number;
   onPanToggle?: (isPanning: boolean) => void;
-  onViewportChange: (rangs: Vector2, offset: Vector2) => void;
+  onViewportChange: (range: Vector2, offset: Vector2) => void;
 }) => {
   const { size, axisRangeSizes, offset, options, getBoundPos } =
     useGraphEditContext();
@@ -24,7 +24,7 @@ export const GraphViewportControls = ({
     },
     onDragMove: (_, delta, [initialOffset, accumulatedDelta]) => {
       const valueSpaceDelta: Vector2 = toValueSpaceSize(
-        [delta[0] / size[0], delta[1] / size[1]],
+        fromCanvasPixelsSize(delta, size, options),
         axisRangeSizes,
       );
       const newAccumDelta = sum(accumulatedDelta, valueSpaceDelta);
