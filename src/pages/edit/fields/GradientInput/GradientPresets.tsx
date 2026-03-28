@@ -66,7 +66,6 @@ export const GradientPresets = ({
 
   const handleSelectPreset = (index: number) => {
     setSelectedIndex(index);
-    console.log('reverse', reverse);
     onPreview(scaleStops(GRADIENT_PRESETS[index].stops, maxPosition, reverse));
   };
 
