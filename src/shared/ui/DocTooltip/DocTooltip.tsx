@@ -17,11 +17,11 @@ export const DocTooltip = ({
   docKeys,
   anchor,
 }: {
-  docKeys: string;
+  docKeys: string | undefined;
   anchor: React.ReactElement;
 }) => {
   const { openDoc } = useDocModal();
-  const docKeysArray = docKeys.split(",").map((key) => key.trim());
+  const docKeysArray = docKeys?.split(",").map((key) => key.trim()) || [];
 
   const content = docKeysArray
     .map((key) => docMap[key]?.short)
@@ -37,7 +37,10 @@ export const DocTooltip = ({
       <HoverCard.Target>
         <div
           style={{ display: "inline-block", cursor: "pointer", lineHeight: 0 }}
-          onClick={() => openDoc(docKeysArray)}
+          onClick={(e) => {
+            openDoc(docKeysArray);
+            e.stopPropagation();
+          }}
         >
           {anchor}
         </div>

@@ -9,6 +9,8 @@ import {
   GraphToolbar as BaseGraphToolbar,
   ToolbarItem,
 } from "../../ui/GraphToolbar";
+import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BiQuestionMark } from "react-icons/bi";
 
 export const GraphToolbar = ({
   mode,
@@ -27,6 +29,10 @@ export const GraphToolbar = ({
     <BaseGraphToolbar
       left={
         <>
+          <DocTooltip
+            docKeys={mergeDocKeys("graph-step-rule")}
+            anchor={<ToolbarItem icon={BiQuestionMark} color='gray' />}
+          />
           <ToolbarItem
             icon={FiScissors}
             label={mode === "addPoint" ? "Cancel adding point" : "Add point"}

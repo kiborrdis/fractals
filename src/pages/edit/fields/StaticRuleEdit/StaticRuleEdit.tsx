@@ -134,7 +134,7 @@ const ruleConfigs: RuleRenderers = {
     return (
       <ColorInput
         label='Border Color'
-        size="xs"
+        size='xs'
         format='rgba'
         onChange={(color) => {
           // Convert rgba(255, 255, 255, 1) to [1,1,1,255]
@@ -163,7 +163,11 @@ const ruleConfigs: RuleRenderers = {
 
   borderIntensity: (props) => (
     <EditorNumberInput
-      label="Border Distance Multiplier"
+      label={
+        <EditorLabel size='xs' docKeys={"border-distance-multiplier"}>
+          Border Distance Multiplier
+        </EditorLabel>
+      }
       min={0}
       max={1000000}
       step={1}
@@ -189,7 +193,11 @@ const ruleConfigs: RuleRenderers = {
   trapIntensity: (props) => (
     <>
       <EditorNumberInput
-        label="Trap Distance Multiplier"
+        label={
+          <EditorLabel size='xs' docKeys={"trap-distance-multiplier"}>
+            Trap Distance Multiplier
+          </EditorLabel>
+        }
         min={0}
         max={1000000}
         step={1}

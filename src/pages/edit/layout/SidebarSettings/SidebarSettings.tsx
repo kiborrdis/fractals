@@ -29,6 +29,8 @@ import { ModeEdit } from "../../fields/ModeEdit/ModeEdit";
 import { PresetModal } from "./PresetModal";
 import { EditorLabel } from "../../ui/EditorLabel";
 import styles from "./SidebarSettings.module.css";
+import { EditorDocTooltip } from "../../ui/EditorDocTooltip";
+import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 
 const TrapColoringSettings = () => {
   const [trapColoringEnabled] = useStaticRule("trapColoringEnabled");
@@ -90,7 +92,10 @@ const ColoringBlock = ({
     <Stack gap='lg'>
       <Paper withBorder p='xs' style={{ cursor: "pointer" }} onClick={handleToggle}>
         <Group justify='space-between'>
-          <Text size='sm' fw={600}>{coloringLabels[coloringType]}</Text>
+          <Group gap={0}>
+            <Text size='sm' fw={600}>{coloringLabels[coloringType]}</Text>
+            <EditorDocTooltip docKeys={mergeDocKeys(`coloring-${coloringType}`)} />
+          </Group>
           <Switch
             checked={isEnabled}
             onChange={handleToggle}

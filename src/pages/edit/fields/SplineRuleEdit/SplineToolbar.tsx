@@ -8,6 +8,8 @@ import {
   FiMap,
 } from "react-icons/fi";
 import { GraphToolbar, ToolbarItem } from "../../ui/GraphToolbar";
+import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BiQuestionMark } from "react-icons/bi";
 
 export const SplineToolbar = ({
   mode,
@@ -32,6 +34,10 @@ export const SplineToolbar = ({
     <GraphToolbar
       left={
         <>
+          <DocTooltip
+            docKeys={mergeDocKeys("graph-spline")}
+            anchor={<ToolbarItem icon={BiQuestionMark} color='gray' />}
+          />
           <ToolbarItem
             icon={FiEye}
             label={previewValueMode ? "Disable preview" : "Enable preview"}

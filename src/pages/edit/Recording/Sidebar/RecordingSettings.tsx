@@ -1,7 +1,8 @@
-import { Group, NumberInput, Select, Stack, Text } from "@mantine/core";
+import { Group, NumberInput, Select, Stack } from "@mantine/core";
 import { useRecordingSettings } from "../store/data/useRecordingSettings";
 import { useRecordingActions } from "../store/data/useRecordingActions";
 import { useRecordingStatus } from "../store/data/useRecordingStatus";
+import { EditorLabel } from "../../ui/EditorLabel";
 
 const RESOLUTION_PRESETS = [
   { value: "1920x1080", label: "1080p (1920×1080)" },
@@ -44,11 +45,11 @@ export const RecordingSettings = () => {
   };
 
   return (
-    <Stack gap='xs'>
-      <Text size='sm' fw={500}>
-        Resolution
-      </Text>
+    <Stack gap='md'>
       <Select
+        label={
+          <EditorLabel docKeys={"recording-resolution"}>Resolution</EditorLabel>
+        }
         data={RESOLUTION_PRESETS}
         value={isCustomResolution ? "custom" : currentResolution}
         onChange={handleResolutionChange}
@@ -80,10 +81,8 @@ export const RecordingSettings = () => {
         </Group>
       )}
 
-      <Text size='sm' fw={500} mt='xs'>
-        Frame Rate
-      </Text>
       <Select
+        label={<EditorLabel docKeys='recording-fps'>Framerate</EditorLabel>}
         value={String(settings.fps)}
         data={FPS_OPTIONS.map((fpsOption) => ({
           value: fpsOption,
@@ -93,10 +92,12 @@ export const RecordingSettings = () => {
         disabled={isRecording}
       />
 
-      <Text size='sm' fw={500} mt='xs'>
-        Start Time (seconds)
-      </Text>
       <NumberInput
+        label={
+          <EditorLabel docKeys={"recording-start-time"}>
+            Start Time (seconds)
+          </EditorLabel>
+        }
         value={settings.startTime / 1000}
         onChange={(val) =>
           actions.updateSettings({ startTime: (Number(val) || 0) * 1000 })
@@ -107,10 +108,12 @@ export const RecordingSettings = () => {
         disabled={isRecording}
       />
 
-      <Text size='sm' fw={500} mt='xs'>
-        Duration (seconds)
-      </Text>
       <NumberInput
+        label={
+          <EditorLabel docKeys={"recording-duration"}>
+            Duration (seconds)
+          </EditorLabel>
+        }
         value={settings.duration / 1000}
         onChange={(val) =>
           actions.updateSettings({ duration: (Number(val) || 10) * 1000 })

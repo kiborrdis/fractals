@@ -1,5 +1,7 @@
 import { FiScissors, FiTrash2, FiX, FiCheck } from "react-icons/fi";
 import { GraphToolbar, ToolbarItem } from "../../ui/GraphToolbar";
+import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BiQuestionMark } from "react-icons/bi";
 
 export const NewSplineRuleCreateToolbar = ({
   mode,
@@ -20,6 +22,15 @@ export const NewSplineRuleCreateToolbar = ({
     <GraphToolbar
       left={
         <>
+          <DocTooltip
+            docKeys={mergeDocKeys("graph-new-spline")}
+            anchor={
+              <ToolbarItem
+                icon={BiQuestionMark}
+                color='gray'
+              />
+            }
+          />
           <ToolbarItem
             icon={FiScissors}
             label={

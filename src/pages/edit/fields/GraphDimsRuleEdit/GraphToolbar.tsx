@@ -4,6 +4,8 @@ import {
   GraphToolbar as BaseGraphToolbar,
   ToolbarItem,
 } from "../../ui/GraphToolbar";
+import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BiQuestionMark } from "react-icons/bi";
 
 export const GraphToolbar = ({
   previewMode,
@@ -19,12 +21,20 @@ export const GraphToolbar = ({
   return (
     <BaseGraphToolbar
       left={
-        <ToolbarItem
-          icon={FiEye}
-          label={previewMode ? "Disable preview" : "Enable preview"}
-          onClick={onPreviewModeToggle}
-          color={previewMode ? "blue" : "gray"}
-        />
+        <>
+          <DocTooltip docKeys={mergeDocKeys('graph-sep-dims')} anchor={
+            <ToolbarItem
+              icon={BiQuestionMark}
+              color="gray"
+            />
+          }/>
+          <ToolbarItem
+            icon={FiEye}
+            label={previewMode ? "Disable preview" : "Enable preview"}
+            onClick={onPreviewModeToggle}
+            color={previewMode ? "blue" : "gray"}
+          />
+        </>
       }
       right={
         canEditMap &&

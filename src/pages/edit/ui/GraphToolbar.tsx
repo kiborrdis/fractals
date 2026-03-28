@@ -12,8 +12,8 @@ export const ToolbarItem = React.forwardRef<
   HTMLButtonElement,
   {
     icon: React.ComponentType<{ size: number | string }>;
-    label: string;
-    onClick: () => void;
+    label?: string;
+    onClick?: () => void;
     color?: ActionIconProps["color"];
     disabled?: boolean;
     size?: ActionIconProps["size"];
@@ -32,10 +32,7 @@ export const ToolbarItem = React.forwardRef<
     },
     ref,
   ) => {
-    return (
-      <div className={styles.toolbarItemWrapper}>
-        <Tooltip label={label}>
-          <ActionIcon
+    const actionIcon = <ActionIcon
             ref={ref}
             variant={variant}
             size={size}
@@ -44,8 +41,11 @@ export const ToolbarItem = React.forwardRef<
             disabled={disabled}
           >
             <Icon size={12} />
-          </ActionIcon>
-        </Tooltip>
+          </ActionIcon>;
+    return (
+      <div className={styles.toolbarItemWrapper}>
+        {label && <Tooltip label={label}>{actionIcon}</Tooltip>}
+        {!label && actionIcon}
       </div>
     );
   },

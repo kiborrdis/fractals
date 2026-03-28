@@ -1,10 +1,22 @@
 import { memo } from "react";
-import { Button, Tooltip, Group, Stack, ActionIcon, Badge, Divider, Text, SimpleGrid } from "@mantine/core";
+import {
+  Button,
+  Tooltip,
+  Group,
+  Stack,
+  ActionIcon,
+  Badge,
+  Divider,
+  Text,
+  SimpleGrid,
+} from "@mantine/core";
 import { FiCircle, FiMinus, FiArrowRight, FiX } from "react-icons/fi";
 import { FractalTrap } from "@/features/fractals";
 import { Vector2 } from "@/shared/libs/vectors";
 import { useActions } from "../../stores/editStore/data/useActions";
 import { FloatingPanel } from "../../ui/FloatingPanel/FloatingPanel";
+import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BiQuestionMark } from "react-icons/bi";
 
 const getTrapTypeIndices = (traps: FractalTrap[]) => {
   const typeCounters: Record<string, number> = {};
@@ -114,18 +126,31 @@ export const TrapEditModePanel = memo(
           )}
 
           <Divider />
-
-          <Tooltip label='Exit trap edit mode' position='bottom' withArrow>
-            <Button
-              size='compact-xs'
-              color='red'
-              variant='outline'
-              fullWidth
-              onClick={toggleTrapEditMode}
-            >
-              Exit mode
-            </Button>
-          </Tooltip>
+          <Group wrap="nowrap">
+            <DocTooltip
+              docKeys={mergeDocKeys("trap-edit-mode")}
+              anchor={
+                <ActionIcon
+                  size='sm'
+                  variant='outline'
+                  color="gray"
+                >
+                  <BiQuestionMark />
+                </ActionIcon>
+              }
+            />
+            <Tooltip label='Exit trap edit mode' position='bottom' withArrow>
+              <Button
+                size='compact-xs'
+                color='red'
+                variant='outline'
+                fullWidth
+                onClick={toggleTrapEditMode}
+              >
+                Exit mode
+              </Button>
+            </Tooltip>
+          </Group>
         </Stack>
       </FloatingPanel>
     );

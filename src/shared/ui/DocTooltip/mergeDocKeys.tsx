@@ -6,6 +6,10 @@ export const mergeDocKeys = (
     | undefined
   )[]
 ): string | undefined => {
+  if (!docKeysArrays || docKeysArrays.length === 0) {
+    return undefined;
+  }
+
   const mergedSet = new Set<string>();
 
   docKeysArrays.forEach((docKeys) => {

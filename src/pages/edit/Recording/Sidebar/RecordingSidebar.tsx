@@ -4,6 +4,7 @@ import { useRecordingStatus } from "../store/data/useRecordingStatus";
 import { RecordingControls } from "./RecordingControls";
 import { RecordingSettings } from "./RecordingSettings";
 import { RecordingActions } from "./RecordingActions";
+import { EditorDocTooltip } from "../../ui/EditorDocTooltip";
 
 export const RecordingSidebar = ({
   play,
@@ -28,7 +29,10 @@ export const RecordingSidebar = ({
           <ActionIcon variant='subtle' onClick={onBack} disabled={isRecording}>
             <FaArrowLeft />
           </ActionIcon>
-          <Title order={4}>Recording Mode</Title>
+          <Title order={4}>
+            Recording Mode
+            <EditorDocTooltip docKeys={"recording-mode"} />
+          </Title>
         </Group>
       </Group>
 

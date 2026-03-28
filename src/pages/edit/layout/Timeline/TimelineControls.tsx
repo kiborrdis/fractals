@@ -3,6 +3,8 @@ import { FiPenTool, FiList } from "react-icons/fi";
 import { VisibleRangeSettings } from "./VisibleRangeSettings";
 import { TimelineCollapseButton } from "./TimelineCollapseButton";
 import { useSetting } from "../../stores/settings";
+import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BiQuestionMark } from "react-icons/bi";
 
 export const TimelineControls = ({
   collapsed,
@@ -59,6 +61,15 @@ export const TimelineControls = ({
             <FiPenTool />
           </ActionIcon>
         </Tooltip>
+        <Divider size='xs' orientation='vertical' />
+        <DocTooltip
+          docKeys={mergeDocKeys("timeline-tool")}
+          anchor={
+            <ActionIcon variant='outline' color='gray'>
+              <BiQuestionMark />
+            </ActionIcon>
+          }
+        />
       </Group>
       {timelineRangeEnabled && (
         <>

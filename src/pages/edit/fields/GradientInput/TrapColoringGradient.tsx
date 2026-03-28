@@ -65,7 +65,7 @@ export const TrapColoringGradient = ({
   return (
     <>
       <Group justify='space-between' wrap='nowrap'>
-        <EditorLabel>Trap Gradient</EditorLabel>
+        <EditorLabel docKeys="trap-gradient">Trap Gradient</EditorLabel>
         {activePanel === null && (
           <Group gap={4} wrap='nowrap'>
             <Tooltip label='New stop' position='left'>

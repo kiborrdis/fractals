@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Collapse, Group, Stack } from "@mantine/core";
+import { ActionIcon, Collapse, Group, Stack } from "@mantine/core";
 import styles from "./RecordingTimelineTool.module.css";
 import { useRecordingSettings } from "../store/data/useRecordingSettings";
 import { RecordingTimelineGraph } from "./RecordingTimelineGraph";
@@ -7,6 +7,8 @@ import { useActions } from "../../stores/editStore/data/useActions";
 import { useDynamicNumberRules } from "../../stores/editStore/data/useTimelineRules";
 import { calcPeriod } from "../../helpers/timelineUtils";
 import { TimelineCollapseButton } from "../../layout/Timeline/TimelineCollapseButton";
+import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BiQuestionMark } from "react-icons/bi";
 
 export const RecordingTimelineTool = ({
   currentTime,
@@ -108,6 +110,14 @@ const RecordingTimelineToolInner = ({
           <TimelineCollapseButton
             collapsed={false}
             onClick={onCollapseToggle}
+          />
+          <DocTooltip
+            docKeys={mergeDocKeys("recording-timeline")}
+            anchor={
+              <ActionIcon variant='outline' color='gray'>
+                <BiQuestionMark />
+              </ActionIcon>
+            }
           />
         </Group>
         <RecordingTimelineGraph
