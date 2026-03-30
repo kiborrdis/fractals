@@ -109,26 +109,6 @@ const ruleConfigs: RuleRenderers = {
     />
   ),
 
-  gradientColoringEnabled: (props) => (
-    <Checkbox
-      label='Enable Gradient Coloring'
-      checked={props.value ?? true}
-      onChange={() => {
-        props.onChange(props.name, !props.value);
-      }}
-    />
-  ),
-
-  borderColoringEnabled: (props) => (
-    <Checkbox
-      label='Enable Border Coloring'
-      checked={props.value ?? false}
-      onChange={() => {
-        props.onChange(props.name, !props.value);
-      }}
-    />
-  ),
-
   borderColor: (props) => {
     const val = props.value || [0, 0, 0, 255];
     return (
@@ -174,16 +154,6 @@ const ruleConfigs: RuleRenderers = {
       value={props.value ?? 1}
       onChange={(value) => {
         props.onChange(props.name, value);
-      }}
-    />
-  ),
-
-  trapColoringEnabled: (props) => (
-    <Checkbox
-      label='Enable Trap Coloring'
-      checked={props.value ?? false}
-      onChange={() => {
-        props.onChange(props.name, !props.value);
       }}
     />
   ),
