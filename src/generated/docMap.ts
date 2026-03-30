@@ -27,6 +27,10 @@ export const docMap: Record<string, DocEntry> = {
     "short": "Colors the fractal by mapping iteration counts to a color gradient. The primary coloring method for creating vibrant fractal images.",
     "hasLong": true
   },
+  "coloring-layers": {
+    "short": "Coloring layers allow you to apply multiple coloring methods simultaneously, blending their results for richer and more complex fractal images. Each layer can use a different coloring technique, and you can control how they blend together.",
+    "hasLong": true
+  },
   "coloring-trap": {
     "short": "Trap coloring is a technique that uses the distance to predefined shapes (traps) to determine the color of each point in the fractal. By defining different trap shapes and their corresponding colors, you can create unique and intricate coloring effects that enhance the visual appeal of your fractals.",
     "hasLong": true

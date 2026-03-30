@@ -3,6 +3,8 @@ import { TbArrowDown, TbArrowUp } from "react-icons/tb";
 import { BlendMode, ColoringMode, ColoringEntry } from "@/features/fractals";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { useActions } from "../../stores/editStore/data/useActions";
+import { EditorLabel } from "../../ui/EditorLabel";
+import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 
 const defaultColoring: ColoringEntry[] = [
   { type: ColoringMode.Iterations, blend: BlendMode.Normal },
@@ -68,47 +70,50 @@ export const BlendingModes = () => {
   if (currentColoring.length === 0) return null;
 
   return (
-    <Stack gap="xs">
-      {currentColoring.map((entry, index) => (
-        <Group key={entry.type} justify="space-between" align="center">
-          <Text size="sm" fw={500}>
-            {coloringModeLabels[entry.type]}
-          </Text>
-          <Group gap={4}>
-            <Tooltip label="Move layer up" position="bottom">
-              <ActionIcon
+    <Stack>
+      <EditorLabel docKeys={mergeDocKeys('coloring-layers')}>Coloring layers</EditorLabel>
+      <Stack gap="xs">
+        {currentColoring.map((entry, index) => (
+          <Group key={entry.type} justify="space-between" align="center">
+            <Text size="sm" fw={500}>
+              {coloringModeLabels[entry.type]}
+            </Text>
+            <Group gap={4}>
+              <Tooltip label="Move layer up" position="bottom">
+                <ActionIcon
+                  size="xs"
+                  variant="subtle"
+                  disabled={index === 0}
+                  onClick={() => handleMoveUp(index)}
+                >
+                  <TbArrowUp size={16} />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label="Move layer down" position="bottom">
+                <ActionIcon
+                  size="xs"
+                  variant="subtle"
+                  disabled={index === currentColoring.length - 1}
+                  onClick={() => handleMoveDown(index)}
+                >
+                  <TbArrowDown size={16} />
+                </ActionIcon>
+              </Tooltip>
+              <Select
                 size="xs"
-                variant="subtle"
+                w={130}
                 disabled={index === 0}
-                onClick={() => handleMoveUp(index)}
-              >
-                <TbArrowUp size={16} />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label="Move layer down" position="bottom">
-              <ActionIcon
-                size="xs"
-                variant="subtle"
-                disabled={index === currentColoring.length - 1}
-                onClick={() => handleMoveDown(index)}
-              >
-                <TbArrowDown size={16} />
-              </ActionIcon>
-            </Tooltip>
-            <Select
-              size="xs"
-              w={130}
-              disabled={index === 0}
-              value={String(entry.blend)}
-              onChange={(val) =>
-                val && handleBlendChange(index, Number(val) as BlendMode)
-              }
-              data={blendModeOptions}
-              allowDeselect={false}
-            />
+                value={String(entry.blend)}
+                onChange={(val) =>
+                  val && handleBlendChange(index, Number(val) as BlendMode)
+                }
+                data={blendModeOptions}
+                allowDeselect={false}
+              />
+            </Group>
           </Group>
-        </Group>
-      ))}
+        ))}
+      </Stack>
     </Stack>
   );
 };

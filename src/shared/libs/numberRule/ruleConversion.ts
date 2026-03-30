@@ -39,7 +39,6 @@ export const calcRulePeriod = (
   return rule.transitions.reduce((m, t) => m + t.len, 0) * SECOND;
 };
 
-// Calculate max rangeSize
 export const calcVectorRuleRangeSize = (
   rule: NVectorStepRule<2> | Vector2BSplineRule,
 ): number => {
