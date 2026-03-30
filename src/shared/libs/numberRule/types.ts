@@ -115,23 +115,90 @@ type TupleWithLength<
   R extends T[] = [],
 > = R["length"] extends L ? R : TupleWithLength<T, L, [T, ...R]>;
 
-export type ConvertToBuildResult<
-  R extends
-    | NumberBuildRule
-    | NumberBuildRule[]
-    | NVectorStepRule<number>
-    | Vector2BSplineRule,
-> = R extends Vector2BSplineRule
-  ? Vector2
-  : R extends NVectorStepRule<infer D>
-    ? TupleWithLength<number, D>
-    : R extends NumberBuildRule
-      ? number
-      : R extends [infer F, ...infer Rest]
-        ? [
-            F extends NumberBuildRule ? number : never,
-            ...(Rest extends NumberBuildRule[]
-              ? ConvertToBuildResult<Rest>
-              : []),
-          ]
-        : [];
+export type AnyRule = NumberBuildRule | Vector2BSplineRule | NVectorStepRule<number>;
+export type AnyScalar = number;
+export type AnyRuleOrScalar = AnyRule | AnyScalar;
+
+export type ConvertRuleToBuildResult<R extends AnyRule> =
+  R extends Vector2BSplineRule
+    ? Vector2
+    : R extends NVectorStepRule<infer D>
+      ? TupleWithLength<number, D>
+      : R extends NumberBuildRule
+        ? number
+        : never;
+
+export type ConvertRuleOrScalarToBuildResult<R extends AnyRule | AnyScalar> =
+  R extends AnyScalar
+    ? R
+    : R extends AnyRule
+      ? ConvertRuleToBuildResult<R>
+      : never;
+
+type ArrayOrArrayOfArrays<V> = (V | ArrayOrArrayOfArrays<V>)[];
+
+export type BuildArray = ArrayOrArrayOfArrays<AnyRuleOrScalar>;
+type BuildObjectKeyValue = BuildArray | AnyRuleOrScalar;
+export type BuildObject = {
+  [key: string]: BuildObjectKeyValue;
+};
+
+// ConvertRuleArrayToResult example:
+// type Test = ConvertRuleArrayToResult<
+//   [
+//     number,
+//     Vector2BSplineRule,
+//     RangeNumberRule,
+//     StepNumberRule,
+//     Vector2BSplineRule,
+//     NVectorStepRule<3>,
+//     [Vector2BSplineRule, RangeNumberRule],
+//   ]
+// >;
+// Result:
+// type Test = [
+//   number,
+//   Vector2,
+//   number,
+//   number,
+//   Vector2,
+//   [number, number, number],
+//   [Vector2, number],
+// ];
+export type ConvertRuleArrayToResult<
+  R extends ArrayOrArrayOfArrays<AnyRuleOrScalar> | AnyRuleOrScalar,
+> = R extends AnyRuleOrScalar
+  ? ConvertRuleOrScalarToBuildResult<R>
+  : R extends [infer F, ...infer Rest]
+    ? [
+        F extends AnyRuleOrScalar
+          ? ConvertRuleOrScalarToBuildResult<F>
+          : F extends ArrayOrArrayOfArrays<AnyRuleOrScalar>
+            ? ConvertRuleArrayToResult<F>
+            : never,
+        ...(Rest extends ArrayOrArrayOfArrays<AnyRuleOrScalar>
+          ? ConvertRuleArrayToResult<Rest>
+          : []),
+      ]
+    : [];
+
+// type Test = ConvertBuildObjectToResult<{
+//   a: number;
+//   b: StaticNumberRule;
+//   c: [RangeNumberRule, StepNumberRule];
+//   d: Vector2BSplineRule;
+//   e: NVectorStepRule<3>;
+//   f: [[StaticNumberRule, RangeNumberRule, 3], StepNumberRule];
+// }>;
+// Result:
+// type Test = {
+//   a: number;
+//   b: number;
+//   c: [number, number];
+//   d: Vector2;
+//   e: [number, number, number];
+//   f: [[number, number, 3], number];
+// };
+export type ConvertBuildObjectToResult<O extends BuildObject> = {
+  [K in keyof O]: ConvertRuleArrayToResult<O[K]>;
+}

@@ -5,8 +5,7 @@ import {
 } from "../../stores/editStore/data/useTimelineRules";
 import {
   addNewStepToRule,
-  makeArrayFromRules,
-  makeNumberFromRangeRule,
+  convertRuleOrArrayToResult,
   moveRuleStep,
   RangeNumberRule,
   RuleType,
@@ -206,10 +205,7 @@ export const TimelineGraph = ({
       if (rules.length > 0) {
         onDynamicParamOverride(
           rules.map((item): number | [number, number] => {
-            if (item.kind === "number") {
-              return makeNumberFromRangeRule(item.rule, time);
-            }
-            return makeArrayFromRules(item.rule, time);
+            return convertRuleOrArrayToResult(item.rule, time);
           }),
         );
       }

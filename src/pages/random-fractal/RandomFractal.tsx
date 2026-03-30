@@ -9,7 +9,7 @@ import { FractalImage } from "@/features/fractals/shader/FractalImage";
 import { FractalsRenderer } from "@/features/fractals/shader/FractalsRenderer";
 import { useEffect, useState } from "react";
 import {
-  makeArrayFromRules,
+  convertRuleOrArrayToResult,
   makeRuleFromArray,
   NVectorStepRule,
   RuleType,
@@ -444,7 +444,7 @@ export function RandomFractal() {
       const defaultParams = makeToDisplayParams();
       defaultParams.dynamic.c = rule;
 
-      const goodFrame = await lookForGoodFrame(makeArrayFromRules(rule, 0));
+      const goodFrame = await lookForGoodFrame(convertRuleOrArrayToResult(rule, 0));
       defaultParams.dynamic.rlVisibleRange = makeRuleFromArray(
         goodFrame.rlVisibleRange,
       );

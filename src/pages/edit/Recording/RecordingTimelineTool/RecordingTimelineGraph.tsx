@@ -5,8 +5,7 @@ import {
   isNumberItem,
 } from "../../stores/editStore/data/useTimelineRules";
 import {
-  makeArrayFromRules,
-  makeNumberFromRangeRule,
+  convertRuleOrArrayToResult,
 } from "@/shared/libs/numberRule";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
@@ -66,10 +65,7 @@ export const RecordingTimelineGraph = ({
       if (rules.length > 0) {
         onDynamicParamOverride(
           rules.map((item): number | [number, number] => {
-            if (item.kind === "number") {
-              return makeNumberFromRangeRule(item.rule, time);
-            }
-            return makeArrayFromRules(item.rule, time) as [number, number];
+            return convertRuleOrArrayToResult(item.rule, time) as [number, number];
           }),
         );
       }

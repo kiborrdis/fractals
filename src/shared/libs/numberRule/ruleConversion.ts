@@ -1,8 +1,14 @@
 import { Vector2 } from "../vectors";
 import { animationFns } from "./animationFns";
 import { makeVector2FromBSpline } from "./bSplineRule";
+import { isAnyRule } from "./guards";
 import {
-  ConvertToBuildResult,
+  AnyRule,
+  BuildArray,
+  BuildObject,
+  ConvertBuildObjectToResult,
+  ConvertRuleArrayToResult,
+  ConvertRuleToBuildResult,
   ConvertToRule,
   NumberBuildRule,
   NVectorStepRule,
@@ -294,24 +300,82 @@ export const computeTransitionState = (
   };
 };
 
-export const makeArrayFromRules = <
-  V extends NumberBuildRule[] | NVectorStepRule<number> | Vector2BSplineRule,
->(
-  rules: V,
+export const convertBuildArrayToResult = <V extends BuildArray>(
+  arr: V,
   time: number = 0,
-): ConvertToBuildResult<V> => {
-  if ("t" in rules) {
-    if (rules.t === RuleType.Vector2BSpline) {
-      return makeVector2FromBSpline(rules, time) as ConvertToBuildResult<V>;
+): ConvertRuleArrayToResult<V> => {
+  return arr.map((item) => {
+    if (typeof item === "number") {
+      return item;
     }
 
-    if (rules.t === RuleType.StepNVector) {
-      const vector = makeVectorFromSteps(rules, time);
-      return vector as ConvertToBuildResult<V>;
+    if (Array.isArray(item)) {
+      return convertBuildArrayToResult(item, time);
+    }
+
+    if (isAnyRule(item)) {
+      return convertAnyRuleToResult(item, time);
+    }
+
+    return 0;
+  }) as ConvertRuleArrayToResult<V>;
+};
+
+export const convertAnyRuleToResult = <R extends AnyRule>(
+  rule: R,
+  time: number,
+): ConvertRuleToBuildResult<R> => {
+  if (rule.t === RuleType.Vector2BSpline) {
+    return makeVector2FromBSpline(rule, time) as ConvertRuleToBuildResult<R>;
+  } else if (rule.t === RuleType.StepNVector) {
+    return makeVectorFromSteps(rule, time) as ConvertRuleToBuildResult<R>;
+  } else {
+    return makeNumberFromRangeRule(rule, time) as ConvertRuleToBuildResult<R>;
+  }
+};
+
+export const convertRuleOrArrayToResult = <R extends AnyRule | BuildArray>(
+  ruleOrArray: R,
+  time: number = 0,
+): R extends AnyRule
+  ? ConvertRuleToBuildResult<R>
+  : R extends BuildArray
+    ? ConvertRuleArrayToResult<R>
+    : never => {
+  if (Array.isArray(ruleOrArray)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return convertBuildArrayToResult(ruleOrArray, time) as any;
+  } else if (isAnyRule(ruleOrArray)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return convertAnyRuleToResult(ruleOrArray, time) as any;
+  }
+
+  throw new Error("Invalid rule or array");
+};
+
+export const convertBuildObjectToResult = <V extends BuildObject>(
+  rules: V,
+  time: number = 0,
+): ConvertBuildObjectToResult<V> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: any = {};
+
+  for (const key in rules) {
+    const ruleOrScalar = rules[key];
+    if (typeof ruleOrScalar === "number") {
+      result[key] = ruleOrScalar;
+      continue;
+    }
+
+    if (Array.isArray(ruleOrScalar)) {
+      result[key] = convertBuildArrayToResult(ruleOrScalar, time);
+      continue;
+    }
+
+    if (isAnyRule(ruleOrScalar)) {
+      result[key] = convertAnyRuleToResult(ruleOrScalar, time);
     }
   }
 
-  return rules.map((rule) =>
-    makeScalarFromRule(rule, time),
-  ) as ConvertToBuildResult<V>;
+  return result as ConvertBuildObjectToResult<V>;
 };

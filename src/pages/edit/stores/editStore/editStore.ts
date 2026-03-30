@@ -9,7 +9,7 @@ import {
 } from "@/features/fractals";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
-  makeArrayFromRules,
+  convertRuleOrArrayToResult,
   NumberBuildRule,
   RuleType,
   Vector2BulidRule,
@@ -453,7 +453,7 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
                 }
               }
 
-              const numRange = makeArrayFromRules(visibleRange, 0);
+              const numRange = convertRuleOrArrayToResult(visibleRange, 0);
               const span = Math.abs(numRange[1] - numRange[0]);
               const move = span * amountPerc * dirSign;
 

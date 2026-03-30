@@ -1,6 +1,6 @@
 import {
   Vector2BSplineRule,
-  makeArrayFromRules,
+  convertRuleOrArrayToResult,
 } from "@/shared/libs/numberRule";
 import { PointsEdit } from "@/shared/ui/GraphEdit";
 import { TrianglePoint } from "@/shared/ui/Points/TrianglePoint";
@@ -15,8 +15,8 @@ export const GraphSplinePositionIndicator = ({
 
   const timeToUse = currTime;
 
-  const prevPosition = makeArrayFromRules(rule, Math.max(timeToUse - 1, 0));
-  const currPosition = makeArrayFromRules(rule, timeToUse);
+  const prevPosition = convertRuleOrArrayToResult(rule, Math.max(timeToUse - 1, 0));
+  const currPosition = convertRuleOrArrayToResult(rule, timeToUse);
   const direction = [
     currPosition[0] - prevPosition[0],
     currPosition[1] - prevPosition[1],

@@ -1,9 +1,7 @@
 import {
-  makeArrayFromRules,
+  convertBuildObjectToResult,
   makeRuleFromArray,
   makeRuleFromNumber,
-  makeScalarFromRule,
-  RuleType,
 } from "@/shared/libs/numberRule";
 import {
   FractalDynamicParamsBuildRules,
@@ -75,53 +73,12 @@ const makeCustomFractalParamsFromRules = (
   rules: FractalCustomRules,
   time: number = 0,
 ): { [key: string]: number | [number, number] } => {
-  const params = Object.entries(rules).reduce(
-    (acc, [key, value]) => {
-      if (
-        Array.isArray(value) ||
-        value.t === RuleType.StepNVector ||
-        value.t === RuleType.Vector2BSpline
-      ) {
-        acc[key] = makeArrayFromRules(value, time);
-        return acc;
-      }
-
-      acc[key] = makeScalarFromRule(value, time);
-
-      return acc;
-    },
-    {} as { [key: string]: number | [number, number] },
-  );
-
-  return params;
+  return convertBuildObjectToResult(rules, time);
 };
 
 const makeFractalDynamicParamsFromRules = (
   rules: FractalDynamicParamsBuildRules,
   time: number = 0,
 ): FractalDynamicParams => {
-  const params = Object.entries(rules).reduce((acc, [key, value]) => {
-    if (
-      Array.isArray(value) ||
-      value.t === RuleType.StepNVector ||
-      value.t === RuleType.Vector2BSpline
-    ) {
-      acc[key as keyof FractalDynamicParams] = makeArrayFromRules(
-        value,
-        time,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as any;
-      return acc;
-    }
-
-    acc[key as keyof FractalDynamicParams] = makeScalarFromRule(
-      value,
-      time,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ) as any;
-
-    return acc;
-  }, {} as FractalDynamicParams);
-
-  return params;
+  return convertBuildObjectToResult(rules, time);
 };

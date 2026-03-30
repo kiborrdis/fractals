@@ -1,5 +1,5 @@
 import { FractalTrap } from "@/features/fractals";
-import { makeArrayFromRules } from "@/shared/libs/numberRule";
+import { convertRuleOrArrayToResult } from "@/shared/libs/numberRule";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
   GraphEdit,
@@ -27,16 +27,16 @@ export const FractalGraphOverlay = () => {
   >(null);
 
   const offset: Vector2 = useMemo(() => {
-    const imRange = makeArrayFromRules(fractal.dynamic.imVisibleRange, 0);
-    const reRange = makeArrayFromRules(fractal.dynamic.rlVisibleRange, 0);
+    const imRange = convertRuleOrArrayToResult(fractal.dynamic.imVisibleRange, 0);
+    const reRange = convertRuleOrArrayToResult(fractal.dynamic.rlVisibleRange, 0);
     return [
       -1 * (reRange[0] + (reRange[1] - reRange[0]) / 2),
       -1 * (imRange[0] + (imRange[1] - imRange[0]) / 2),
     ];
   }, [fractal.dynamic.imVisibleRange, fractal.dynamic.rlVisibleRange]);
   const axisRangeSizes: Vector2 = useMemo(() => {
-    const imRange = makeArrayFromRules(fractal.dynamic.imVisibleRange, 0);
-    const reRange = makeArrayFromRules(fractal.dynamic.rlVisibleRange, 0);
+    const imRange = convertRuleOrArrayToResult(fractal.dynamic.imVisibleRange, 0);
+    const reRange = convertRuleOrArrayToResult(fractal.dynamic.rlVisibleRange, 0);
     return [reRange[1] - reRange[0], imRange[1] - imRange[0]];
   }, [fractal.dynamic.imVisibleRange, fractal.dynamic.rlVisibleRange]);
   const { panAndZoomViewport, zoomToArea, updateTrap } = useActions();

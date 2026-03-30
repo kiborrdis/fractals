@@ -1,4 +1,5 @@
 import {
+  AnyRule,
   NumberBuildRule,
   NVectorStepRule,
   RuleType,
@@ -28,4 +29,8 @@ export const isVector2Rule = (
     value.t === RuleType.Vector2BSpline ||
     (value.t === RuleType.StepNVector && value.dimension === 2)
   );
+};
+
+export const isAnyRule = (test: unknown): test is AnyRule => {
+  return typeof test === "object" && test !== null && "t" in test;
 };

@@ -1,6 +1,6 @@
 import {
   calcRulePeriod,
-  makeArrayFromRules,
+  convertRuleOrArrayToResult,
   Vector2BSplineRule,
 } from "@/shared/libs/numberRule";
 import { Vector2 } from "@/shared/libs/vectors";
@@ -23,7 +23,7 @@ export const useRuleData = (
     for (let i = 0; i <= numOfPoints; i++) {
       const t = i * quant;
 
-      points.push(makeArrayFromRules(rule, t));
+      points.push(convertRuleOrArrayToResult(rule, t));
     }
 
     return points;

@@ -1,6 +1,6 @@
 import {
   calcRulePeriod,
-  makeArrayFromRules,
+  convertRuleOrArrayToResult,
   makeNumberFromRangeRule,
   NVectorStepRule,
   RuleType,
@@ -103,7 +103,7 @@ export function useTimelineVector2GraphData(
 
       for (let i = 0; i <= SAMPLE_POINTS; i++) {
         const time = (i / SAMPLE_POINTS) * period;
-        const val = makeArrayFromRules(rule, time);
+        const val = convertRuleOrArrayToResult(rule, time);
         const norm0 =
           (2 * (val[0] - bounds.min[0])) / (bounds.max[0] - bounds.min[0]) - 1;
         const norm1 =

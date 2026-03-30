@@ -1,6 +1,6 @@
 import {
   computeTransitionState,
-  makeArrayFromRules,
+  convertRuleOrArrayToResult,
   makeNumberFromRangeRule,
 } from "./ruleConversion";
 import { NVectorStepRule, StepNumberRule } from "./types";
@@ -207,7 +207,7 @@ export const addStepToVectorRule = <N extends number>(
     },
     time,
   );
-  const separateValue: number[] = makeArrayFromRules(rule, time);
+  const separateValue: number[] = convertRuleOrArrayToResult(rule, time);
 
   const newRule = { ...rule };
   newRule.steps = [...newRule.steps];
@@ -219,7 +219,7 @@ export const addStepToVectorRule = <N extends number>(
     len: prevLen * (transitionPhase / prevLen),
   };
   newRule.transitions.splice(stepIndex + 1, 0, {
-    fns: [{ t: "linear" }, { t: "linear" }],
+    fns: new Array(rule.dimension).fill({ t: "linear" }),
     len: prevLen * (1 - transitionPhase / prevLen),
   });
 
