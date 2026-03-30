@@ -3,6 +3,35 @@ import { Vector2, Vector4 } from "@/shared/libs/vectors";
 
 export type RGBAVector = Vector4;
 
+export enum ColoringMode {
+  Iterations = 1,
+  Border = 2,
+  Trap = 3,
+}
+
+export enum BlendMode {
+  Normal = 1,
+  Add = 2,
+  Multiply = 3,
+  Screen = 4,
+  ColorDodge = 5,
+  ColorBurn = 6,
+  Lighten = 7,
+  Darken = 8,
+  Difference = 9,
+  Exclusion = 10,
+  Overlay = 11,
+  HardLight = 12,
+  InvertedOverlay = 13,
+  InvertedHardLight = 14,
+  SoftLight = 15,
+}
+
+export type ColoringEntry = {
+  type: ColoringMode;
+  blend: BlendMode;
+};
+
 type LineTrap = {
   type: "line";
   a: number;
@@ -39,9 +68,7 @@ export type FractalParams = {
   initialTime?: number;
   antialiasingLevel?: number;
 
-  gradientColoringEnabled?: boolean;
-  borderColoringEnabled?: boolean;
-  trapColoringEnabled?: boolean;
+  coloring?: ColoringEntry[];
 
   traps?: FractalTrap[];
   trapIntensity?: number;

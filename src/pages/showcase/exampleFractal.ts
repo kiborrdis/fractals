@@ -1,4 +1,4 @@
-import { FractalParamsBuildRules } from "@/features/fractals";
+import { BlendMode, ColoringMode, FractalParamsBuildRules } from "@/features/fractals";
 
 export const exampleFractal: FractalParamsBuildRules = {
   formula: "z^2 + c",
@@ -21,7 +21,7 @@ export const exampleFractal: FractalParamsBuildRules = {
   mirroringType: "off",
   initialTime: 150,
   custom: {},
-  borderColoringEnabled: false,
+  coloring: [{ type: ColoringMode.Iterations, blend: BlendMode.Normal }],
   dynamic: {
     hexMirroringFactor: {
       t: 0,

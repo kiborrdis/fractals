@@ -31,11 +31,21 @@ import { EditorLabel } from "../../ui/EditorLabel";
 import styles from "./SidebarSettings.module.css";
 import { EditorDocTooltip } from "../../ui/EditorDocTooltip";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
+import { BlendMode, ColoringEntry, ColoringMode } from "@/features/fractals";
+import { BlendingModes } from "./BlendingModes";
+import { useSetting } from "../../stores/settings";
+
+const defaultColoring: ColoringEntry[] = [
+  { type: ColoringMode.Iterations, blend: BlendMode.Normal },
+];
 
 const TrapColoringSettings = () => {
-  const [trapColoringEnabled] = useStaticRule("trapColoringEnabled");
+  const [coloring] = useStaticRule("coloring");
+  const trapEnabled = (coloring ?? defaultColoring).some(
+    (c) => c.type === ColoringMode.Trap,
+  );
 
-  if (!trapColoringEnabled) {
+  if (!trapEnabled) {
     return null;
   }
 
@@ -48,22 +58,16 @@ const TrapColoringSettings = () => {
   );
 };
 
-const coloringTypeToRule = {
-  gradient: "gradientColoringEnabled",
-  border: "borderColoringEnabled",
-  trap: "trapColoringEnabled",
+const coloringTypeToMode = {
+  gradient: ColoringMode.Iterations,
+  border: ColoringMode.Border,
+  trap: ColoringMode.Trap,
 } as const;
 
 const coloringLabels = {
   gradient: "Gradient Coloring",
   border: "Border Coloring",
   trap: "Trap Coloring",
-};
-
-const coloringDefaults: Record<"gradient" | "border" | "trap", boolean> = {
-  gradient: true,
-  border: false,
-  trap: false,
 };
 
 const ColoringBlock = ({
@@ -73,18 +77,35 @@ const ColoringBlock = ({
   coloringType: "gradient" | "border" | "trap";
   children: ReactNode;
 }) => {
-  const ruleName = coloringTypeToRule[coloringType];
-  const [enabled] = useStaticRule(ruleName);
+  const [coloring] = useStaticRule("coloring");
   const { staticRuleChange } = useActions();
-
-  const isEnabled = enabled ?? coloringDefaults[coloringType];
+  const coloringLayers = useSetting("coloringLayers");
+  console.log("coloring", coloring);
+  const currentColoring = coloring ?? defaultColoring;
+  const thisMode = coloringTypeToMode[coloringType];
+  const isEnabled = currentColoring.some((c) => c.type === thisMode);
 
   const handleToggle = () => {
-    if (!isEnabled) {
-      staticRuleChange("gradientColoringEnabled", false);
-      staticRuleChange("borderColoringEnabled", false);
-      staticRuleChange("trapColoringEnabled", false);
-      staticRuleChange(ruleName, true);
+    if (coloringLayers) {
+      if (isEnabled) {
+        if (currentColoring.length > 1) {
+          staticRuleChange(
+            "coloring",
+            currentColoring.filter((c) => c.type !== thisMode),
+          );
+        }
+      } else {
+        staticRuleChange("coloring", [
+          ...currentColoring,
+          { type: thisMode, blend: BlendMode.Normal },
+        ]);
+      }
+    } else {
+      if (!isEnabled) {
+        staticRuleChange("coloring", [
+          { type: thisMode, blend: BlendMode.Normal },
+        ]);
+      }
     }
   };
 
@@ -98,7 +119,6 @@ const ColoringBlock = ({
           </Group>
           <Switch
             checked={isEnabled}
-            onChange={handleToggle}
             onClick={(e) => e.stopPropagation()}
           />
         </Group>
@@ -110,23 +130,33 @@ const ColoringBlock = ({
   );
 };
 
-const ColoringSettings = () => (
-  <Stack gap='md'>
-    <ColoringBlock coloringType='gradient'>
-      <StaticRuleEdit name='gradient' />
-      <StaticRuleEdit name='bandSmoothing' />
-    </ColoringBlock>
-    <Divider />
-    <ColoringBlock coloringType='border'>
-      <StaticRuleEdit name='borderColor' />
-      <StaticRuleEdit name='borderIntensity' />
-    </ColoringBlock>
-    <Divider />
-    <ColoringBlock coloringType='trap'>
-      <TrapColoringSettings />
-    </ColoringBlock>
-  </Stack>
-);
+const ColoringSettings = () => {
+  const coloringLayers = useSetting("coloringLayers");
+
+  return (
+    <Stack gap='md'>
+      {coloringLayers && (
+        <>
+          <BlendingModes />
+          <Divider />
+        </>
+      )}
+      <ColoringBlock coloringType='gradient'>
+        <StaticRuleEdit name='gradient' />
+        <StaticRuleEdit name='bandSmoothing' />
+      </ColoringBlock>
+      <Divider />
+      <ColoringBlock coloringType='border'>
+        <StaticRuleEdit name='borderColor' />
+        <StaticRuleEdit name='borderIntensity' />
+      </ColoringBlock>
+      <Divider />
+      <ColoringBlock coloringType='trap'>
+        <TrapColoringSettings />
+      </ColoringBlock>
+    </Stack>
+  );
+};
 
 export const ShapeParams = React.memo(() => {
   const [mirroringType] = useStaticRule("mirroringType");

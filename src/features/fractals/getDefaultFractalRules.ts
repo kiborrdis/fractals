@@ -1,6 +1,6 @@
 import { rangeRule } from "@/shared/libs/numberRule";
 import { makeRulesBasedOnParams } from "./ruleConversion";
-import { FractalParams, FractalParamsBuildRules } from "./types";
+import { BlendMode, ColoringMode, FractalParams, FractalParamsBuildRules } from "./types";
 
 export const getDefaultFractalParams = (): FractalParams => {
   const initialFractalParams: FractalParams = {
@@ -16,7 +16,7 @@ export const getDefaultFractalParams = (): FractalParams => {
 
     invert: false,
 
-    trapColoringEnabled: false,
+    coloring: [{ type: ColoringMode.Iterations, blend: BlendMode.Normal }],
     traps: [
       {
         type: "line",
@@ -46,7 +46,6 @@ export const getDefaultFractalParams = (): FractalParams => {
       [15, 0, 0, 0, 1],
     ],
 
-    borderColoringEnabled: false,
     borderColor: [1, 1, 1, 1],
     borderIntensity: 25,
 

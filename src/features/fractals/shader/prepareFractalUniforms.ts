@@ -1,4 +1,4 @@
-import { FractalParams } from "../types";
+import { FractalParams, ColoringMode, BlendMode, ColoringEntry } from "../types";
 import { encodeGradientInTexture, encodeTrapsAsUniforms } from "./texture";
 import {
   createUniformApplier,
@@ -11,6 +11,13 @@ const mirroringTypeToInt = {
   hex: 2,
   radial: 3,
 };
+
+const defaultColoring: ColoringEntry[] = [
+  { type: ColoringMode.Iterations, blend: BlendMode.Normal },
+];
+
+const getColoring = (data: FractalParams): ColoringEntry[] =>
+  data.coloring ?? defaultColoring;
 
 export const createResolutionUniformApplier = (
   ctx: WebGL2RenderingContext,
@@ -103,17 +110,15 @@ export const createFractalUniformApplier = (
       "1i",
       "u_gradient_coloring",
       (data) =>
-        data.gradientColoringEnabled === undefined
+        getColoring(data).some((c) => c.type === ColoringMode.Iterations)
           ? 1
-          : Number(data.gradientColoringEnabled),
+          : 0,
     ],
     [
       "1i",
       "u_border_coloring",
       (data) =>
-        data.borderColoringEnabled === undefined
-          ? 0
-          : Number(data.borderColoringEnabled),
+        getColoring(data).some((c) => c.type === ColoringMode.Border) ? 1 : 0,
     ],
     ["1f", "u_border_intensity", (data) => data.borderIntensity ?? 10],
     [
@@ -134,14 +139,17 @@ export const createFractalUniformApplier = (
     [
       "1i",
       "u_trap_coloring",
-      (data) => ((data.trapColoringEnabled ?? false) ? 1 : 0),
+      (data) =>
+        getColoring(data).some((c) => c.type === ColoringMode.Trap) ? 1 : 0,
     ],
     ["1f", "u_trap_intensity", (data) => data.trapIntensity ?? 0],
     [
       "1i",
       "u_traps_size",
       (data) => {
-        const trapEnabled = data.trapColoringEnabled ?? false;
+        const trapEnabled = getColoring(data).some(
+          (c) => c.type === ColoringMode.Trap,
+        );
         const trapsLength = data.traps?.length ?? 0;
         return trapEnabled && trapsLength > 0 ? trapsLength : 0;
       },
@@ -150,7 +158,9 @@ export const createFractalUniformApplier = (
       "1iv",
       "u_trap_types",
       (data) => {
-        const trapEnabled = data.trapColoringEnabled ?? false;
+        const trapEnabled = getColoring(data).some(
+          (c) => c.type === ColoringMode.Trap,
+        );
         const traps = data.traps ?? [];
         if (!trapEnabled || traps.length === 0) return null;
         return encodeTrapsAsUniforms(traps).types;
@@ -160,7 +170,9 @@ export const createFractalUniformApplier = (
       "4fv",
       "u_trap_data",
       (data) => {
-        const trapEnabled = data.trapColoringEnabled ?? false;
+        const trapEnabled = getColoring(data).some(
+          (c) => c.type === ColoringMode.Trap,
+        );
         const traps = data.traps ?? [];
         if (!trapEnabled || traps.length === 0) return null;
         return encodeTrapsAsUniforms(traps).data;
@@ -182,7 +194,9 @@ export const createFractalUniformApplier = (
       "1i",
       "u_trap_gradient_wl",
       (data) => {
-        if (!(data.trapColoringEnabled ?? false)) return 0;
+        if (!getColoring(data).some((c) => c.type === ColoringMode.Trap)) {
+          return 0;
+        }
         return (
           data.trapGradient ?? [
             [0, 1, 1, 1, 1],
@@ -192,6 +206,18 @@ export const createFractalUniformApplier = (
       },
     ],
 
-    ["2iv", "u_blend_types", () => new Int32Array([3, 1, 2, 1, 1, 1])],
-    ["1i", "u_blend_types_size", () => 3],
+    [
+      "2iv",
+      "u_blend_types",
+      (data) => {
+        const coloring = getColoring(data);
+        const arr = new Int32Array(coloring.length * 2);
+        coloring.forEach((entry, i) => {
+          arr[i * 2] = entry.type;
+          arr[i * 2 + 1] = entry.blend;
+        });
+        return arr;
+      },
+    ],
+    ["1i", "u_blend_types_size", (data) => getColoring(data).length],
   ]);

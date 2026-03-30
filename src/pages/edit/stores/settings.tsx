@@ -5,13 +5,15 @@ type Settings = {
   version: number,
   data: {
   timelineRange: boolean;
+  coloringLayers: boolean;
   },
 };
 
 const initialSettings: Settings = {
-  version: 1,
+  version: 2,
   data: {
     timelineRange: false,
+    coloringLayers: false,
   },
 };
 
