@@ -636,6 +636,82 @@ vec4 doColoring(float iterationSmooth, float dist, float distToTrap) {
 
       } else if (blendMode == 4) { // Screen
         resultColor = mix(resultColor, vec4(1.0f) - (vec4(1.0f) - resultColor) * (vec4(1.0f) - currentColor), alpha);
+
+      } else if (blendMode == 5) { // Color Dodge
+        vec4 dodged = vec4(0.0f);
+        dodged.x = resultColor.x == 1.0f ? 1.0f : min(1.0f, resultColor.x / (1.0f - currentColor.x));
+        dodged.y = resultColor.y == 1.0f ? 1.0f : min(1.0f, resultColor.y / (1.0f - currentColor.y));
+        dodged.z = resultColor.z == 1.0f ? 1.0f : min(1.0f, resultColor.z / (1.0f - currentColor.z));
+        dodged.w = 1.0f;
+        resultColor = mix(resultColor, dodged, alpha);
+
+      } else if (blendMode == 6) { // Color Burn
+        vec4 burned = vec4(0.0f);
+        burned.x = resultColor.x == 0.0f ? 0.0f : max(0.0f, 1.0f - (1.0f - resultColor.x) / currentColor.x);
+        burned.y = resultColor.y == 0.0f ? 0.0f : max(0.0f, 1.0f - (1.0f - resultColor.y) / currentColor.y);
+        burned.z = resultColor.z == 0.0f ? 0.0f : max(0.0f, 1.0f - (1.0f - resultColor.z) / currentColor.z);
+        burned.w = 1.0f;
+        resultColor = mix(resultColor, burned, alpha);
+
+      } else if (blendMode == 7) { // Lighten
+        vec4 lightened = max(resultColor, currentColor);
+        lightened.w = 1.0f;
+        resultColor = mix(resultColor, lightened, alpha);
+
+      } else if (blendMode == 8) { // Darken
+        vec4 darkened = min(resultColor, currentColor);
+        darkened.w = 1.0f;
+        resultColor = mix(resultColor, darkened, alpha);
+
+      } else if (blendMode == 9) { // Difference
+        vec4 difference = abs(resultColor - currentColor);
+        difference.w = 1.0f;
+        resultColor = mix(resultColor, difference, alpha);
+
+      } else if (blendMode == 10) { // Exclusion
+        vec4 exclusion = resultColor + currentColor - 2.0f * resultColor * currentColor;
+        exclusion.w = 1.0f;
+        resultColor = mix(resultColor, exclusion, alpha);
+
+      } else if (blendMode == 11) { // Overlay
+        vec4 overlaid = vec4(0.0f);
+        overlaid.x = resultColor.x <= 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
+        overlaid.y = resultColor.y <= 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
+        overlaid.z = resultColor.z <= 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
+        overlaid.w = 1.0f;
+        resultColor = mix(resultColor, overlaid, alpha);
+
+      } else if (blendMode == 12) { // Hard Light
+        vec4 hardLight = vec4(0.0f);
+        hardLight.x = currentColor.x <= 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
+        hardLight.y = currentColor.y <= 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
+        hardLight.z = currentColor.z <= 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
+        hardLight.w = 1.0f;
+        resultColor = mix(resultColor, hardLight, alpha);
+
+      } else if (blendMode == 13) { // Inverted Overlay
+        vec4 invertedOverlay = vec4(0.0f);
+        invertedOverlay.x = resultColor.x > 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
+        invertedOverlay.y = resultColor.y > 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
+        invertedOverlay.z = resultColor.z > 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
+        invertedOverlay.w = 1.0f;
+        resultColor = mix(resultColor, invertedOverlay, alpha);
+
+      } else if (blendMode == 14) { // Inverted Hard Light
+        vec4 invertedHardLight = vec4(0.0f);
+        invertedHardLight.x = currentColor.x > 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
+        invertedHardLight.y = currentColor.y > 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
+        invertedHardLight.z = currentColor.z > 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
+        invertedHardLight.w = 1.0f;
+        resultColor = mix(resultColor, invertedHardLight, alpha);
+
+      } else if (blendMode == 15) { // Soft Light
+        vec4 softLight = vec4(0.0f);
+        softLight.x = currentColor.x <= 0.5f ? resultColor.x + (2.0f * currentColor.x - 1.0f) * (resultColor.x - resultColor.x * resultColor.x) : resultColor.x + (2.0f * currentColor.x - 1.0f) * (sqrt(resultColor.x) - resultColor.x);
+        softLight.y = currentColor.y <= 0.5f ? resultColor.y + (2.0f * currentColor.y - 1.0f) * (resultColor.y - resultColor.y * resultColor.y) : resultColor.y + (2.0f * currentColor.y - 1.0f) * (sqrt(resultColor.y) - resultColor.y);
+        softLight.z = currentColor.z <= 0.5f ? resultColor.z + (2.0f * currentColor.z - 1.0f) * (resultColor.z - resultColor.z * resultColor.z) : resultColor.z + (2.0f * currentColor.z - 1.0f) * (sqrt(resultColor.z) - resultColor.z);
+        softLight.w = 1.0f;
+        resultColor = mix(resultColor, softLight, alpha);
       }
     }
     colorIndex++;
