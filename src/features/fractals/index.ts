@@ -11,7 +11,7 @@ export { getDefaultFractalRules } from "./getDefaultFractalRules";
 export * from "./ruleConversion";
 export { DisplayFractal } from "./DisplayFractal";
 export type * from "./types";
-export { ColoringMode, BlendMode } from "./types";
+export { ColoringMode, BlendMode, MirroringPassType } from "./types";
 export { getDynamicParamLabel } from "./fractalParamLabels";
 export * from "./shader/allowedVars";
 export * from "./serialization";

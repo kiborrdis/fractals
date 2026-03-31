@@ -2,18 +2,23 @@ import { createStorageSlot } from "@/shared/hooks/useStorageSlot";
 import { ReactNode, useCallback } from "react";
 
 type Settings = {
-  version: number,
+  version: number;
   data: {
-  timelineRange: boolean;
-  coloringLayers: boolean;
-  },
+    timelineRange: boolean;
+    coloringLayers: boolean;
+    advancedMirroringSettings: boolean;
+    normalColoring: boolean;
+  };
 };
 
 const initialSettings: Settings = {
-  version: 2,
+  version: 4,
   data: {
     timelineRange: false,
     coloringLayers: false,
+    advancedMirroringSettings: false,
+
+    normalColoring: false,
   },
 };
 
@@ -32,7 +37,7 @@ const { useSlot, SlotProvider } = createStorageSlot<Settings>({
   },
 });
 
-export const useSetting = (key: keyof Settings['data']) => {
+export const useSetting = (key: keyof Settings["data"]) => {
   const [slot] = useSlot();
 
   return slot.data[key];
@@ -42,7 +47,7 @@ export const useSettings = () => {
   const [slot, setSlot] = useSlot();
 
   const setSetting = useCallback(
-    (key: keyof Settings['data'], value: boolean) => {
+    (key: keyof Settings["data"], value: boolean) => {
       setSlot((prev) => ({
         ...prev,
         data: {

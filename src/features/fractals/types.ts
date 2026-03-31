@@ -1,12 +1,22 @@
-import { ConvertToRule } from "@/shared/libs/numberRule";
+import { ConvertToRule, NumberBuildRule } from "@/shared/libs/numberRule";
 import { Vector2, Vector4 } from "@/shared/libs/vectors";
 
 export type RGBAVector = Vector4;
+
+export enum MirroringPassType {
+  Linear = 1,
+  Hex = 2,
+  Radial = 3,
+}
+
+export type MirroringPass = [MirroringPassType, number, number];
 
 export enum ColoringMode {
   Iterations = 1,
   Border = 2,
   Trap = 3,
+
+  Normal = 40,
 }
 
 export enum BlendMode {
@@ -78,8 +88,6 @@ export type FractalParams = {
   borderColor?: RGBAVector;
   borderIntensity?: number;
 
-  mirroringType: "off" | "hex" | "square" | "radial";
-
   /**
    * @description [2, Infinity] -- override auto-calculated smoothing power(in general, should be max power of z in formula).
    *              [-Infinity, 0) disable smoothing altogether,
@@ -93,9 +101,7 @@ export type FractalParams = {
 };
 
 export type FractalDynamicParams = {
-  hexMirroringFactor: number;
-  linearMirroringFactor: number;
-  radialMirroringAngle: number;
+  mirroringPasses: MirroringPass[];
   c: Vector2;
   r: number;
   maxIterations: number;
@@ -105,9 +111,6 @@ export type FractalDynamicParams = {
   rlVisibleRange: Vector2;
   imVisibleRange: Vector2;
 
-  hexMirroringDistVariation: number;
-  linearMirroringDistVariation: number;
-  radialMirroringDistVariation: number;
   cDistVariation: Vector2;
   rDistVariation: number;
   iterationsDistVariation: number;
@@ -121,8 +124,14 @@ export type GradientStop = [
   number,
 ];
 
+type FractalDynamicParamsRulable = Omit<FractalDynamicParams, "mirroringPasses">;
+
 export type FractalDynamicParamsBuildRules = {
-  [K in keyof FractalDynamicParams]: ConvertToRule<FractalDynamicParams[K]>;
+  [K in keyof FractalDynamicParamsRulable]: ConvertToRule<
+    FractalDynamicParamsRulable[K]
+  >;
+} & {
+  mirroringPasses: [MirroringPassType, NumberBuildRule, NumberBuildRule][];
 };
 
 export type FractalCustomRules = Record<

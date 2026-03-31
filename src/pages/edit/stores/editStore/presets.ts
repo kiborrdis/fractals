@@ -16,12 +16,11 @@ const julia: FractalParamsBuildRules = {
   ],
 
   invert: false,
-  mirroringType: "hex",
   bandSmoothing: 3,
   initialTime: 0,
 
   dynamic: {
-    // Complex constant oscillates in a figure-8 pattern
+    mirroringPasses: [],
     c: {
       t: RuleType.Vector2BSpline,
       knots: [0, 0, 0, 0, 0.25, 0.5, 0.75, 1, 1, 1, 1],
@@ -54,14 +53,6 @@ const julia: FractalParamsBuildRules = {
       phase: 0,
     },
 
-    // Hex mirroring creates kaleidoscope effect
-    hexMirroringFactor: {
-      t: RuleType.RangeNumber,
-      range: [0.7, 1.3],
-      period: 25,
-      phase: 5,
-    },
-
     rlVisibleRange: [
       {
         t: RuleType.StaticNumber,
@@ -87,33 +78,6 @@ const julia: FractalParamsBuildRules = {
     time: {
       t: RuleType.StaticNumber,
       value: 0,
-    },
-
-    linearMirroringFactor: {
-      t: RuleType.StaticNumber,
-      value: 1,
-    },
-
-    radialMirroringAngle: {
-      t: RuleType.RangeNumber,
-      range: [170, 190],
-      period: 35,
-      phase: 10,
-    },
-
-    hexMirroringDistVariation: {
-      t: RuleType.StaticNumber,
-      value: 0.05,
-    },
-
-    linearMirroringDistVariation: {
-      t: RuleType.StaticNumber,
-      value: 0,
-    },
-
-    radialMirroringDistVariation: {
-      t: RuleType.StaticNumber,
-      value: 0.03,
     },
 
     cDistVariation: [
@@ -152,21 +116,9 @@ const mandelbrot: FractalParamsBuildRules = {
     [100, 1, 0.9372549019607843, 0.8392156862745098, 1],
   ],
   invert: false,
-  mirroringType: "off",
   custom: {},
   dynamic: {
-    hexMirroringFactor: {
-      t: 0,
-      value: 0,
-    },
-    hexMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    linearMirroringFactor: {
-      t: 0,
-      value: 2000,
-    },
+    mirroringPasses: [],
     time: {
       t: 0,
       value: 0,
@@ -213,14 +165,6 @@ const mandelbrot: FractalParamsBuildRules = {
       t: 0,
       value: 100,
     },
-    linearMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    radialMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
     cDistVariation: [
       {
         t: 0,
@@ -239,10 +183,6 @@ const mandelbrot: FractalParamsBuildRules = {
       t: 0,
       value: 0,
     },
-    radialMirroringAngle: {
-      t: 0,
-      value: 181,
-    },
   },
   initialZFormula: "c0",
   initialCFormula: "fCoord",
@@ -259,21 +199,9 @@ const burningship: FractalParamsBuildRules = {
     [100, 1, 0.9372549019607843, 0.8392156862745098, 1],
   ],
   invert: false,
-  mirroringType: "off",
   custom: {},
   dynamic: {
-    hexMirroringFactor: {
-      t: 0,
-      value: 0,
-    },
-    hexMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    linearMirroringFactor: {
-      t: 0,
-      value: 2000,
-    },
+    mirroringPasses: [],
     time: {
       t: 0,
       value: 0,
@@ -320,14 +248,6 @@ const burningship: FractalParamsBuildRules = {
       t: 0,
       value: 100,
     },
-    linearMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    radialMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
     cDistVariation: [
       {
         t: 0,
@@ -345,10 +265,6 @@ const burningship: FractalParamsBuildRules = {
     iterationsDistVariation: {
       t: 0,
       value: 0,
-    },
-    radialMirroringAngle: {
-      t: 0,
-      value: 181,
     },
   },
   initialZFormula: "c0",
@@ -367,21 +283,9 @@ const tricorn: FractalParamsBuildRules = {
     [100, 1, 0.9372549019607843, 0.8392156862745098, 1],
   ],
   invert: false,
-  mirroringType: "off",
   custom: {},
   dynamic: {
-    hexMirroringFactor: {
-      t: 0,
-      value: 0,
-    },
-    hexMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    linearMirroringFactor: {
-      t: 0,
-      value: 2000,
-    },
+    mirroringPasses: [],
     time: {
       t: 0,
       value: 0,
@@ -428,14 +332,6 @@ const tricorn: FractalParamsBuildRules = {
       t: 0,
       value: 100,
     },
-    linearMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    radialMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
     cDistVariation: [
       {
         t: 0,
@@ -453,10 +349,6 @@ const tricorn: FractalParamsBuildRules = {
     iterationsDistVariation: {
       t: 0,
       value: 0,
-    },
-    radialMirroringAngle: {
-      t: 0,
-      value: 181,
     },
   },
   initialZFormula: "c0",
@@ -475,21 +367,9 @@ const multibrot: FractalParamsBuildRules = {
     [100, 1, 0.9372549019607843, 0.8392156862745098, 1],
   ],
   invert: false,
-  mirroringType: "off",
   custom: {},
   dynamic: {
-    hexMirroringFactor: {
-      t: 0,
-      value: 0,
-    },
-    hexMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    linearMirroringFactor: {
-      t: 0,
-      value: 2000,
-    },
+    mirroringPasses: [],
     time: {
       t: 0,
       value: 0,
@@ -536,14 +416,6 @@ const multibrot: FractalParamsBuildRules = {
       t: 0,
       value: 100,
     },
-    linearMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    radialMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
     cDistVariation: [
       {
         t: 0,
@@ -561,10 +433,6 @@ const multibrot: FractalParamsBuildRules = {
     iterationsDistVariation: {
       t: 0,
       value: 0,
-    },
-    radialMirroringAngle: {
-      t: 0,
-      value: 181,
     },
   },
   initialZFormula: "c0",

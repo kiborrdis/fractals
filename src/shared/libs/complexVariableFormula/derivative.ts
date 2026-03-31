@@ -13,6 +13,7 @@ export type StdFnNames = {
 export type CustomDerivatives = Record<
   string,
   (
+    derivative: (node: CalcNode, variable: string, stdFnNames: StdFnNames, custom: CustomDerivatives) => CalcNode,
     node: CalcNode,
     variable: string,
     stdFnNames: StdFnNames,
@@ -22,7 +23,7 @@ export type CustomDerivatives = Record<
 
 export const derivative = (
   node: CalcNode,
-  variable: "z",
+  variable: string,
   stdFnNames: StdFnNames,
   custom: CustomDerivatives = {},
 ): CalcNode => {
@@ -39,7 +40,7 @@ export const derivative = (
     const varName = node.v;
 
     if (custom[varName]) {
-      return custom[varName](node, variable, stdFnNames, custom);
+      return custom[varName](derivative, node, variable, stdFnNames, custom);
     }
 
     if (node.v === variable) {
@@ -229,7 +230,7 @@ export const derivative = (
 
   if (node.t === CalcNodeType.FuncCall) {
     if (custom[node.n]) {
-      return custom[node.n](node, variable, stdFnNames, custom);
+      return custom[node.n](derivative, node, variable, stdFnNames, custom);
     }
 
     if (node.n === stdFnNames.exp) {

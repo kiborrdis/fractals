@@ -17,40 +17,59 @@ export const fractalsStdFnNames: StdFnNames = {
 };
 
 const customDerivatives: CustomDerivatives = {
-  z: (node) => ({
+  z: (_derivative, node) => ({
     t: CalcNodeType.Variable,
     v: "dz",
     r: node.r,
   }),
-  dz: (node) => ({
+  dz: (_derivative, node) => ({
     t: CalcNodeType.Variable,
     v: "dz",
     r: node.r,
   }),
 
+  // I make an assumtion that there is no z in o[1].
+  // If there were, it would be wrong derivative. For now I leave it like this
+  rotate: (der, node, varName, ...rest) => {
+    if (node.t === CalcNodeType.FuncCall) {
+      return {
+        t: CalcNodeType.FuncCall,
+        n: "rotate",
+        o: [
+          der(node.o[0], varName, ...rest),
+          node.o[1],
+        ],
+        r: node.r,
+      };
+    }
+
+    return node;
+  },
+
+
+
   // These ones probably not complex differentiable
   // I just define some random derivatives to avoid errors
   // Maybe in future I can do proper research and do something better
-  re: (node) => ({
+  re: (_derivative, node) => ({
     t: CalcNodeType.Number,
     re: 1,
     im: 0,
     r: node.r,
   }),
-  im: (node) => ({
+  im: (_derivative, node) => ({
     t: CalcNodeType.Number,
     re: 0,
     im: 0,
     r: node.r,
   }),
-  mirror: (node) => ({
+  mirror: (_derivative, node) => ({
     t: CalcNodeType.Number,
     re: -1,
     im: 0,
     r: node.r,
   }),
-  cmpl: (node) => node,
-  rotate: (node) => node,
+  cmpl: (_derivative, node) => node,
 };
 
 export const derivative = (node: CalcNode): CalcNode => {

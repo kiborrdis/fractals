@@ -45,6 +45,19 @@ export const EditorSettings = ({ onClose }: { onClose: () => void }) => {
           }
         }}
       />
+      <Switch
+        label='Advanced mirroring'
+        description='Enable multi-pass mirroring editor in the Mirroring tab'
+        checked={settings.advancedMirroringSettings}
+        onChange={(e) => setSetting("advancedMirroringSettings", e.currentTarget.checked)}
+      />
+
+       <Switch
+        label='Normal coloring'
+        description='Enable normal coloring mode in the Coloring tab'
+        checked={settings.normalColoring}
+        onChange={(e) => setSetting("normalColoring", e.currentTarget.checked)}
+      />
     </Stack>
   );
 };

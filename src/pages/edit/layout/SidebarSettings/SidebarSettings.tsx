@@ -14,7 +14,6 @@ import {
 import React, { ReactNode, useState } from "react";
 import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
 import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
-import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { useActions } from "../../stores/editStore/data/useActions";
 import { CustomVariables } from "../../fields/CustomVariables/CustomVariables";
 import {
@@ -34,21 +33,15 @@ import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { BlendMode, ColoringEntry, ColoringMode } from "@/features/fractals";
 import { BlendingModes } from "./BlendingModes";
 import { useSetting } from "../../stores/settings";
+import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
+import { BasicMirroringEdit } from "../../fields/MirroringEdit/BasicMirroringEdit";
+import { AdvancedMirroringEdit } from "../../fields/MirroringEdit/AdvancedMirroringEdit";
 
 const defaultColoring: ColoringEntry[] = [
   { type: ColoringMode.Iterations, blend: BlendMode.Normal },
 ];
 
 const TrapColoringSettings = () => {
-  const [coloring] = useStaticRule("coloring");
-  const trapEnabled = (coloring ?? defaultColoring).some(
-    (c) => c.type === ColoringMode.Trap,
-  );
-
-  if (!trapEnabled) {
-    return null;
-  }
-
   return (
     <>
       <StaticRuleEdit name='traps' />
@@ -58,29 +51,40 @@ const TrapColoringSettings = () => {
   );
 };
 
+const InterationColoringSettings = () => {
+  return (
+    <>
+      <StaticRuleEdit name='gradient' />
+      <StaticRuleEdit name='bandSmoothing' />
+    </>
+  );
+};
+
 const coloringTypeToMode = {
   gradient: ColoringMode.Iterations,
   border: ColoringMode.Border,
   trap: ColoringMode.Trap,
+  normal: ColoringMode.Normal,
 } as const;
 
 const coloringLabels = {
   gradient: "Gradient Coloring",
   border: "Border Coloring",
   trap: "Trap Coloring",
+  normal: "Normal Coloring",
 };
 
 const ColoringBlock = ({
   coloringType,
   children,
 }: {
-  coloringType: "gradient" | "border" | "trap";
+  coloringType: "gradient" | "border" | "trap" | "normal";
   children: ReactNode;
 }) => {
   const [coloring] = useStaticRule("coloring");
   const { staticRuleChange } = useActions();
   const coloringLayers = useSetting("coloringLayers");
-  console.log("coloring", coloring);
+
   const currentColoring = coloring ?? defaultColoring;
   const thisMode = coloringTypeToMode[coloringType];
   const isEnabled = currentColoring.some((c) => c.type === thisMode);
@@ -111,20 +115,28 @@ const ColoringBlock = ({
 
   return (
     <Stack gap='lg'>
-      <Paper withBorder p='xs' style={{ cursor: "pointer" }} onClick={handleToggle}>
+      <Paper
+        withBorder
+        p='xs'
+        style={{ cursor: "pointer" }}
+        onClick={handleToggle}
+      >
         <Group justify='space-between'>
           <Group gap={0}>
-            <Text size='sm' fw={600}>{coloringLabels[coloringType]}</Text>
-            <EditorDocTooltip docKeys={mergeDocKeys(`coloring-${coloringType}`)} />
+            <Text size='sm' fw={600}>
+              {coloringLabels[coloringType]}
+            </Text>
+            <EditorDocTooltip
+              docKeys={mergeDocKeys(`coloring-${coloringType}`)}
+            />
           </Group>
-          <Switch
-            checked={isEnabled}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <Switch checked={isEnabled} onClick={(e) => e.stopPropagation()} />
         </Group>
       </Paper>
-      <Collapse in={isEnabled}>
-        <Stack gap='md' px='0'>{children}</Stack>
+      <Collapse keepMounted={false} in={isEnabled}>
+        <Stack gap='md' px='0'>
+          {children}
+        </Stack>
       </Collapse>
     </Stack>
   );
@@ -132,6 +144,7 @@ const ColoringBlock = ({
 
 const ColoringSettings = () => {
   const coloringLayers = useSetting("coloringLayers");
+  const normalColoring = useSetting("normalColoring");
 
   return (
     <Stack gap='md'>
@@ -142,8 +155,7 @@ const ColoringSettings = () => {
         </>
       )}
       <ColoringBlock coloringType='gradient'>
-        <StaticRuleEdit name='gradient' />
-        <StaticRuleEdit name='bandSmoothing' />
+        <InterationColoringSettings />
       </ColoringBlock>
       <Divider />
       <ColoringBlock coloringType='border'>
@@ -154,14 +166,20 @@ const ColoringSettings = () => {
       <ColoringBlock coloringType='trap'>
         <TrapColoringSettings />
       </ColoringBlock>
+
+      {normalColoring && (
+        <ColoringBlock coloringType='normal'>
+          <div />
+        </ColoringBlock>
+      )}
     </Stack>
   );
 };
 
 export const ShapeParams = React.memo(() => {
-  const [mirroringType] = useStaticRule("mirroringType");
   const [activeTab, setActiveTab] = React.useState<string | null>("c");
   const [presetModalOpen, setPresetModalOpen] = useState(false);
+  const advancedMirroring = useSetting("advancedMirroringSettings");
 
   return (
     <Stack gap='sm'>
@@ -246,29 +264,10 @@ export const ShapeParams = React.memo(() => {
 
         <Tabs.Panel value='Mirroring'>
           <SettingsSection>
-            <StaticRuleEdit name='mirroringType' />
-
-            {mirroringType === "square" && (
-              <>
-                <DynamicRuleEdit name='linearMirroringFactor' />
-
-                <DynamicRuleEdit name='linearMirroringDistVariation' />
-              </>
-            )}
-
-            {mirroringType === "hex" && (
-              <>
-                <DynamicRuleEdit name='hexMirroringFactor' />
-                <DynamicRuleEdit name='hexMirroringDistVariation' />
-              </>
-            )}
-
-            {mirroringType !== "off" && (
-              <>
-                <DynamicRuleEdit name='radialMirroringAngle' />
-
-                <DynamicRuleEdit name='radialMirroringDistVariation' />
-              </>
+            {advancedMirroring ? (
+              <AdvancedMirroringEdit />
+            ) : (
+              <BasicMirroringEdit />
             )}
           </SettingsSection>
         </Tabs.Panel>

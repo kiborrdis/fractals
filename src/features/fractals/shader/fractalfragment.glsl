@@ -6,6 +6,8 @@ const float T = 1000000.0f;
 
 uniform int u_gradient_coloring;
 uniform int u_border_coloring;
+uniform int u_stripe_coloring;
+
 uniform float u_border_intensity;
 
 uniform int u_trap_coloring;
@@ -29,15 +31,9 @@ uniform vec2 u_c_dist_variation;
 uniform float u_r_dist_variation;
 uniform float u_iterations_dist_variation;
 
-// Mirroring
-uniform float u_linear_mirroring;
-uniform float u_radial_mirroring;
-uniform vec2 u_radial_mirroring_angle_base_vector;
-uniform float u_hex_mirroring_factor;
-
-uniform float u_hex_mirroring_dist_variation;
-uniform float u_linear_mirroring_dist_variation;
-uniform float u_radial_mirroring_dist_variation;
+const int MAX_MIRRORING_PASSES = 8;
+uniform int u_mirroring_passes_size;
+uniform vec4 u_mirroring_passes[MAX_MIRRORING_PASSES];
 
 uniform float u_time;
 
@@ -45,7 +41,6 @@ uniform float u_time;
 uniform vec2 u_fractal_r_range_start;
 uniform vec2 u_fractal_r_range_end;
 
-uniform int u_mirror_type; // 0 = off, 1 = square, 2 = hex, 3 = radial
 uniform bool u_invert;
 
 uniform sampler2D uSampler;
@@ -56,7 +51,7 @@ uniform int u_traps_size;
 uniform int u_trap_types[MAX_TRAPS];
 uniform vec4 u_trap_data[MAX_TRAPS];
 
-const int MAX_BLEND = 3;
+const int MAX_BLEND = 6;
 uniform int u_blend_types_size;
 uniform ivec2 u_blend_types[MAX_BLEND];
 
@@ -405,48 +400,27 @@ float distToLine(vec3 line, vec2 point) {
 // vec2 fractStartEndDelta = (fractEnd - fractStart) / 2.0;
 // vec2 fractalCoords = fractStartEndDelta * (coord)  + fractStart + fractStartEndDelta;
 
-vec2 mirrorCoord(vec2 inCoord, vec2 centCoord, float normLenFromCenter) {
-  vec2 coord = inCoord;
+vec2 mirrorCoord(vec2 inCoord, float normLenFromCenter) {
+  vec2 coord = inCoord / u_resolution2.y;
 
-  if (u_mirror_type == 0 || u_mirror_type == 3) {
-    coord = coord / u_resolution2.y;
-  }
+  for (int i = 0; i < u_mirroring_passes_size; i++) {
+    int passType = int(u_mirroring_passes[i].x);
+    float factor = u_mirroring_passes[i].y + u_mirroring_passes[i].z * normLenFromCenter;
 
-  // Square mirroring
-  if (u_mirror_type == 1) {
-    float linMirror = u_linear_mirroring + u_linear_mirroring_dist_variation * normLenFromCenter;
-
-    float resolutionSep = linMirror * u_resolution2.y;
-    coord = mod(centCoord - resolutionSep / 2.0f, resolutionSep) - resolutionSep / 2.0f;
-
-    coord = abs(coord / u_resolution2.y);
-  }
-
-  // Hexagonal mirroring
-  if (u_mirror_type == 2) {
-    float hexFactor = u_hex_mirroring_factor;
-    hexFactor = hexFactor + u_hex_mirroring_dist_variation * normLenFromCenter;
-
-    float hexHeight = hexFactor * u_resolution2.y;
-
-    coord = hexMirror(coord, hexHeight);
-
-    coord = coord / u_resolution2.y;
-  }   
-
-  // Perform radial split based on the angle
-  vec2 normailizedCentrCoord = coord / length(coord);
-  float angle = vectorAngle(normailizedCentrCoord) * (180.0f / PI);
-  float sepAng = u_radial_mirroring;
-
-  // Increase radial split based on the distance from the center
-  sepAng = sepAng + u_radial_mirroring_dist_variation * normLenFromCenter;
-
-  float part = abs(mod(angle, sepAng) - (sepAng / 2.0f)) / (180.0f / PI);
-  vec2 nCrd = vec2(sin(part), cos(part)) * length(coord);
-
-  if (sepAng < 180.0f && u_mirror_type != 0) {
-    coord = nCrd;
+    if (passType == 1) {
+      // Linear/square mirroring (normalized space)
+      coord = mod(coord - factor / 2.0f, factor) - factor / 2.0f;
+      coord = abs(coord);
+    } else if (passType == 2) {
+      // Hexagonal mirroring (scale-invariant, works in normalized space)
+      coord = hexMirror(coord, factor);
+    } else if (passType == 3) {
+      // Radial mirroring
+      vec2 normalizedDir = coord / length(coord);
+      float angle = vectorAngle(normalizedDir) * (180.0f / PI);
+      float part = abs(mod(angle, factor) - factor / 2.0f) / (180.0f / PI);
+      coord = vec2(sin(part), cos(part)) * length(coord);
+    }
   }
 
   return coord;
@@ -471,7 +445,16 @@ vec2 calcEscapeDerivativeIteration(vec2 z, vec2 dz, vec2 c, vec2 zp, vec2 fCoord
   return dz;
 }
 
-vec3 generateFractalIntensity(vec2 point) {
+struct FractalInfo {
+  float escapeIteration;
+  float borderDistance;
+  float trapDistance;
+  float stripeAvg;
+  vec2 derivative;
+  vec2 finalZ;
+};
+
+FractalInfo generateFractalIntensity(vec2 point) {
   vec2 centCoord = point * 2.0f - u_resolution2;
   vec2 normCentCoord = centCoord / u_resolution2.y;
 
@@ -479,7 +462,7 @@ vec3 generateFractalIntensity(vec2 point) {
   float normLenFromCenterClamped = clamp(normLenFromCenter, 0.0f, 1.0f);
 
   vec2 preparedCoord = centCoord;
-  vec2 coord = mirrorCoord(preparedCoord, centCoord, normLenFromCenterClamped);
+  vec2 coord = mirrorCoord(preparedCoord, normLenFromCenterClamped);
   vec2 fCoord = toFractalSpace(coord, u_fractal_r_range_start, u_fractal_r_range_end);
 
   float cx = u_fractal_c.x;
@@ -516,6 +499,9 @@ vec3 generateFractalIntensity(vec2 point) {
   float trapDist = 100000000.0f;
   bool doTrapCalc = u_trap_coloring == 1 && u_traps_size > 0;
 
+  float stripeSum = 0.0f;
+  float prevStripeSumVal = 0.0f;
+
   float powZ = 0.0f;
   //@FORMULA_POW_PLACEHOLDER@
   bool earlyStop = false;
@@ -534,10 +520,17 @@ vec3 generateFractalIntensity(vec2 point) {
     if (u_border_coloring == 1) {
       dz = calcEscapeDerivativeIteration(z, dz, c, zp, fCoord, scoord, cdist);
     }
+
     z = calcEscapeIteration(z, c, zp, fCoord, scoord, cdist);
+
     // if (trapDist <= trapEarlyStopThreshold) {
     //   return vec3(-1.0f, 0.0f, 0.0f);
     // }
+
+    if (u_stripe_coloring == 1) {
+      prevStripeSumVal = stripeSum;
+      stripeSum += 0.5f + 0.5f * sin(16.0f * vectorAngle(z));
+    }
 
     if (doTrapCalc && trapDist > trapEarlyStopThreshold) {
       trapDist = min(trapDist, calcDistanceToTraps(z));
@@ -577,14 +570,26 @@ vec3 generateFractalIntensity(vec2 point) {
   }
 
   if (u_smooth_pow >= 0 && powZ >= 2.0f && iteration < maxIteration) {
-    iterationSmooth = float(iteration) - log(log(xSqrd + ySqrd) / log(pow(2.0f, 1.0f / (powZ - 1.0f)))) / log(powZ);
+    iterationSmooth = float(iteration) - log(log(length(z)) / log(r)) / log(powZ);
+  }
+ 
+  FractalInfo info;
+  info.escapeIteration = iterationSmooth;
+  info.borderDistance = dist;
+  info.trapDistance = trapDist;
+  info.derivative = dz;
+  info.finalZ = z;
+
+  if (u_stripe_coloring == 1) {
+    float curStripeAvg = stripeSum / max(float(iteration), 1.0f);
+    float smoothFrac = fract(iterationSmooth);
+    info.stripeAvg = mix(prevStripeSumVal / max(float(iteration)- 1.0f, 1.0f), curStripeAvg, smoothFrac);
   }
 
-  return vec3(iterationSmooth, dist, trapDist);
+  return info;
 }
 
-
-vec4 doColoring(float iterationSmooth, float dist, float distToTrap) {
+vec4 doColoring(FractalInfo info) {
   vec4 resultColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
   int colorIndex = 0;
 
@@ -599,23 +604,35 @@ vec4 doColoring(float iterationSmooth, float dist, float distToTrap) {
         continue;
       }
 
-      float colorInt = iterationSmooth / u_max_iterations;
+      float colorInt = info.escapeIteration / u_max_iterations;
       currentColor = createGradient(colorInt, int(u_max_iterations));
-    } else if(coloringType == 2) { // Border coloring
+    } else if (coloringType == 2) { // Border coloring
       if (u_border_coloring == 0) {
         continue;
       }
 
-      currentColor = vec4(u_border_color.xyz * (1.0f - sqrt(sqrt(dist))), 1.0f);
+      currentColor = vec4(u_border_color.xyz * (1.0f - sqrt(sqrt(info.borderDistance))), 1.0f);
 
     } else if (coloringType == 3) { // Trap coloring
       if (u_trap_coloring == 0 || u_traps_size == 0) {
         continue;
       }
 
-      float scaledDist = sqrt(distToTrap) * u_trap_intensity;
+      float scaledDist = sqrt(info.trapDistance) * u_trap_intensity;
 
       currentColor = createTrapGradient(scaledDist);
+    } else if (coloringType == 40) { // Normal coloring
+      if (info.escapeIteration == u_max_iterations) {
+        currentColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        continue;
+      }
+
+      float t = dot(normalize(complexDiv(info.finalZ, info.derivative)), vec2(1.0f, 0.0f));
+      t = t * 0.5f + 0.5f;
+
+      currentColor = vec4(t, t, t, 1.0f);
+    } else if (coloringType == 50) { // Stripe averaging
+      currentColor =  vec4(info.stripeAvg, 0.0f, 0.0f, 1.0f);
     }
 
     int blendMode = int(u_blend_types[i].y);
@@ -723,9 +740,6 @@ vec4 doColoring(float iterationSmooth, float dist, float distToTrap) {
 void main() {
   int maxIteration = int(u_max_iterations);
 
-  float iterationSmooth = 0.0f;
-  float dist = 0.0f;
-  float distToTrap = 0.0f;
   float superSampling = float(u_antialiasing_level); // Num of samples
 
   vec2 coord = vTextureCoord * u_resolution2;
@@ -740,6 +754,12 @@ void main() {
   float rowStep = 1.0f / (numOfRows + 1.0f);
   vec2 halfDistanceBetweenPixels = vec2(0.5f);
 
+  FractalInfo final;
+  final.escapeIteration = 0.0f;
+  final.borderDistance = 0.0f;
+  final.trapDistance = 0.0f;
+  final.derivative = vec2(0.0f, 0.0f);
+
   for (float i = 0.0f; i <= 16.0f; i += 1.0f) {
     if (i >= numOfRows) {
       break;
@@ -751,22 +771,27 @@ void main() {
       }
 
       vec2 samplePoint = coord - halfDistanceBetweenPixels + vec2((j + 1.0f) * columnStep, (i + 1.0f) * rowStep);
-      vec3 res = generateFractalIntensity(samplePoint);
-      dist += res.y;
-      distToTrap += res.z;
-      iterationSmooth += res.x;
+      FractalInfo res = generateFractalIntensity(samplePoint);
+      final.escapeIteration += res.escapeIteration;
+      final.borderDistance += res.borderDistance;
+      final.trapDistance += res.trapDistance;
+      final.derivative += res.derivative;
+      final.finalZ += res.finalZ;
+      final.stripeAvg += res.stripeAvg;
     }
   }
 
-  dist = dist / superSampling;
-  distToTrap = distToTrap / superSampling;
-  iterationSmooth = iterationSmooth / superSampling;
+  final.borderDistance = final.borderDistance / superSampling;
+  final.trapDistance = final.trapDistance / superSampling;
+  final.escapeIteration = final.escapeIteration / superSampling;
+  final.derivative = final.derivative / superSampling;
+  final.finalZ = final.finalZ / superSampling;
+  final.stripeAvg = final.stripeAvg / superSampling;
 
-  if (iterationSmooth == -1.0f) {
+  if (final.escapeIteration == -1.0f) {
     myOutputColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
     return;
   }
-  
-  myOutputColor = doColoring(iterationSmooth, dist, distToTrap);
-}
 
+  myOutputColor = doColoring(final);
+}

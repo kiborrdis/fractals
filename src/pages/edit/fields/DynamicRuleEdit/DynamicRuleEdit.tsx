@@ -41,78 +41,6 @@ const renderGraphMapForC = () => {
 };
 
 const ruleConfigs: RuleRenderers = {
-  hexMirroringFactor: (props) => (
-    <NumberRuleEdit
-      docKey='hex-mirroring'
-      label='Hex Mirroring'
-      min={0}
-      max={4}
-      step={0.01}
-      minRange={0.01}
-      {...props}
-    />
-  ),
-
-  hexMirroringDistVariation: (props) => (
-    <NumberRuleEdit
-      docKey={mergeDocKeys("dist-variation", "hex-mirroring")}
-      label='Distance Variation'
-      min={-4}
-      max={4}
-      step={0.01}
-      minRange={0.01}
-      {...props}
-    />
-  ),
-
-  linearMirroringFactor: (props) => (
-    <NumberRuleEdit
-      docKey='linear-mirroring'
-      label='Linear mirroring'
-      min={0}
-      max={4}
-      step={0.01}
-      minRange={0.01}
-      {...props}
-    />
-  ),
-
-  linearMirroringDistVariation: (props) => (
-    <NumberRuleEdit
-      docKey={mergeDocKeys("dist-variation", "linear-mirroring")}
-      label='Distance Variation'
-      min={-4}
-      max={4}
-      step={0.01}
-      minRange={0.01}
-      {...props}
-    />
-  ),
-
-  radialMirroringAngle: (props) => (
-    <NumberRuleEdit
-      docKey='radial-mirroring'
-      label='Radial mirroring angle (deg)'
-      min={0}
-      max={360}
-      step={1}
-      minRange={5}
-      {...props}
-    />
-  ),
-
-  radialMirroringDistVariation: (props) => (
-    <NumberRuleEdit
-      docKey={mergeDocKeys("dist-variation", "radial-mirroring")}
-      label='Distance Variation (deg)'
-      min={-180}
-      max={180}
-      step={0.1}
-      minRange={1}
-      {...props}
-    />
-  ),
-
   time: (props) => (
     <NumberRuleEdit
       label='Time'
@@ -123,6 +51,11 @@ const ruleConfigs: RuleRenderers = {
       {...props}
     />
   ),
+  mirroringPasses: () => {
+    return (
+      <div>Mirroring</div>
+    );
+  },
 
   c: (props) => {
     return (
@@ -173,7 +106,7 @@ const ruleConfigs: RuleRenderers = {
       label='Escape Radius'
       docKey='r'
       min={0.5}
-      max={50}
+      max={50000}
       step={0.01}
       minRange={0.01}
       {...props}
@@ -274,9 +207,9 @@ export const DynamicRuleEdit = ({
 }: {
   name: keyof FractalDynamicParamsBuildRules;
 }) => {
-  const [rule, setRule] = useDynamicRule(name);
+  const [rule, setRule] = useDynamicRule(name as keyof FractalDynamicParamsBuildRules);
 
-  const Component = ruleConfigs[name];
+  const Component = (ruleConfigs as Record<string, ((props: RuleRenderProps<keyof FractalDynamicParamsBuildRules>) => ReactNode) | undefined>)[name];
 
   if (!Component) {
     console.warn(`No DynamicRuleEdit component for rule: ${name}`);

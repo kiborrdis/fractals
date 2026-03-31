@@ -18,23 +18,11 @@ export const exampleFractal: FractalParamsBuildRules = {
     [150, 0, 0, 0, 1],
   ],
   invert: false,
-  mirroringType: "off",
   initialTime: 150,
   custom: {},
   coloring: [{ type: ColoringMode.Iterations, blend: BlendMode.Normal }],
   dynamic: {
-    hexMirroringFactor: {
-      t: 0,
-      value: 1,
-    },
-    hexMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    linearMirroringFactor: {
-      t: 0,
-      value: 1,
-    },
+    mirroringPasses: [],
     time: {
       t: 0,
       value: 0,
@@ -104,14 +92,6 @@ export const exampleFractal: FractalParamsBuildRules = {
         },
       ],
     },
-    linearMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
-    radialMirroringDistVariation: {
-      t: 0,
-      value: 0,
-    },
     cDistVariation: [
       {
         t: 0,
@@ -129,10 +109,6 @@ export const exampleFractal: FractalParamsBuildRules = {
     iterationsDistVariation: {
       t: 0,
       value: 0,
-    },
-    radialMirroringAngle: {
-      t: 0,
-      value: 181,
     },
   },
   bandSmoothing: -1,

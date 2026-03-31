@@ -49,26 +49,19 @@ export const getDefaultFractalParams = (): FractalParams => {
     borderColor: [1, 1, 1, 1],
     borderIntensity: 25,
 
-    mirroringType: "off",
-
     initialTime: 10738,
 
     dynamic: {
-      hexMirroringFactor: 1,
-      hexMirroringDistVariation: 0,
-      linearMirroringFactor: 1,
+      mirroringPasses: [],
       time: 0,
       c: [-1, 1],
       r: 4,
       rlVisibleRange: [-1, 1],
       imVisibleRange: [-1, 1],
       maxIterations: 100,
-      linearMirroringDistVariation: 0,
-      radialMirroringDistVariation: 0,
       cDistVariation: [0, 0],
       rDistVariation: 0,
       iterationsDistVariation: 0,
-      radialMirroringAngle: 181,
     },
     custom: {},
   };

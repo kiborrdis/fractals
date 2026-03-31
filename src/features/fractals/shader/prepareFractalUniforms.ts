@@ -5,13 +5,6 @@ import {
   UniformApplierMemory,
 } from "@/shared/libs/webgl";
 
-const mirroringTypeToInt = {
-  off: 0,
-  square: 1,
-  hex: 2,
-  radial: 3,
-};
-
 const defaultColoring: ColoringEntry[] = [
   { type: ColoringMode.Iterations, blend: BlendMode.Normal },
 ];
@@ -75,33 +68,30 @@ export const createFractalUniformApplier = (
     ],
 
     // --- Mirroring ---
-    ["1i", "u_mirror_type", (data) => mirroringTypeToInt[data.mirroringType]],
-    ["1f", "u_linear_mirroring", (data) => data.dynamic.linearMirroringFactor],
-    ["1f", "u_radial_mirroring", (data) => data.dynamic.radialMirroringAngle],
-    ["1f", "u_hex_mirroring_factor", (data) => data.dynamic.hexMirroringFactor],
+    ["1i", "u_mirroring_passes_size", (data) => data.dynamic.mirroringPasses.length],
+    [
+      "4fv",
+      "u_mirroring_passes",
+      (data) => {
+        const passes = data.dynamic.mirroringPasses;
+        if (passes.length === 0) return null;
+        const arr = new Float32Array(8 * 4);
+        passes.forEach(([type, factor, variation], i) => {
+          arr[i * 4] = type;
+          arr[i * 4 + 1] = factor;
+          arr[i * 4 + 2] = variation;
+          arr[i * 4 + 3] = 0;
+        });
+        return arr;
+      },
+    ],
 
-    // --- Distance variation ---
-    [
-      "1f",
-      "u_linear_mirroring_dist_variation",
-      (data) => data.dynamic.linearMirroringDistVariation,
-    ],
-    [
-      "1f",
-      "u_radial_mirroring_dist_variation",
-      (data) => data.dynamic.radialMirroringDistVariation,
-    ],
     ["2f", "u_c_dist_variation", (data) => data.dynamic.cDistVariation],
     ["1f", "u_r_dist_variation", (data) => data.dynamic.rDistVariation],
     [
       "1f",
       "u_iterations_dist_variation",
       (data) => data.dynamic.iterationsDistVariation,
-    ],
-    [
-      "1f",
-      "u_hex_mirroring_dist_variation",
-      (data) => data.dynamic.hexMirroringDistVariation,
     ],
 
     // --- Coloring / rendering quality ---
@@ -118,7 +108,7 @@ export const createFractalUniformApplier = (
       "1i",
       "u_border_coloring",
       (data) =>
-        getColoring(data).some((c) => c.type === ColoringMode.Border) ? 1 : 0,
+        getColoring(data).some((c) => c.type === ColoringMode.Border || c.type === ColoringMode.Normal) ? 1 : 0,
     ],
     ["1f", "u_border_intensity", (data) => data.borderIntensity ?? 10],
     [

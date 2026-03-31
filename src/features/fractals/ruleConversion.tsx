@@ -29,29 +29,22 @@ export const makeRulesBasedOnParams = ({
       return acc;
     }, {} as FractalCustomRules),
     dynamic: {
-      hexMirroringFactor: makeRuleFromNumber(params.hexMirroringFactor),
-      hexMirroringDistVariation: makeRuleFromNumber(
-        params.hexMirroringDistVariation,
-      ),
-      linearMirroringFactor: makeRuleFromNumber(params.linearMirroringFactor),
+      mirroringPasses: params.mirroringPasses.map(([type, param1, param2]) => [
+        type,
+        makeRuleFromNumber(param1),
+        makeRuleFromNumber(param2),
+      ]),
       time: makeRuleFromNumber(params.time),
       c: makeRuleFromArray(params.c),
       r: makeRuleFromNumber(params.r),
       rlVisibleRange: makeRuleFromArray(params.rlVisibleRange),
       imVisibleRange: makeRuleFromArray(params.imVisibleRange),
       maxIterations: makeRuleFromNumber(params.maxIterations),
-      linearMirroringDistVariation: makeRuleFromNumber(
-        params.linearMirroringDistVariation,
-      ),
-      radialMirroringDistVariation: makeRuleFromNumber(
-        params.radialMirroringDistVariation,
-      ),
       cDistVariation: makeRuleFromArray(params.cDistVariation),
       rDistVariation: makeRuleFromNumber(params.rDistVariation),
       iterationsDistVariation: makeRuleFromNumber(
         params.iterationsDistVariation,
       ),
-      radialMirroringAngle: makeRuleFromNumber(params.radialMirroringAngle),
     },
   };
 

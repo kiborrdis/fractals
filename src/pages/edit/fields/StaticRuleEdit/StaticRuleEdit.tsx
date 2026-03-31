@@ -5,7 +5,7 @@ import {
 } from "@/features/fractals";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { ReactNode } from "react";
-import { Checkbox, ColorInput, SegmentedControl, Select } from "@mantine/core";
+import { Checkbox, ColorInput, Select } from "@mantine/core";
 import { FormulaInput } from "../../ui/FormulaInput";
 import { InitialTimeEdit } from "../InitialTimeEdit/InitialTimeEdit";
 import { BandSmoothingOptions } from "../BandSmoothingOptions/BandSmoothingOptions";
@@ -190,28 +190,6 @@ const ruleConfigs: RuleRenderers = {
       onChange={props.onChange}
       name={props.name as "trapGradient"}
     />
-  ),
-
-  mirroringType: (props) => (
-    <>
-      <EditorLabel docKeys={"mirroring-type"}>Mirroring Type</EditorLabel>
-      <SegmentedControl
-        value={props.value as string}
-        data={[
-          { value: "off", label: "Off" },
-          { value: "square", label: "Square" },
-          { value: "hex", label: "Hex" },
-          { value: "radial", label: "Radial" },
-        ]}
-        size='sm'
-        onChange={(value) =>
-          props.onChange(
-            props.name,
-            value as FractalParamsBuildRules[typeof props.name],
-          )
-        }
-      />
-    </>
   ),
 };
 
