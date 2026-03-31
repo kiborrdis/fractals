@@ -71,6 +71,84 @@ export function encodeTrapsAsUniforms(traps: FractalTrap[]): {
   return { types, data };
 }
 
+const MAX_STOPS = 32;
+const GRADIENT_TEXTURE_WIDTH = MAX_STOPS * 2;
+const GRADIENT_TEXTURE_HEIGHT = 2;
+
+const padEndWithZeros = (arr: number[], targetLength: number) => {
+  while (arr.length < targetLength) {
+    arr.push(0);
+  }
+  return arr;
+};
+
+export const createGradientTexture = (gl: WebGL2RenderingContext) => {
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  const internalFormat = gl.RGBA8;
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texStorage2D(gl.TEXTURE_2D, 1, internalFormat, GRADIENT_TEXTURE_WIDTH, GRADIENT_TEXTURE_HEIGHT);
+
+  return texture;
+};
+
+export const encodeGradientsInTexture = (
+  gl: WebGL2RenderingContext,
+  texture: WebGLTexture,
+  iterationGradient: GradientStop[],
+  trapsGradient: GradientStop[],
+) => {
+  const iterationGradientPixels = iterationGradient.reduce<number[]>(
+    (memo, s) => {
+      memo.push(
+        Math.round(s[1] * 255),
+        Math.round(s[2] * 255),
+        Math.round(s[3] * 255),
+        Math.round(s[4] * 255),
+        ...encodeUnsignedFloatTo4Bytes(s[0]),
+      );
+      return memo;
+    },
+    [],
+  );
+  padEndWithZeros(iterationGradientPixels, MAX_STOPS * 8);
+
+  const trapsGradientPixels = trapsGradient.reduce<number[]>((memo, s) => {
+    memo.push(
+      Math.round(s[1] * 255),
+      Math.round(s[2] * 255),
+      Math.round(s[3] * 255),
+      Math.round(s[4] * 255),
+      ...encodeUnsignedFloatTo4Bytes(s[0]),
+    );
+    return memo;
+  }, []);
+  padEndWithZeros(trapsGradientPixels, MAX_STOPS * 8);
+
+  const textPixels = [...iterationGradientPixels, ...trapsGradientPixels];
+
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.texSubImage2D(
+    gl.TEXTURE_2D,
+    0, // mipmap level to update
+    0, // x offset, y offset
+    0, 
+    GRADIENT_TEXTURE_WIDTH, // width, height of the data being uploaded
+    GRADIENT_TEXTURE_HEIGHT, 
+    gl.RGBA, // format of your source data
+    gl.UNSIGNED_BYTE, // type of your source data
+    new Uint8Array(textPixels), // data
+  );
+
+  return texture;
+};
+
 // Initialize a texture and load gradient data
 export function encodeGradientInTexture(
   gl: WebGLRenderingContext,
@@ -88,7 +166,6 @@ export function encodeGradientInTexture(
     })
     .flat();
   const texture = gl.createTexture();
-
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
   const level = 0;

@@ -4,18 +4,11 @@ precision highp float;
 const float PI = 3.141592653589793238462f;
 const float T = 1000000.0f;
 
-uniform int u_gradient_coloring;
-uniform int u_border_coloring;
-uniform int u_stripe_coloring;
+uniform int u_derivative_enabled;
+uniform int u_stripe_enabled;
+uniform int u_trap_calculation_enabled;
 
-uniform float u_border_intensity;
-
-uniform int u_trap_coloring;
-uniform float u_trap_intensity;
-
-uniform int u_antialiasing_level;
-
-uniform vec4 u_border_color;
+uniform int u_supersampling_level;
 
 uniform int u_smooth_pow;
 
@@ -35,34 +28,22 @@ const int MAX_MIRRORING_PASSES = 8;
 uniform int u_mirroring_passes_size;
 uniform vec4 u_mirroring_passes[MAX_MIRRORING_PASSES];
 
-uniform float u_time;
-
 // Viewport
 uniform vec2 u_fractal_r_range_start;
 uniform vec2 u_fractal_r_range_end;
 
-uniform bool u_invert;
-
-uniform sampler2D uSampler;
-uniform int u_sampler_wl;
 
 const int MAX_TRAPS = 64;
 uniform int u_traps_size;
 uniform int u_trap_types[MAX_TRAPS];
 uniform vec4 u_trap_data[MAX_TRAPS];
 
-const int MAX_BLEND = 6;
-uniform int u_blend_types_size;
-uniform ivec2 u_blend_types[MAX_BLEND];
-
-uniform sampler2D uTrapGradient;
-uniform int u_trap_gradient_wl;
-
 in highp vec2 vTextureCoord;
 
 //@CUSTOM_VARS_DECLARATION_PLACEHOLDER@
 
-out vec4 myOutputColor;
+layout(location = 0) out vec4 output1;
+layout(location = 1) out vec4 output2;
 
 float decodeFloat(vec4 encoded) {
   float b1 = floor(encoded.x * 255.0f + 0.5f);
@@ -123,92 +104,6 @@ float calcDistanceToTraps(vec2 point) {
   }
 
   return minDist;
-}
-
-vec4 createTrapGradient(float dist) {
-  int numColors = u_trap_gradient_wl * 2;
-  vec2 texDim = vec2(float(numColors), 1.0f);
-  if (numColors == 0) {
-    return vec4(1.0f, 0.0f, 1.0f, 1.0f);
-  }
-
-  vec4 prevTexel = texture(uTrapGradient, getTexCoord(vec2(0, 0), texDim));
-  float prevPos = decodeUnsignedFloat(texture(uTrapGradient, getTexCoord(vec2(1, 0), texDim)));
-  vec4 color = prevTexel;
-
-  for (int i = 2; i < 256; i += 2) {
-    if (i >= numColors) {
-      break;
-    }
-
-    vec4 texel = texture(uTrapGradient, getTexCoord(vec2(i, 0), texDim));
-    float curPos = decodeUnsignedFloat(texture(uTrapGradient, getTexCoord(vec2(i + 1, 0), texDim)));
-    color = mix(color, texel, smoothstep(prevPos, curPos, dist));
-    prevPos = curPos;
-  }
-  // myOutputColor = vec4(dist, 0.0f, 0.0f, 1.0f);
-
-  return color;
-}
-
-vec4 createGradient(float part, int maxIterations) {
-  int numColors = u_sampler_wl * 2;
-  vec2 texDim = vec2(float(numColors), float(numColors));
-  if (numColors == 0) {
-    return vec4(1.0f, 0.0f, 1.0f, 1.0f);
-  }
-
-  if (abs(1.0f - part) < 0.00001f) {
-    vec4 lastTexel = texture(uSampler, getTexCoord(vec2(numColors - 2, 0), texDim));
-    return lastTexel;
-  }
-
-  vec4 prevTexel = texture(uSampler, getTexCoord(vec2(0, 0), texDim));
-
-  vec4 color = prevTexel;
-  float prevPos = decodeUnsignedFloat(texture(uSampler, getTexCoord(vec2(1, 0), texDim))) / float(maxIterations);
-
-  bool nextBailOut = false;
-  for (int i = 2; i < 256; i += 2) {
-    if (i >= numColors) {
-      break;
-    }
-
-    vec4 texel = texture(uSampler, getTexCoord(vec2(i, 0), texDim));
-    float stopCoord = decodeUnsignedFloat(texture(uSampler, getTexCoord(vec2(i + 1, 0), texDim)));
-    float curPos = stopCoord / float(maxIterations);
-
-    if (stopCoord > float(maxIterations)) {
-      if (nextBailOut) {
-        curPos = 1.0f;
-        texel = texture(uSampler, getTexCoord(vec2(numColors - 2, 0), texDim));
-      }
-      nextBailOut = true;
-    }
-
-    color = mix(color, texel, smoothstep(prevPos, curPos, part));
-
-    if (curPos >= 1.0f) {
-      return color;
-    }
-
-    prevPos = curPos;
-  }
-
-  return color;
-}
-
-float sdCircle(vec2 p, float r) {
-  return length(p) - r;
-}
-
-vec3 palette(float t) {
-  vec3 a = vec3(0.5f, 0.5f, 0.5f);
-  vec3 b = vec3(0.5f, 0.5f, 0.5f);
-  vec3 c = vec3(1.0f, 1.0f, 1.0f);
-  vec3 d = vec3(0.263f, 0.416f, 0.557f);
-
-  return a + b * cos(6.28318f * (c * t * d));
 }
 
 vec2 rotate(float angle, vec2 uv) {
@@ -389,17 +284,6 @@ vec2 complexTan(vec2 i) {
   return complexDiv(complexSin(i), complexCos(i));
 }
 
-float distToLine(vec3 line, vec2 point) {
-  return abs(line[0] * point[0] + line[1] * point[1] + line[2]) / length(line.xy);
-}
-
-// vec2 centeredCoord = gl_FragCoord.xy * 2.0 - u_resolution;
-// vec2 coord = preparedCoord / u_resolution.y;
-// vec2 fractStart = u_fractal_r_range_start;
-// vec2 fractEnd = u_fractal_r_range_end;
-// vec2 fractStartEndDelta = (fractEnd - fractStart) / 2.0;
-// vec2 fractalCoords = fractStartEndDelta * (coord)  + fractStart + fractStartEndDelta;
-
 vec2 mirrorCoord(vec2 inCoord, float normLenFromCenter) {
   vec2 coord = inCoord / u_resolution2.y;
 
@@ -497,7 +381,7 @@ FractalInfo generateFractalIntensity(vec2 point) {
   vec2 scoord = normCentCoord;
   float cdist = normLenFromCenter;
   float trapDist = 100000000.0f;
-  bool doTrapCalc = u_trap_coloring == 1 && u_traps_size > 0;
+  bool doTrapCalc = u_trap_calculation_enabled == 1 && u_traps_size > 0;
 
   float stripeSum = 0.0f;
   float prevStripeSumVal = 0.0f;
@@ -517,7 +401,7 @@ FractalInfo generateFractalIntensity(vec2 point) {
       break;
     }
 
-    if (u_border_coloring == 1) {
+    if (u_derivative_enabled == 1) {
       dz = calcEscapeDerivativeIteration(z, dz, c, zp, fCoord, scoord, cdist);
     }
 
@@ -527,7 +411,7 @@ FractalInfo generateFractalIntensity(vec2 point) {
     //   return vec3(-1.0f, 0.0f, 0.0f);
     // }
 
-    if (u_stripe_coloring == 1) {
+    if (u_stripe_enabled == 1) {
       prevStripeSumVal = stripeSum;
       stripeSum += 0.5f + 0.5f * sin(16.0f * vectorAngle(z));
     }
@@ -556,11 +440,10 @@ FractalInfo generateFractalIntensity(vec2 point) {
   }
   float dist = 0.0f;
 
-  if (u_border_coloring == 1) {
+  if (u_derivative_enabled == 1) {
     if (!earlyStop) {
       dist = 2.0f * length(z) * log(length(z)) / length(dz);
     }
-    dist = clamp(dist * u_border_intensity, 0.0f, 1.0f);
   }
 
   float iterationSmooth = float(iteration);
@@ -580,7 +463,7 @@ FractalInfo generateFractalIntensity(vec2 point) {
   info.derivative = dz;
   info.finalZ = z;
 
-  if (u_stripe_coloring == 1) {
+  if (u_stripe_enabled == 1) {
     float curStripeAvg = stripeSum / max(float(iteration), 1.0f);
     float smoothFrac = fract(iterationSmooth);
     info.stripeAvg = mix(prevStripeSumVal / max(float(iteration)- 1.0f, 1.0f), curStripeAvg, smoothFrac);
@@ -589,158 +472,10 @@ FractalInfo generateFractalIntensity(vec2 point) {
   return info;
 }
 
-vec4 doColoring(FractalInfo info) {
-  vec4 resultColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-  int colorIndex = 0;
-
-  for (int i = 0; i < u_blend_types_size; i++) {
-    int coloringType = u_blend_types[i].x;
-
-    vec4 currentColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
-    // Time escape gradient coloring
-    if (coloringType == 1) {
-      if (u_gradient_coloring == 0) {
-        continue;
-      }
-
-      float colorInt = info.escapeIteration / u_max_iterations;
-      currentColor = createGradient(colorInt, int(u_max_iterations));
-    } else if (coloringType == 2) { // Border coloring
-      if (u_border_coloring == 0) {
-        continue;
-      }
-
-      currentColor = vec4(u_border_color.xyz * (1.0f - sqrt(sqrt(info.borderDistance))), 1.0f);
-
-    } else if (coloringType == 3) { // Trap coloring
-      if (u_trap_coloring == 0 || u_traps_size == 0) {
-        continue;
-      }
-
-      float scaledDist = sqrt(info.trapDistance) * u_trap_intensity;
-
-      currentColor = createTrapGradient(scaledDist);
-    } else if (coloringType == 40) { // Normal coloring
-      if (info.escapeIteration == u_max_iterations) {
-        currentColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        continue;
-      }
-
-      float t = dot(normalize(complexDiv(info.finalZ, info.derivative)), vec2(1.0f, 0.0f));
-      t = t * 0.5f + 0.5f;
-
-      currentColor = vec4(t, t, t, 1.0f);
-    } else if (coloringType == 50) { // Stripe averaging
-      currentColor =  vec4(info.stripeAvg, 0.0f, 0.0f, 1.0f);
-    }
-
-    int blendMode = int(u_blend_types[i].y);
-
-    if (colorIndex == 0) {
-      resultColor = currentColor;
-    } else {
-      float alpha = currentColor.w;
-
-      if (blendMode == 1) { // Normal
-        resultColor = mix(resultColor, currentColor, alpha);
-
-      } else if (blendMode == 2) { // Add
-        resultColor = clamp(resultColor + currentColor * alpha, 0.0f, 1.0f);
-
-      } else if (blendMode == 3) { // Multiply
-        resultColor = mix(resultColor, resultColor * currentColor, alpha);
-
-      } else if (blendMode == 4) { // Screen
-        resultColor = mix(resultColor, vec4(1.0f) - (vec4(1.0f) - resultColor) * (vec4(1.0f) - currentColor), alpha);
-
-      } else if (blendMode == 5) { // Color Dodge
-        vec4 dodged = vec4(0.0f);
-        dodged.x = resultColor.x == 1.0f ? 1.0f : min(1.0f, resultColor.x / (1.0f - currentColor.x));
-        dodged.y = resultColor.y == 1.0f ? 1.0f : min(1.0f, resultColor.y / (1.0f - currentColor.y));
-        dodged.z = resultColor.z == 1.0f ? 1.0f : min(1.0f, resultColor.z / (1.0f - currentColor.z));
-        dodged.w = 1.0f;
-        resultColor = mix(resultColor, dodged, alpha);
-
-      } else if (blendMode == 6) { // Color Burn
-        vec4 burned = vec4(0.0f);
-        burned.x = resultColor.x == 0.0f ? 0.0f : max(0.0f, 1.0f - (1.0f - resultColor.x) / currentColor.x);
-        burned.y = resultColor.y == 0.0f ? 0.0f : max(0.0f, 1.0f - (1.0f - resultColor.y) / currentColor.y);
-        burned.z = resultColor.z == 0.0f ? 0.0f : max(0.0f, 1.0f - (1.0f - resultColor.z) / currentColor.z);
-        burned.w = 1.0f;
-        resultColor = mix(resultColor, burned, alpha);
-
-      } else if (blendMode == 7) { // Lighten
-        vec4 lightened = max(resultColor, currentColor);
-        lightened.w = 1.0f;
-        resultColor = mix(resultColor, lightened, alpha);
-
-      } else if (blendMode == 8) { // Darken
-        vec4 darkened = min(resultColor, currentColor);
-        darkened.w = 1.0f;
-        resultColor = mix(resultColor, darkened, alpha);
-
-      } else if (blendMode == 9) { // Difference
-        vec4 difference = abs(resultColor - currentColor);
-        difference.w = 1.0f;
-        resultColor = mix(resultColor, difference, alpha);
-
-      } else if (blendMode == 10) { // Exclusion
-        vec4 exclusion = resultColor + currentColor - 2.0f * resultColor * currentColor;
-        exclusion.w = 1.0f;
-        resultColor = mix(resultColor, exclusion, alpha);
-
-      } else if (blendMode == 11) { // Overlay
-        vec4 overlaid = vec4(0.0f);
-        overlaid.x = resultColor.x <= 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
-        overlaid.y = resultColor.y <= 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
-        overlaid.z = resultColor.z <= 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
-        overlaid.w = 1.0f;
-        resultColor = mix(resultColor, overlaid, alpha);
-
-      } else if (blendMode == 12) { // Hard Light
-        vec4 hardLight = vec4(0.0f);
-        hardLight.x = currentColor.x <= 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
-        hardLight.y = currentColor.y <= 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
-        hardLight.z = currentColor.z <= 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
-        hardLight.w = 1.0f;
-        resultColor = mix(resultColor, hardLight, alpha);
-
-      } else if (blendMode == 13) { // Inverted Overlay
-        vec4 invertedOverlay = vec4(0.0f);
-        invertedOverlay.x = resultColor.x > 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
-        invertedOverlay.y = resultColor.y > 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
-        invertedOverlay.z = resultColor.z > 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
-        invertedOverlay.w = 1.0f;
-        resultColor = mix(resultColor, invertedOverlay, alpha);
-
-      } else if (blendMode == 14) { // Inverted Hard Light
-        vec4 invertedHardLight = vec4(0.0f);
-        invertedHardLight.x = currentColor.x > 0.5f ? 2.0f * resultColor.x * currentColor.x : 1.0f - 2.0f * (1.0f - resultColor.x) * (1.0f - currentColor.x);
-        invertedHardLight.y = currentColor.y > 0.5f ? 2.0f * resultColor.y * currentColor.y : 1.0f - 2.0f * (1.0f - resultColor.y) * (1.0f - currentColor.y);
-        invertedHardLight.z = currentColor.z > 0.5f ? 2.0f * resultColor.z * currentColor.z : 1.0f - 2.0f * (1.0f - resultColor.z) * (1.0f - currentColor.z);
-        invertedHardLight.w = 1.0f;
-        resultColor = mix(resultColor, invertedHardLight, alpha);
-
-      } else if (blendMode == 15) { // Soft Light
-        vec4 softLight = vec4(0.0f);
-        softLight.x = currentColor.x <= 0.5f ? resultColor.x + (2.0f * currentColor.x - 1.0f) * (resultColor.x - resultColor.x * resultColor.x) : resultColor.x + (2.0f * currentColor.x - 1.0f) * (sqrt(resultColor.x) - resultColor.x);
-        softLight.y = currentColor.y <= 0.5f ? resultColor.y + (2.0f * currentColor.y - 1.0f) * (resultColor.y - resultColor.y * resultColor.y) : resultColor.y + (2.0f * currentColor.y - 1.0f) * (sqrt(resultColor.y) - resultColor.y);
-        softLight.z = currentColor.z <= 0.5f ? resultColor.z + (2.0f * currentColor.z - 1.0f) * (resultColor.z - resultColor.z * resultColor.z) : resultColor.z + (2.0f * currentColor.z - 1.0f) * (sqrt(resultColor.z) - resultColor.z);
-        softLight.w = 1.0f;
-        resultColor = mix(resultColor, softLight, alpha);
-      }
-    }
-    colorIndex++;
-  }
-
-  return resultColor;
-}
-
 void main() {
   int maxIteration = int(u_max_iterations);
 
-  float superSampling = float(u_antialiasing_level); // Num of samples
+  float superSampling = float(u_supersampling_level); // Num of samples
 
   vec2 coord = vTextureCoord * u_resolution2;
 
@@ -759,6 +494,8 @@ void main() {
   final.borderDistance = 0.0f;
   final.trapDistance = 0.0f;
   final.derivative = vec2(0.0f, 0.0f);
+  final.finalZ = vec2(0.0f, 0.0f);
+  final.stripeAvg = 0.0f;
 
   for (float i = 0.0f; i <= 16.0f; i += 1.0f) {
     if (i >= numOfRows) {
@@ -788,10 +525,6 @@ void main() {
   final.finalZ = final.finalZ / superSampling;
   final.stripeAvg = final.stripeAvg / superSampling;
 
-  if (final.escapeIteration == -1.0f) {
-    myOutputColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
-    return;
-  }
-
-  myOutputColor = doColoring(final);
+  output1 = vec4(final.escapeIteration, final.trapDistance, final.borderDistance, 1.0f);
+  output2 = vec4(final.derivative.x, final.derivative.y, final.finalZ.x, final.finalZ.y);
 }

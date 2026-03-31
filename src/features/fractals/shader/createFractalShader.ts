@@ -22,6 +22,7 @@ import {
   createResolutionUniformApplier,
 } from "./prepareFractalUniforms";
 
+
 export const createFractalShader = (
   context: WebGL2RenderingContext,
   formula: string,
@@ -106,12 +107,9 @@ export const createFractalShader = (
   if (!shaderProgram) {
     throw new Error("Shader program is undefined");
   }
-  const pos_vertex_attr_array = context.getAttribLocation(
-    shaderProgram,
-    "a_position",
-  );
 
   const memory = new UniformApplierMemory();
+
   const applyFractalParams = createFractalUniformApplier(
     context,
     shaderProgram,
@@ -159,12 +157,21 @@ export const createFractalShader = (
   );
   return {
     program: shaderProgram,
-    pos_vertex_attr_array,
     applyFractalParams,
     applyCameraParams,
     applyResolutionParams,
     applyCustomVars,
+    cleanup: () => {
+      context.deleteProgram(shaderProgram);
+      
+      if (vertexShader) {
+        context.deleteShader(vertexShader);
+      } 
+      if (fragmentShader) {
+        context.deleteShader(fragmentShader);
+      }
+    }
   };
 };
 
-export type FractalShaderDescrition = ReturnType<typeof createFractalShader>;
+export type FractalShader = ReturnType<typeof createFractalShader>;

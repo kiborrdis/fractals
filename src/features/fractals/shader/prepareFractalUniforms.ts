@@ -1,5 +1,5 @@
 import { FractalParams, ColoringMode, BlendMode, ColoringEntry } from "../types";
-import { encodeGradientInTexture, encodeTrapsAsUniforms } from "./texture";
+import { encodeGradientsInTexture, encodeTrapsAsUniforms } from "./texture";
 import {
   createUniformApplier,
   UniformApplierMemory,
@@ -67,7 +67,6 @@ export const createFractalUniformApplier = (
         ] as const,
     ],
 
-    // --- Mirroring ---
     ["1i", "u_mirroring_passes_size", (data) => data.dynamic.mirroringPasses.length],
     [
       "4fv",
@@ -94,45 +93,22 @@ export const createFractalUniformApplier = (
       (data) => data.dynamic.iterationsDistVariation,
     ],
 
-    // --- Coloring / rendering quality ---
     ["1i", "u_smooth_pow", (data) => data.bandSmoothing ?? 0],
     [
       "1i",
-      "u_gradient_coloring",
-      (data) =>
-        getColoring(data).some((c) => c.type === ColoringMode.Iterations)
-          ? 1
-          : 0,
-    ],
-    [
-      "1i",
-      "u_border_coloring",
+      "u_derivative_enabled",
       (data) =>
         getColoring(data).some((c) => c.type === ColoringMode.Border || c.type === ColoringMode.Normal) ? 1 : 0,
     ],
-    ["1f", "u_border_intensity", (data) => data.borderIntensity ?? 10],
-    [
-      "4f",
-      "u_border_color",
-      (data): readonly [number, number, number, number] =>
-        data.borderColor ?? [1, 1, 1, 0],
-    ],
-    ["1i", "u_antialiasing_level", (data) => data.antialiasingLevel ?? 1],
-
-    [
-      "texture",
-      "uSampler",
-      (data, ctx) => encodeGradientInTexture(ctx, data.gradient),
-    ],
-    ["1i", "u_sampler_wl", (data) => data.gradient.length],
+    ["1i", "u_supersampling_level", (data) => data.antialiasingLevel ?? 1],
 
     [
       "1i",
-      "u_trap_coloring",
+      "u_trap_calculation_enabled",
       (data) =>
         getColoring(data).some((c) => c.type === ColoringMode.Trap) ? 1 : 0,
     ],
-    ["1f", "u_trap_intensity", (data) => data.trapIntensity ?? 0],
+
     [
       "1i",
       "u_traps_size",
@@ -168,18 +144,39 @@ export const createFractalUniformApplier = (
         return encodeTrapsAsUniforms(traps).data;
       },
     ],
+  ]);
+
+export const createColoringUniformApplier = (
+  ctx: WebGL2RenderingContext,
+  program: WebGLProgram,
+  gradientTexture: WebGLTexture,
+  memory: UniformApplierMemory,
+) =>
+  createUniformApplier<FractalParams>(ctx, program, memory, [
+    ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
+     
+    ["1f", "u_border_intensity", (data) => data.borderIntensity ?? 10],
+    [
+      "4f",
+      "u_border_color",
+      (data): readonly [number, number, number, number] =>
+        data.borderColor ?? [1, 1, 1, 0],
+    ],
+
+    ["1f", "u_trap_intensity", (data) => data.trapIntensity ?? 0],
+    
     [
       "texture",
-      "uTrapGradient",
-      (data, ctx) =>
-        encodeGradientInTexture(
-          ctx,
-          data.trapGradient ?? [
-            [0, 1, 1, 1, 1],
-            [100, 0, 0, 0, 1],
-          ],
-        ),
+      "u_gradients_sampler",
+      (data, ctx) => {
+        const trapGradient = data.trapGradient;
+        const iterationGradient = data.gradient;
+        
+        const texture = encodeGradientsInTexture(ctx, gradientTexture, iterationGradient, trapGradient || []);
+        return texture;
+      },
     ],
+    ["1i", "u_sampler_wl", (data) => data.gradient.length],
     [
       "1i",
       "u_trap_gradient_wl",

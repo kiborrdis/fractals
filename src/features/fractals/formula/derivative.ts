@@ -47,7 +47,6 @@ const customDerivatives: CustomDerivatives = {
   },
 
 
-
   // These ones probably not complex differentiable
   // I just define some random derivatives to avoid errors
   // Maybe in future I can do proper research and do something better
