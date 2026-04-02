@@ -17,6 +17,7 @@ export enum ColoringMode {
   Trap = 3,
 
   Normal = 40,
+  StripesAverage = 50,
 }
 
 export enum BlendMode {

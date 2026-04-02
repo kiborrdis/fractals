@@ -164,6 +164,7 @@ export class FractalImage {
   }
 
   renderColoringPass(
+    time: number,
     camera: {
       offset: Vector2;
       scale: number;
@@ -198,6 +199,7 @@ export class FractalImage {
     context.useProgram(this.coloringShader.program);
 
     this.coloringShader.applyFractalParams(this.builtParams);
+    this.coloringShader.applyTime(time);
     this.coloringShader.applyCameraParams(camera);
     this.coloringShader.applyResolutionParams({
       fullResolution: canvasSize,

@@ -47,7 +47,6 @@ export const createFractalUniformApplier = (
     ["2f", "u_fractal_c", (data) => data.dynamic.c],
     ["1f", "u_fractal_r", (data) => data.dynamic.r],
     ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
-
     [
       "2f",
       "u_fractal_r_range_start",
@@ -108,6 +107,8 @@ export const createFractalUniformApplier = (
       (data) =>
         getColoring(data).some((c) => c.type === ColoringMode.Trap) ? 1 : 0,
     ],
+
+    ["1i", "u_stripe_enabled", (data) => data.coloring?.some((c) => c.type === ColoringMode.StripesAverage) ? 1 : 0],
 
     [
       "1i",
@@ -207,4 +208,14 @@ export const createColoringUniformApplier = (
       },
     ],
     ["1i", "u_blend_types_size", (data) => getColoring(data).length],
+  ]);
+
+
+export const createTimeUniformApplier = (
+  ctx: WebGL2RenderingContext,
+  program: WebGLProgram,
+  memory: UniformApplierMemory,
+) =>
+  createUniformApplier<number>(ctx, program, memory, [
+    ["1f", "u_time", (data) => data],
   ]);

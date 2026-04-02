@@ -14,8 +14,9 @@ const coloringModeLabels: Record<ColoringMode, string> = {
   [ColoringMode.Iterations]: "Gradient",
   [ColoringMode.Border]: "Border",
   [ColoringMode.Trap]: "Trap",
-  
+
   [ColoringMode.Normal]: "Normal",
+  [ColoringMode.StripesAverage]: "Stripes Average",
 };
 
 const blendModeOptions = Object.entries({

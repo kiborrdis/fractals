@@ -225,6 +225,7 @@ export class FractalsRenderer {
         }
 
         fractalImage.renderColoringPass(
+          time,
           camera,
           [this.canvasSize[0], this.canvasSize[1]],
           [

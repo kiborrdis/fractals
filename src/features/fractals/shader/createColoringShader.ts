@@ -8,6 +8,7 @@ import {
   createCameraUniformApplier,
   createColoringUniformApplier,
   createResolutionUniformApplier,
+  createTimeUniformApplier,
 } from "./prepareFractalUniforms";
 import vertex from "./fractalvertex.glsl?raw";
 import fragment from "./colorshader.glsl?raw";
@@ -55,9 +56,10 @@ export const createColoringShader = (context: WebGL2RenderingContext) => {
     applyCameraParams,
     applyResolutionParams,
     applyFractalData,
+    applyTime: createTimeUniformApplier(context, shaderProgram, memory),
     cleanup: () => {
       context.deleteProgram(shaderProgram);
-      
+
       if (vertexShader) {
         context.deleteShader(vertexShader);
       } 

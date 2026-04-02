@@ -525,6 +525,6 @@ void main() {
   final.finalZ = final.finalZ / superSampling;
   final.stripeAvg = final.stripeAvg / superSampling;
 
-  output1 = vec4(final.escapeIteration, final.trapDistance, final.borderDistance, 1.0f);
+  output1 = vec4(final.escapeIteration, final.trapDistance, final.borderDistance, final.stripeAvg);
   output2 = vec4(final.derivative.x, final.derivative.y, final.finalZ.x, final.finalZ.y);
 }

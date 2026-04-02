@@ -1,20 +1,16 @@
 import {
   Button,
-  Collapse,
   Divider,
   Group,
-  Paper,
   Stack,
-  Switch,
   Tabs,
-  Text,
   ThemeIcon,
   Tooltip,
 } from "@mantine/core";
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
+import { SettingsSection } from "./SettingsSection";
 import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
 import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
-import { useActions } from "../../stores/editStore/data/useActions";
 import { CustomVariables } from "../../fields/CustomVariables/CustomVariables";
 import {
   TbAdjustments,
@@ -28,153 +24,10 @@ import { ModeEdit } from "../../fields/ModeEdit/ModeEdit";
 import { PresetModal } from "./PresetModal";
 import { EditorLabel } from "../../ui/EditorLabel";
 import styles from "./SidebarSettings.module.css";
-import { EditorDocTooltip } from "../../ui/EditorDocTooltip";
-import { mergeDocKeys } from "@/shared/ui/DocTooltip";
-import { BlendMode, ColoringEntry, ColoringMode } from "@/features/fractals";
-import { BlendingModes } from "./BlendingModes";
 import { useSetting } from "../../stores/settings";
-import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { BasicMirroringEdit } from "../../fields/MirroringEdit/BasicMirroringEdit";
 import { AdvancedMirroringEdit } from "../../fields/MirroringEdit/AdvancedMirroringEdit";
-
-const defaultColoring: ColoringEntry[] = [
-  { type: ColoringMode.Iterations, blend: BlendMode.Normal },
-];
-
-const TrapColoringSettings = () => {
-  return (
-    <>
-      <StaticRuleEdit name='traps' />
-      <StaticRuleEdit name='trapIntensity' />
-      <StaticRuleEdit name='trapGradient' />
-    </>
-  );
-};
-
-const InterationColoringSettings = () => {
-  return (
-    <>
-      <StaticRuleEdit name='gradient' />
-      <StaticRuleEdit name='bandSmoothing' />
-    </>
-  );
-};
-
-const coloringTypeToMode = {
-  gradient: ColoringMode.Iterations,
-  border: ColoringMode.Border,
-  trap: ColoringMode.Trap,
-  normal: ColoringMode.Normal,
-} as const;
-
-const coloringLabels = {
-  gradient: "Gradient Coloring",
-  border: "Border Coloring",
-  trap: "Trap Coloring",
-  normal: "Normal Coloring",
-};
-
-const ColoringBlock = ({
-  coloringType,
-  children,
-}: {
-  coloringType: "gradient" | "border" | "trap" | "normal";
-  children: ReactNode;
-}) => {
-  const [coloring] = useStaticRule("coloring");
-  const { staticRuleChange } = useActions();
-  const coloringLayers = useSetting("coloringLayers");
-
-  const currentColoring = coloring ?? defaultColoring;
-  const thisMode = coloringTypeToMode[coloringType];
-  const isEnabled = currentColoring.some((c) => c.type === thisMode);
-
-  const handleToggle = () => {
-    if (coloringLayers) {
-      if (isEnabled) {
-        if (currentColoring.length > 1) {
-          staticRuleChange(
-            "coloring",
-            currentColoring.filter((c) => c.type !== thisMode),
-          );
-        }
-      } else {
-        staticRuleChange("coloring", [
-          ...currentColoring,
-          { type: thisMode, blend: BlendMode.Normal },
-        ]);
-      }
-    } else {
-      if (!isEnabled) {
-        staticRuleChange("coloring", [
-          { type: thisMode, blend: BlendMode.Normal },
-        ]);
-      }
-    }
-  };
-
-  return (
-    <Stack gap='lg'>
-      <Paper
-        withBorder
-        p='xs'
-        style={{ cursor: "pointer" }}
-        onClick={handleToggle}
-      >
-        <Group justify='space-between'>
-          <Group gap={0}>
-            <Text size='sm' fw={600}>
-              {coloringLabels[coloringType]}
-            </Text>
-            <EditorDocTooltip
-              docKeys={mergeDocKeys(`coloring-${coloringType}`)}
-            />
-          </Group>
-          <Switch checked={isEnabled} onClick={(e) => e.stopPropagation()} />
-        </Group>
-      </Paper>
-      <Collapse keepMounted={false} in={isEnabled}>
-        <Stack gap='md' px='0'>
-          {children}
-        </Stack>
-      </Collapse>
-    </Stack>
-  );
-};
-
-const ColoringSettings = () => {
-  const coloringLayers = useSetting("coloringLayers");
-  const normalColoring = useSetting("normalColoring");
-
-  return (
-    <Stack gap='md'>
-      {coloringLayers && (
-        <>
-          <BlendingModes />
-          <Divider />
-        </>
-      )}
-      <ColoringBlock coloringType='gradient'>
-        <InterationColoringSettings />
-      </ColoringBlock>
-      <Divider />
-      <ColoringBlock coloringType='border'>
-        <StaticRuleEdit name='borderColor' />
-        <StaticRuleEdit name='borderIntensity' />
-      </ColoringBlock>
-      <Divider />
-      <ColoringBlock coloringType='trap'>
-        <TrapColoringSettings />
-      </ColoringBlock>
-
-      {normalColoring && (
-        <ColoringBlock coloringType='normal'>
-          <div />
-        </ColoringBlock>
-      )}
-    </Stack>
-  );
-};
+import { ColoringSettings } from "./ColoringSettings";
 
 export const ShapeParams = React.memo(() => {
   const [activeTab, setActiveTab] = React.useState<string | null>("c");
@@ -272,9 +125,7 @@ export const ShapeParams = React.memo(() => {
           </SettingsSection>
         </Tabs.Panel>
         <Tabs.Panel value='Coloring'>
-          <SettingsSection>
-            <ColoringSettings />
-          </SettingsSection>
+          <ColoringSettings />
         </Tabs.Panel>
         <Tabs.Panel value='Rest'>
           <SettingsSection>
@@ -298,14 +149,6 @@ export const ShapeParams = React.memo(() => {
   );
 });
 ShapeParams.displayName = "ShapeParams";
-
-const SettingsSection = ({ children }: { children: ReactNode }) => {
-  return (
-    <Stack p='md' gap='md'>
-      {children}
-    </Stack>
-  );
-};
 
 const TabWithIcon = ({
   value,
