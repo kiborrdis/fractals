@@ -164,7 +164,8 @@ export const createColoringUniformApplier = (
         data.borderColor ?? [1, 1, 1, 0],
     ],
 
-    ["1f", "u_trap_intensity", (data) => data.trapIntensity ?? 0],
+    ["1f", "u_trap_intensity", (data) => data.dynamic.trapDistMult],
+    ["1f", "u_trap_distance_pow", (data) => data.dynamic.trapDistPow],
     
     [
       "texture",

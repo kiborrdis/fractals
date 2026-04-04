@@ -35,7 +35,6 @@ export const getDefaultFractalParams = (): FractalParams => {
         radius: 0.047084123256274646,
       },
     ],
-    trapIntensity: 25,
     trapGradient: [
       [0, 1, 0.9372549019607843, 0.8392156862745098, 1],
       [1, 1, 0.9372549019607843, 0.8392156862745098, 1],
@@ -62,6 +61,8 @@ export const getDefaultFractalParams = (): FractalParams => {
       cDistVariation: [0, 0],
       rDistVariation: 0,
       iterationsDistVariation: 0,
+      trapDistMult: 25,
+      trapDistPow: 0.5,
     },
     custom: {},
   };

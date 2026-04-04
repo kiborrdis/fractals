@@ -82,7 +82,6 @@ export type FractalParams = {
   coloring?: ColoringEntry[];
 
   traps?: FractalTrap[];
-  trapIntensity?: number;
   trapGradient?: GradientStop[];
 
   gradient: GradientStop[];
@@ -115,6 +114,9 @@ export type FractalDynamicParams = {
   cDistVariation: Vector2;
   rDistVariation: number;
   iterationsDistVariation: number;
+
+  trapDistMult: number;
+  trapDistPow: number;
 };
 
 export type GradientStop = [

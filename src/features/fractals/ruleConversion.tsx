@@ -45,6 +45,8 @@ export const makeRulesBasedOnParams = ({
       iterationsDistVariation: makeRuleFromNumber(
         params.iterationsDistVariation,
       ),
+      trapDistMult: makeRuleFromNumber(params.trapDistMult),
+      trapDistPow: makeRuleFromNumber(params.trapDistPow),
     },
   };
 

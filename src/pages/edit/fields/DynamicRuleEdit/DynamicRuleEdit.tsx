@@ -185,6 +185,28 @@ const ruleConfigs: RuleRenderers = {
       {...props}
     />
   ),
+
+  trapDistMult: (props) => (
+    <NumberRuleEdit
+      label='Trap Distance Multiplier'
+      min={0}
+      max={1000000}
+      step={1}
+      minRange={1}
+      {...props}
+    />
+  ),
+
+  trapDistPow: (props) => (
+    <NumberRuleEdit
+      label='Trap Distance Power'
+      min={0}
+      max={50}
+      step={0.1}
+      minRange={0.1}
+      {...props}
+    />
+  ),
 };
 
 const Vector2RuleEditContainer = (

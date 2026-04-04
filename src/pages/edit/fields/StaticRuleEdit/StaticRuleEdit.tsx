@@ -160,25 +160,6 @@ const ruleConfigs: RuleRenderers = {
 
   traps: (_props) => <TrapEditor />,
 
-  trapIntensity: (props) => (
-    <>
-      <EditorNumberInput
-        label={
-          <EditorLabel size='xs' docKeys={"trap-distance-multiplier"}>
-            Trap Distance Multiplier
-          </EditorLabel>
-        }
-        min={0}
-        max={1000000}
-        step={1}
-        value={props.value ?? 0}
-        onChange={(value) => {
-          props.onChange(props.name, value);
-        }}
-      />
-    </>
-  ),
-
   trapGradient: (props) => (
     <TrapColoringGradient
       value={

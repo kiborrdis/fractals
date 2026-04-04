@@ -5,6 +5,7 @@ const float T = 1000000.0f;
 
 uniform float u_border_intensity;
 uniform float u_trap_intensity;
+uniform float u_trap_distance_pow;
 
 uniform vec4 u_border_color;
 
@@ -254,7 +255,7 @@ vec4 doColoring(FractalInfo info) {
 
       currentColor = vec4(u_border_color.xyz * (1.0f - sqrt(sqrt(dist))), 1.0f);
     } else if (coloringType == 3) { // Trap coloring
-      float scaledDist = sqrt(info.trapDistance) * u_trap_intensity;
+      float scaledDist = pow(info.trapDistance, u_trap_distance_pow) * u_trap_intensity;
 
       currentColor = createTrapGradient(scaledDist);
     } else if (coloringType == 40) { // Normal coloring

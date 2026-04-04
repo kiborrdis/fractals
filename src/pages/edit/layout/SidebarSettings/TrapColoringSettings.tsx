@@ -1,11 +1,12 @@
-import React from "react";
 import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
+import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
 
 export const TrapColoringSettings = () => {
   return (
     <>
       <StaticRuleEdit name='traps' />
-      <StaticRuleEdit name='trapIntensity' />
+      <DynamicRuleEdit name='trapDistMult' />
+      <DynamicRuleEdit name='trapDistPow' />
       <StaticRuleEdit name='trapGradient' />
     </>
   );
