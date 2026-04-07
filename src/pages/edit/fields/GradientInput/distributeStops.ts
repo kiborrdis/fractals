@@ -25,6 +25,6 @@ export const distributeStops = (
       position = maxValue * exponentialValue;
     }
 
-    return [position, stop[1], stop[2], stop[3], stop[4]] as GradientStop;
+    return [position, stop[1]] as GradientStop;
   });
 };

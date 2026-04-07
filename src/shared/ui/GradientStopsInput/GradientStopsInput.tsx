@@ -24,10 +24,10 @@ export const stopsToLinearGradient = (
   const gradientStops = sorted.map((stop) => {
     const percentage = (stop[0] / maxPos) * 100;
     const color = rgbaToRgbaString(
-      Math.round(stop[1] * 255),
-      Math.round(stop[2] * 255),
-      Math.round(stop[3] * 255),
-      stop[4],
+      Math.round(stop[1][0] * 255),
+      Math.round(stop[1][1] * 255),
+      Math.round(stop[1][2] * 255),
+      stop[1][3],
     );
     return `${color} ${percentage}%`;
   });
@@ -56,7 +56,7 @@ export const GradientStopsInput = ({
   gradientString,
   actions,
   stopNumberInputProps,
-  defaultNewStop = [500, 1, 1, 1, 1] as GradientStop,
+  defaultNewStop = [500, [1, 1, 1, 1]] as GradientStop,
   hideAddButton = false,
 }: {
   stops: GradientStop[];
@@ -84,7 +84,7 @@ export const GradientStopsInput = ({
     const newStops = [...stopsInternal];
     newStops[index] = [
       newPosition,
-      ...stopsInternal[index].slice(1),
+      stopsInternal[index][1],
     ] as GradientStop;
     setStopsInternal(newStops);
     setStops(newStops);
@@ -93,7 +93,7 @@ export const GradientStopsInput = ({
   const handleColorChange = (index: number, color: string) => {
     const rgba = rgbaStringToNormalizedRgba(color);
     const newStops = [...stops];
-    newStops[index] = [stops[index][0], ...rgba];
+    newStops[index] = [stops[index][0], rgba];
     setStops(newStops);
   };
 
@@ -133,10 +133,10 @@ export const GradientStopsInput = ({
               <ColorInput
                 format='rgba'
                 value={rgbaToRgbaString(
-                  Math.round(stop[1] * 255),
-                  Math.round(stop[2] * 255),
-                  Math.round(stop[3] * 255),
-                  stop[4],
+                  Math.round(stop[1][0] * 255),
+                  Math.round(stop[1][1] * 255),
+                  Math.round(stop[1][2] * 255),
+                  stop[1][3],
                 )}
                 onChange={(color) => handleColorChange(index, color)}
                 size='xs'

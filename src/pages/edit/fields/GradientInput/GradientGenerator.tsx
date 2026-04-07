@@ -48,7 +48,7 @@ export const GradientGenerator = ({
       const r = randomRange(0, 1);
       const g = randomRange(0, 1);
       const b = randomRange(0, 1);
-      stops.push([0, r, g, b, 1]);
+      stops.push([0, [r, g, b, 1]]);
     }
 
     rawStopsRef.current = stops;

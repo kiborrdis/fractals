@@ -189,8 +189,8 @@ export const createColoringUniformApplier = (
         }
         return (
           data.trapGradient ?? [
-            [0, 1, 1, 1, 1],
-            [100, 0, 0, 0, 1],
+            [0, [1, 1, 1, 1]],
+            [100, [0, 0, 0, 1]],
           ]
         ).length;
       },

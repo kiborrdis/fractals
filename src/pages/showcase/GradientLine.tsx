@@ -4,10 +4,7 @@ import styles from "./GradientLine.module.css";
 
 type GradientStop = [
   iteration: number,
-  r: number,
-  g: number,
-  b: number,
-  a: number,
+  rgba: [number, number, number, number],
 ];
 
 export const GradientLine = ({
@@ -28,7 +25,7 @@ export const GradientLine = ({
   const gradientCss = useMemo(() => {
     const stops = gradient
       .map((stop) => {
-        const [iteration, r, g, b, a] = stop;
+        const [iteration, [r, g, b, a]] = stop;
         const percentage = (iteration / maxIterations) * 100;
         const color = `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${a})`;
         return `${color} ${percentage}%`;

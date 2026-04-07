@@ -100,7 +100,7 @@ export const EscapeColoringGradient = ({
                 size='sm'
                 variant='transparent'
                 onClick={() =>
-                  setStops([...value, [500, 1, 1, 1, 1] as GradientStop])
+                  setStops([...value, [500, [1, 1, 1, 1]] as GradientStop])
                 }
               >
                 <FiPlus />
@@ -169,7 +169,7 @@ const GradientEditInputContent = ({
       gradientTooltip='Gradient up to current max iteration'
       gradientString={gradientString}
       stopNumberInputProps={{ max: maxPosition }}
-      defaultNewStop={[500, 1, 1, 1, 1] as GradientStop}
+      defaultNewStop={[500, [1, 1, 1, 1]] as GradientStop}
       hideAddButton
     />
   );

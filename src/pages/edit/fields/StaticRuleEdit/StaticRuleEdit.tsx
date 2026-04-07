@@ -146,8 +146,8 @@ const ruleConfigs: RuleRenderers = {
     <TrapColoringGradient
       value={
         (props.value as GradientStop[]) ?? [
-          [0, 1, 1, 1, 1],
-          [100, 0, 0, 0, 1],
+          [0, [1, 1, 1, 1]],
+          [100, [0, 0, 0, 1]],
         ]
       }
       onChange={props.onChange}

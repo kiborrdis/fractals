@@ -122,11 +122,8 @@ export type FractalDynamicParams = {
 };
 
 export type GradientStop = [
-  number, // Position 0-10000, following by r,g,b,a
-  number,
-  number,
-  number,
-  number,
+  number, // Position 0-10000
+  [number, number, number, number], // RGBA, each value 0 to 1
 ];
 
 type FractalDynamicParamsRulable = Omit<FractalDynamicParams, "mirroringPasses">;

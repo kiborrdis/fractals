@@ -106,10 +106,10 @@ export const encodeGradientsInTexture = (
   const iterationGradientPixels = iterationGradient.reduce<number[]>(
     (memo, s) => {
       memo.push(
-        Math.round(s[1] * 255),
-        Math.round(s[2] * 255),
-        Math.round(s[3] * 255),
-        Math.round(s[4] * 255),
+        Math.round(s[1][0] * 255),
+        Math.round(s[1][1] * 255),
+        Math.round(s[1][2] * 255),
+        Math.round(s[1][3] * 255),
         ...encodeUnsignedFloatTo4Bytes(s[0]),
       );
       return memo;
@@ -120,10 +120,10 @@ export const encodeGradientsInTexture = (
 
   const trapsGradientPixels = trapsGradient.reduce<number[]>((memo, s) => {
     memo.push(
-      Math.round(s[1] * 255),
-      Math.round(s[2] * 255),
-      Math.round(s[3] * 255),
-      Math.round(s[4] * 255),
+      Math.round(s[1][0] * 255),
+      Math.round(s[1][1] * 255),
+      Math.round(s[1][2] * 255),
+      Math.round(s[1][3] * 255),
       ...encodeUnsignedFloatTo4Bytes(s[0]),
     );
     return memo;
@@ -157,10 +157,10 @@ export function encodeGradientInTexture(
   const textPixels = stops
     .map((s) => {
       return [
-        Math.round(s[1] * 255),
-        Math.round(s[2] * 255),
-        Math.round(s[3] * 255),
-        Math.round(s[4] * 255),
+        Math.round(s[1][0] * 255),
+        Math.round(s[1][1] * 255),
+        Math.round(s[1][2] * 255),
+        Math.round(s[1][3] * 255),
         ...encodeUnsignedFloatTo4Bytes(s[0]),
       ];
     })

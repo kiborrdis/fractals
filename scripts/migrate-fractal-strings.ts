@@ -55,6 +55,29 @@ function migrate(data: unknown): unknown {
   }
 
   result.dynamic = dynamic;
+
+  const migrateGradientStop = (stop: unknown): unknown => {
+    if (!Array.isArray(stop)) return stop;
+    // Old format: [pos, r, g, b, a] — 5 numbers
+    if (stop.length === 5 && stop.every((v) => typeof v === "number")) {
+      return [stop[0], [stop[1], stop[2], stop[3], stop[4]]];
+    }
+    return stop;
+  };
+
+  const migrateGradient = (gradient: unknown): unknown => {
+    if (!Array.isArray(gradient)) return gradient;
+    return gradient.map(migrateGradientStop);
+  };
+
+  if ("gradient" in result) {
+    result.gradient = migrateGradient(result.gradient);
+  }
+
+  if ("trapGradient" in result) {
+    result.trapGradient = migrateGradient(result.trapGradient);
+  }
+
   return result;
 }
 

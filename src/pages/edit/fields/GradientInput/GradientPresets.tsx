@@ -20,7 +20,7 @@ const presetToHorizontalGradient = (stops: GradientStop[]): string => {
   const maxPos = sorted[sorted.length - 1]?.[0] ?? 1;
   const stopsStr = sorted.map((stop) => {
     const pct = (stop[0] / maxPos) * 100;
-    const color = `rgba(${Math.round(stop[1] * 255)}, ${Math.round(stop[2] * 255)}, ${Math.round(stop[3] * 255)}, ${stop[4]})`;
+    const color = `rgba(${Math.round(stop[1][0] * 255)}, ${Math.round(stop[1][1] * 255)}, ${Math.round(stop[1][2] * 255)}, ${stop[1][3]})`;
     return `${color} ${pct}%`;
   });
   return `linear-gradient(to right, ${stopsStr.join(", ")})`;
@@ -34,13 +34,13 @@ const scaleStops = (
   let stopsToScale = stops;
   
   if (reverse) {
-    stopsToScale = stops.map(([, r, g, b, a], i) => [stops[stops.length - 1 - i][0], r, g, b, a] as GradientStop).reverse();
+    stopsToScale = stops.map(([, rgba], i) => [stops[stops.length - 1 - i][0], rgba] as GradientStop).reverse();
   }
 
   const maxPresetPos = stops[stops.length - 1][0] || 1;
 
   return stopsToScale.map(
-    ([pos, r, g, b, a]) => [(pos / maxPresetPos) * maxPosition, r, g, b, a] as GradientStop,
+    ([pos, rgba]) => [(pos / maxPresetPos) * maxPosition, rgba] as GradientStop,
   );
 };
 

@@ -75,7 +75,7 @@ export const TrapColoringGradient = ({
                 onClick={() =>
                   onChange(name, [
                     ...value,
-                    [50, 0.5, 0.5, 0.5, 1] as GradientStop,
+                    [50, [0.5, 0.5, 0.5, 1]] as GradientStop,
                   ])
                 }
               >
@@ -136,7 +136,7 @@ export const TrapGradientInput = ({
       gradientTooltip='Trap distance gradient'
       gradientString={gradientString}
       stopNumberInputProps={{ step: 0.1, decimalScale: 3 }}
-      defaultNewStop={[50, 0.5, 0.5, 0.5, 1] as GradientStop}
+      defaultNewStop={[50, [0.5, 0.5, 0.5, 1]] as GradientStop}
       hideAddButton
     />
   );
