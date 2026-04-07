@@ -46,7 +46,6 @@ export const getDefaultFractalParams = (): FractalParams => {
     ],
 
     borderColor: [1, 1, 1, 1],
-    borderIntensity: 25,
 
     initialTime: 10738,
 
@@ -63,6 +62,8 @@ export const getDefaultFractalParams = (): FractalParams => {
       iterationsDistVariation: 0,
       trapDistMult: 25,
       trapDistPow: 0.5,
+      borderDistMult: 25,
+      borderDistPow: 0.5,
     },
     custom: {},
   };

@@ -156,7 +156,8 @@ export const createColoringUniformApplier = (
   createUniformApplier<FractalParams>(ctx, program, memory, [
     ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
      
-    ["1f", "u_border_intensity", (data) => data.borderIntensity ?? 10],
+    ["1f", "u_border_intensity", (data) => data.dynamic.borderDistMult],
+    ["1f", "u_border_distance_pow", (data) => data.dynamic.borderDistPow],
     [
       "4f",
       "u_border_color",

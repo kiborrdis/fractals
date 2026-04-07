@@ -9,7 +9,6 @@ import { Checkbox, ColorInput, Select } from "@mantine/core";
 import { FormulaInput } from "../../ui/FormulaInput";
 import { InitialTimeEdit } from "../InitialTimeEdit/InitialTimeEdit";
 import { BandSmoothingOptions } from "../BandSmoothingOptions/BandSmoothingOptions";
-import { EditorNumberInput } from "@/shared/ui/EditorNumberInput";
 import { EditorLabel } from "../../ui/EditorLabel";
 import { TrapEditor } from "../TrapEditor/TrapEditor";
 import { TrapColoringGradient } from "../GradientInput/TrapColoringGradient";
@@ -140,23 +139,6 @@ const ruleConfigs: RuleRenderers = {
       />
     );
   },
-
-  borderIntensity: (props) => (
-    <EditorNumberInput
-      label={
-        <EditorLabel size='xs' docKeys={"border-distance-multiplier"}>
-          Border Distance Multiplier
-        </EditorLabel>
-      }
-      min={0}
-      max={1000000}
-      step={1}
-      value={props.value ?? 1}
-      onChange={(value) => {
-        props.onChange(props.name, value);
-      }}
-    />
-  ),
 
   traps: (_props) => <TrapEditor />,
 

@@ -24,9 +24,14 @@ function migrate(data: unknown): unknown {
     typeof result.trapDistancepow === "number"
       ? result.trapDistancepow
       : undefined;
+  const oldBorderIntensity =
+    typeof result.borderIntensity === "number"
+      ? result.borderIntensity
+      : undefined;
 
   delete result.trapIntensity;
   delete result.trapDistancepow;
+  delete result.borderIntensity;
 
   const dynamic =
     typeof result.dynamic === "object" && result.dynamic !== null
@@ -39,6 +44,14 @@ function migrate(data: unknown): unknown {
 
   if (!("trapDistPow" in dynamic)) {
     dynamic.trapDistPow = staticNumberRule(oldTrapDistancepow ?? 0.5);
+  }
+
+  if (!("borderDistMult" in dynamic)) {
+    dynamic.borderDistMult = staticNumberRule(oldBorderIntensity ?? 10);
+  }
+
+  if (!("borderDistPow" in dynamic)) {
+    dynamic.borderDistPow = staticNumberRule(0.5);
   }
 
   result.dynamic = dynamic;

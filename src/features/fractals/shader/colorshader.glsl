@@ -4,6 +4,7 @@ precision highp float;
 const float T = 1000000.0f;
 
 uniform float u_border_intensity;
+uniform float u_border_distance_pow;
 uniform float u_trap_intensity;
 uniform float u_trap_distance_pow;
 
@@ -251,7 +252,7 @@ vec4 doColoring(FractalInfo info) {
       float colorInt = info.escapeIteration / u_max_iterations;
       currentColor = createGradient(colorInt, int(u_max_iterations));
     } else if (coloringType == 2) { // Border coloring
-      float dist = clamp(info.borderDistance * u_border_intensity, 0.0f, 1.0f);
+      float dist = clamp(pow(info.borderDistance, u_border_distance_pow) * u_border_intensity, 0.0f, 1.0f);
 
       currentColor = vec4(u_border_color.xyz * (1.0f - sqrt(sqrt(dist))), 1.0f);
     } else if (coloringType == 3) { // Trap coloring

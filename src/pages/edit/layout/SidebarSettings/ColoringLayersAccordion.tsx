@@ -18,6 +18,7 @@ import {
 import { BlendMode, ColoringEntry, ColoringMode } from "@/features/fractals";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
+import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
 import { useActions } from "../../stores/editStore/data/useActions";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { EditorLabel } from "../../ui/EditorLabel";
@@ -68,7 +69,8 @@ const coloringSettings: Partial<Record<ColoringMode, ReactNode>> = {
   [ColoringMode.Border]: (
     <>
       <StaticRuleEdit name='borderColor' />
-      <StaticRuleEdit name='borderIntensity' />
+      <DynamicRuleEdit name='borderDistMult' />
+      <DynamicRuleEdit name='borderDistPow' />
     </>
   ),
   [ColoringMode.Trap]: <TrapColoringSettings />,

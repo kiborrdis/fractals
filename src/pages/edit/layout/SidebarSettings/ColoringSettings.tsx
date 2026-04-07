@@ -1,6 +1,7 @@
 import { SegmentedControl } from "@mantine/core";
 import { BlendMode, ColoringMode } from "@/features/fractals";
 import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
+import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
 import { useActions } from "../../stores/editStore/data/useActions";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { useSetting } from "../../stores/settings";
@@ -59,7 +60,8 @@ export const ColoringSettings = () => {
       {activeTab === String(ColoringMode.Border) && (
         <>
           <StaticRuleEdit name='borderColor' />
-          <StaticRuleEdit name='borderIntensity' />
+          <DynamicRuleEdit name='borderDistMult' />
+          <DynamicRuleEdit name='borderDistPow' />
         </>
       )}
       {activeTab === String(ColoringMode.Trap) && <TrapColoringSettings />}

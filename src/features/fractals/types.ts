@@ -86,7 +86,6 @@ export type FractalParams = {
 
   gradient: GradientStop[];
   borderColor?: RGBAVector;
-  borderIntensity?: number;
 
   /**
    * @description [2, Infinity] -- override auto-calculated smoothing power(in general, should be max power of z in formula).
@@ -117,6 +116,9 @@ export type FractalDynamicParams = {
 
   trapDistMult: number;
   trapDistPow: number;
+
+  borderDistMult: number;
+  borderDistPow: number;
 };
 
 export type GradientStop = [

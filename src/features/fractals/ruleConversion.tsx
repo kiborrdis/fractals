@@ -47,6 +47,8 @@ export const makeRulesBasedOnParams = ({
       ),
       trapDistMult: makeRuleFromNumber(params.trapDistMult),
       trapDistPow: makeRuleFromNumber(params.trapDistPow),
+      borderDistMult: makeRuleFromNumber(params.borderDistMult),
+      borderDistPow: makeRuleFromNumber(params.borderDistPow),
     },
   };
 
