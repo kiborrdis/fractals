@@ -122,6 +122,46 @@ function migrate(data: unknown): unknown {
     result.gradients = gradients;
   }
 
+  // Migrate border coloring entries: add a dedicated gradient per entry instead of using borderColor
+  const borderColorVal = Array.isArray(result.borderColor)
+    ? (result.borderColor as [number, number, number, number])
+    : ([1, 1, 1, 1] as [number, number, number, number]);
+  delete result.borderColor;
+
+  const finalGradients: unknown[] = Array.isArray(result.gradients)
+    ? [...(result.gradients as unknown[])]
+    : [];
+  const coloringEntries = Array.isArray(
+    (dynamic as Record<string, unknown>).coloring,
+  )
+    ? ((dynamic as Record<string, unknown>).coloring as unknown[])
+    : [];
+
+  for (const entry of coloringEntries) {
+    if (
+      Array.isArray(entry) &&
+      entry[0] === ColoringMode.Border &&
+      Array.isArray(entry[1]) &&
+      (entry[1] as unknown[]).length === 0
+    ) {
+      const gradId = finalGradients.length;
+      finalGradients.push([[0, borderColorVal], [1, [0, 0, 0, 1]]]);
+      (entry[1] as number[]).push(gradId);
+    }
+    if (
+      Array.isArray(entry) &&
+      entry[0] === ColoringMode.Normal &&
+      Array.isArray(entry[1]) &&
+      (entry[1] as unknown[]).length === 0
+    ) {
+      const gradId = finalGradients.length;
+      finalGradients.push([[0, [0, 0, 0, 1]], [1, [1, 1, 1, 1]]]);
+      (entry[1] as number[]).push(gradId);
+    }
+  }
+
+  result.gradients = finalGradients;
+
   return result;
 }
 

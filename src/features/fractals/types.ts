@@ -58,11 +58,16 @@ export type TrapColoringBuildRule = [
 ];
 export type BorderColoringBuildRule = [
   ColoringMode.Border,
-  [],
+  [number],
   [pow: NumberBuildRule, multiplier: NumberBuildRule],
   BlendMode,
 ];
-export type NormalColoringBuildRule = [ColoringMode.Normal, [], [], BlendMode];
+export type NormalColoringBuildRule = [
+  ColoringMode.Normal,
+  [number],
+  [angle: NumberBuildRule],
+  BlendMode,
+];
 export type StripesColoringBuildRule = [
   ColoringMode.StripesAverage,
   [],
@@ -118,7 +123,6 @@ export type FractalParams = {
   traps?: FractalTrap[];
 
   gradients: GradientStop[][];
-  borderColor?: RGBAVector;
 
   /**
    * @description [2, Infinity] -- override auto-calculated smoothing power(in general, should be max power of z in formula).

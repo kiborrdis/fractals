@@ -1,7 +1,7 @@
 import { formulaVars, FractalParamsBuildRules } from "@/features/fractals";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { ReactNode } from "react";
-import { Checkbox, ColorInput, Select } from "@mantine/core";
+import { Checkbox, Select } from "@mantine/core";
 import { FormulaInput } from "../../ui/FormulaInput";
 import { InitialTimeEdit } from "../InitialTimeEdit/InitialTimeEdit";
 import { BandSmoothingOptions } from "../BandSmoothingOptions/BandSmoothingOptions";
@@ -95,38 +95,6 @@ const ruleConfigs: RuleRenderers = {
   ),
 
   gradients: () => null,
-
-  borderColor: (props) => {
-    const val = props.value || [0, 0, 0, 255];
-    return (
-      <ColorInput
-        label='Border Color'
-        size='xs'
-        format='rgba'
-        onChange={(color) => {
-          // Convert rgba(255, 255, 255, 1) to [1,1,1,255]
-          const rgba = color
-            .replace("rgba(", "")
-            .replace("rgb(", "")
-            .replace(")", "")
-            .split(",")
-            .map((v) => v.trim());
-          const r = parseInt(rgba[0], 10) / 255;
-          const g = parseInt(rgba[1], 10) / 255;
-          const b = parseInt(rgba[2], 10) / 255;
-          const a =
-            rgba.length === 4 ? Math.floor(parseFloat(rgba[3]) * 255) : 255;
-          props.onChange(props.name, [
-            r,
-            g,
-            b,
-            a,
-          ] as FractalParamsBuildRules[typeof props.name]);
-        }}
-        value={`rgba(${Math.floor(val[0] * 255)}, ${Math.floor(val[1] * 255)}, ${Math.floor(val[2] * 255)}, ${val[3] / 255})`}
-      />
-    );
-  },
 
   traps: (_props) => <TrapEditor />,
 };

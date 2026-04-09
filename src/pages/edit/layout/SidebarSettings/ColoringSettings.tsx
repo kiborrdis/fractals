@@ -7,6 +7,7 @@ import { ColoringLayersAccordion } from "./ColoringLayersAccordion";
 import { InterationColoringEdit } from "../../fields/IterationColoringEdit/InterationColoringEdit";
 import { TrapColoringEdit } from "../../fields/TrapColoringEdit/TrapColoringEdit";
 import { BorderColoringEdit } from "../../fields/BorderColoringEdit/BorderColoringEdit";
+import { NormalColoringEdit } from "../../fields/NormalColoringEdit/NormalColoringEdit";
 import { EditorLabel } from "../../ui/EditorLabel";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { SettingsSection } from "./SettingsSection";
@@ -58,6 +59,9 @@ export const ColoringSettings = () => {
       )}
       {activeMode === ColoringMode.Trap && (
         <TrapColoringEdit coloringIndex={0} />
+      )}
+      {activeMode === ColoringMode.Normal && (
+        <NormalColoringEdit coloringIndex={0} />
       )}
     </SettingsSection>
   );

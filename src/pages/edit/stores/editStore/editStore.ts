@@ -110,7 +110,7 @@ export type EditStore = EditStoreData & { actions: EditStoreActions };
 export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
   const store = create<EditStore>()(
     immer(
-      (set): EditStore => ({
+      (set, get): EditStore => ({
         fractal: fractalRules,
         fractalOverrides: {},
         play: false,
@@ -562,43 +562,9 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             coloringIndex: number,
             newMode: ColoringMode,
           ) => {
-            set((prev) => {
-              const coloring = prev.fractal.dynamic.coloring;
-              const gradients = prev.fractal.gradients;
-              if (coloringIndex < 0 || coloringIndex >= coloring.length) return;
-              const otherGradIds = new Set(
-                coloring
-                  .filter((_, i) => i !== coloringIndex)
-                  .flatMap((e) => e[1]),
-              );
-              const neededGradCount = COLORING_MODE_GRADIENT_COUNT[newMode];
-              const newGradIds: number[] = [];
-              let nextId = 0;
-              while (newGradIds.length < neededGradCount) {
-                if (!otherGradIds.has(nextId)) {
-                  newGradIds.push(nextId);
-                  if (!gradients[nextId] || gradients[nextId].length === 0) {
-                    gradients[nextId] = [
-                      ...COLORING_MODE_DEFAULT_GRADIENT[newMode],
-                    ];
-                  }
-                  otherGradIds.add(nextId);
-                }
-                nextId++;
-              }
-              const paramRules = COLORING_MODE_DEFAULT_PARAMS[newMode].map(
-                (v) => ({
-                  t: RuleType.StaticNumber as const,
-                  value: v,
-                }),
-              );
-              coloring[coloringIndex] = [
-                newMode,
-                newGradIds,
-                paramRules,
-                BlendMode.Normal,
-              ] as unknown as ColoringBuildRule;
-            });
+            const { actions } = get();
+            actions.addColoringMode(newMode);
+            actions.removeColoringMode(coloringIndex);
           },
 
           editColoringParams: (

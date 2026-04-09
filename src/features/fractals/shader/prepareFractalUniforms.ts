@@ -183,13 +183,6 @@ export const createColoringUniformApplier = (
     ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
 
     [
-      "4f",
-      "u_border_color",
-      (data): readonly [number, number, number, number] =>
-        data.borderColor ?? [1, 1, 1, 0],
-    ],
-
-    [
       "texture",
       "u_gradients_sampler",
       (data, ctx) =>

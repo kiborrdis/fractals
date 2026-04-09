@@ -27,6 +27,7 @@ import { EditorLabel } from "../../ui/EditorLabel";
 import { InterationColoringEdit } from "../../fields/IterationColoringEdit/InterationColoringEdit";
 import { TrapColoringEdit } from "../../fields/TrapColoringEdit/TrapColoringEdit";
 import { BorderColoringEdit } from "../../fields/BorderColoringEdit/BorderColoringEdit";
+import { NormalColoringEdit } from "../../fields/NormalColoringEdit/NormalColoringEdit";
 import { SettingsSection } from "./SettingsSection";
 
 const coloringModeLabels: Record<ColoringMode, string> = {
@@ -84,6 +85,8 @@ export const ColoringLayersAccordion = () => {
         return <BorderColoringEdit coloringIndex={index} />;
       case ColoringMode.Trap:
         return <TrapColoringEdit coloringIndex={index} />;
+      case ColoringMode.Normal:
+        return <NormalColoringEdit coloringIndex={index} />;
       default:
         return null;
     }

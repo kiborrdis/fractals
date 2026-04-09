@@ -1,10 +1,10 @@
 import { ColorInput } from "@mantine/core";
 import { GradientStop } from "@/features/fractals";
 import { useColoringEntry } from "../../stores/editStore/data/useColoringRules";
+import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { useActions } from "../../stores/editStore/data/useActions";
 import { NumberRuleEdit } from "../NumberRuleEdit/NumberRuleEdit";
 import { NumberBuildRule } from "@/shared/libs/numberRule";
-import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 
 const rgbaToColorInputValue = (rgba: [number, number, number, number]) =>
   `rgba(${Math.floor(rgba[0] * 255)}, ${Math.floor(rgba[1] * 255)}, ${Math.floor(rgba[2] * 255)}, ${rgba[3]})`;
@@ -24,7 +24,7 @@ const colorInputToRgba = (color: string): [number, number, number, number] => {
   ];
 };
 
-export const BorderColoringEdit = ({
+export const NormalColoringEdit = ({
   coloringIndex,
 }: {
   coloringIndex: number;
@@ -36,16 +36,16 @@ export const BorderColoringEdit = ({
   const gradientsArr = gradients as GradientStop[][];
 
   const gradient = gradientsArr[gradientId] ?? [
-    [0, [1, 1, 1, 1]],
-    [1, [0, 0, 0, 1]],
+    [0, [0, 0, 0, 1]],
+    [1, [1, 1, 1, 1]],
   ];
-  const borderColor = (gradient[0]?.[1] ?? [1, 1, 1, 1]) as [
+  const shadowColor = (gradient[0]?.[1] ?? [0, 0, 0, 1]) as [
     number,
     number,
     number,
     number,
   ];
-  const backgroundColor = (gradient[1]?.[1] ?? [0, 0, 0, 1]) as [
+  const lightColor = (gradient[1]?.[1] ?? [1, 1, 1, 1]) as [
     number,
     number,
     number,
@@ -59,8 +59,8 @@ export const BorderColoringEdit = ({
     const updated = [...gradientsArr];
     const currentGrad: GradientStop[] = [
       ...(updated[gradientId] ?? [
-        [0, [1, 1, 1, 1]],
-        [1, [0, 0, 0, 1]],
+        [0, [0, 0, 0, 1]],
+        [1, [1, 1, 1, 1]],
       ]),
     ];
     currentGrad[stopIndex] = [currentGrad[stopIndex][0], rgba] as GradientStop;
@@ -71,38 +71,28 @@ export const BorderColoringEdit = ({
   return (
     <>
       <ColorInput
-        label='Border Color'
+        label='Shadow Color'
         size='xs'
         format='rgba'
-        value={rgbaToColorInputValue(borderColor)}
+        value={rgbaToColorInputValue(shadowColor)}
         onChange={(color) => updateColor(0, colorInputToRgba(color))}
       />
       <ColorInput
-        label='Background Color'
+        label='Light Color'
         size='xs'
         format='rgba'
-        value={rgbaToColorInputValue(backgroundColor)}
+        value={rgbaToColorInputValue(lightColor)}
         onChange={(color) => updateColor(1, colorInputToRgba(color))}
       />
       <NumberRuleEdit
-        name='borderDistMult'
-        label='Border Distance Multiplier'
-        min={0}
-        max={1000000}
-        step={1}
-        minRange={1}
+        name='lightAngle'
+        label='Light Source Angle'
+        min={-Math.PI}
+        max={Math.PI}
+        step={0.01}
+        minRange={0.01}
         value={entry[2][0] as NumberBuildRule}
         onChange={(_name, rule) => editColoringParams(coloringIndex, 0, rule)}
-      />
-      <NumberRuleEdit
-        name='borderDistPow'
-        label='Border Distance Power'
-        min={0}
-        max={50}
-        step={0.1}
-        minRange={0.1}
-        value={entry[2][1] as NumberBuildRule}
-        onChange={(_name, rule) => editColoringParams(coloringIndex, 1, rule)}
       />
     </>
   );

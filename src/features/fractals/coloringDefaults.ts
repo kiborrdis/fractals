@@ -5,16 +5,16 @@ import { RuleType } from "@/shared/libs/numberRule";
 export const COLORING_MODE_GRADIENT_COUNT: Record<ColoringMode, number> = {
   [ColoringMode.Iterations]: 1,
   [ColoringMode.Trap]: 1,
-  [ColoringMode.Border]: 0,
-  [ColoringMode.Normal]: 0,
+  [ColoringMode.Border]: 1,
+  [ColoringMode.Normal]: 1,
   [ColoringMode.StripesAverage]: 0,
 };
 
 export const COLORING_MODE_DEFAULT_PARAMS: Record<ColoringMode, number[]> = {
   [ColoringMode.Iterations]: [],
   [ColoringMode.Trap]: [25, 0.5],
-  [ColoringMode.Border]: [5, 0.5],
-  [ColoringMode.Normal]: [],
+  [ColoringMode.Border]: [10, 0.5],
+  [ColoringMode.Normal]: [0],
   [ColoringMode.StripesAverage]: [],
 };
 
@@ -39,8 +39,14 @@ export const COLORING_MODE_DEFAULT_GRADIENT: Record<
     [8, [0.8, 0, 0, 1]],
     [15, [0, 0, 0, 1]],
   ],
-  [ColoringMode.Border]: [],
-  [ColoringMode.Normal]: [],
+  [ColoringMode.Border]: [
+    [0, [1, 1, 1, 1]],
+    [1, [0, 0, 0, 1]],
+  ],
+  [ColoringMode.Normal]: [
+    [0, [0, 0, 0, 1]],
+    [1, [1, 1, 1, 1]],
+  ],
   [ColoringMode.StripesAverage]: [],
 };
 

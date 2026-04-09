@@ -3,8 +3,6 @@
 precision highp float;
 const float T = 1000000.0f;
 
-uniform vec4 u_border_color;
-
 uniform vec2 u_resolution;
 
 uniform float u_max_iterations;
@@ -254,7 +252,7 @@ vec4 doColoring(FractalInfo info) {
     } else if (coloringMode == 2) { // Border coloring
       float dist = clamp(pow(info.borderDistance, param1) * param0, 0.0f, 1.0f);
 
-      currentColor = vec4(u_border_color.xyz * (1.0f - sqrt(sqrt(dist))), 1.0f);
+      currentColor = createTrapGradient(dist, gradId, u_gradient_wls[gradId]);
     } else if (coloringMode == 3) { // Trap coloring
       float scaledDist = pow(info.trapDistance, param1) * param0;
 
@@ -265,10 +263,10 @@ vec4 doColoring(FractalInfo info) {
         continue;
       }
 
-      float t = dot(normalize(complexDiv(info.finalZ, info.derivative)), vec2(1.0f, 0.0f));
+      float t = dot(normalize(complexDiv(info.finalZ, info.derivative)), vec2(cos(param0), sin(param0)));
       t = t * 0.5f + 0.5f;
 
-      currentColor = vec4(t, t, t, 1.0f);
+      currentColor = createTrapGradient(t, gradId, u_gradient_wls[gradId]);
     } else if (coloringMode == 50) { // Stripe averaging
       float original = info.stripeAvg;
       currentColor = vec4(original, original, original, 1.0f);

@@ -39,6 +39,7 @@ test("FractalsRenderer renders one frame with FractalImage using border coloring
   rules.dynamic.coloring = [
     makeDefaultColoringEntry(2, 0),
   ];
+  rules.gradients[0] = COLORING_MODE_DEFAULT_GRADIENT[2];
 
   const buffer = await renderFractalFrame(page, rules, [400, 400]);
 
@@ -53,6 +54,7 @@ test("FractalsRenderer renders one frame with FractalImage using normal coloring
   rules.dynamic.coloring = [
     makeDefaultColoringEntry(40, 0),
   ];
+  rules.gradients[0] = COLORING_MODE_DEFAULT_GRADIENT[40];
 
   const buffer = await renderFractalFrame(page, rules, [400, 400]);
 
