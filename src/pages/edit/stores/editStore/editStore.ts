@@ -1,4 +1,5 @@
-import { create } from "zustand";
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+import { create, StateCreator } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
   BlendMode,
@@ -22,6 +23,9 @@ import {
   Vector2BulidRule,
 } from "@/shared/libs/numberRule";
 import { fractalPresets } from "./presets";
+import { createOverrideSlice } from "./overrideSlice";
+import { createAnimationSlice } from "./animationSlice";
+import { createCustomVariableSlice } from "./customVariableSlice";
 
 type DeepPartial<T> = T extends object
   ? {
@@ -40,6 +44,18 @@ export type EditStoreData = {
   trapEditMode: boolean;
   currentTime: number;
 };
+
+export type AnimationSlice = {
+  play: boolean;
+  timeMultiplier: string;
+  currentTime: number;
+
+  actions: {
+    toggleAnimation: () => void;
+    changeAnimationSpeed: (speed: string) => void;
+    updateCurrentTime: (time: number) => void;
+  }
+}
 
 export type EditStoreActions = {
   presetPicked: (presetId: string) => void;
@@ -107,20 +123,62 @@ export type EditStoreActions = {
 
 export type EditStore = EditStoreData & { actions: EditStoreActions };
 
+type CombineSlices<
+  Args extends unknown[],
+  Accum extends {} = {},
+> = Args extends []
+  ? Accum
+  : Args extends [infer Slice, ...infer RestArgs]
+    ? Slice extends {}
+      ? CombineSlices<RestArgs, CombineTwoSlices<Accum, Slice>>
+      : CombineSlices<RestArgs, Accum>
+    : never;
+
+type CombineTwoSlices<A extends {}, B extends {}> = Omit<A, "actions"> &
+  Omit<B, "actions"> &
+  CombineSlicesActions<A, B>;
+
+type CombineSlicesActions<A extends {}, B extends {}> = A extends {
+  actions: infer AActions;
+}
+  ? B extends { actions: infer BActions }
+    ? { actions: AActions & BActions }
+    : { actions: AActions }
+  : B extends { actions: infer BActions }
+    ? { actions: BActions }
+    : { actions: {} };
+
+type OverridesSlice = {
+  fractalOverrides: DeepPartial<FractalParams>;
+
+  actions: {
+    customParamOverride: (route: string[], value: unknown) => void;
+    dynamicParamOverride: (route: string[], value: unknown) => void;
+  };
+};
+
+
 export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
   const store = create<EditStore>()(
-    immer(
-      (set, get): EditStore => ({
+    immer((...args): EditStore => {
+      const [set, get] = args;
+      const { actions: actionsOverride, ...restOverride } = createOverrideSlice<EditStore>()(...args);
+      const { actions: animationActions, ...animationState } = createAnimationSlice<EditStore>()(...args);
+      const { actions: customVariableActions, ...customVariableState } = createCustomVariableSlice<EditStore>()(...args);
+      
+      return {
+        ...restOverride,
+        ...animationState,
+        ...customVariableState,
         fractal: fractalRules,
-        fractalOverrides: {},
-        play: false,
-        timeMultiplier: "1.0x",
         trapEditMode: false,
-        currentTime: 0,
         initialLoopState: {
           time: fractalRules.initialTime ?? 0,
         },
         actions: {
+          ...actionsOverride,
+          ...animationActions,
+          ...customVariableActions,
           customVariableCreate: (name: string, type: "number" | "vector2") => {
             set((prev) => {
               if (type === "number") {
@@ -212,12 +270,6 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
 
                 return;
               }
-            });
-          },
-
-          updateCurrentTime: (time: number) => {
-            set((prev) => {
-              prev.currentTime = time;
             });
           },
 
@@ -360,18 +412,6 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             set((prev) => {
               // Use index signature to safely assign to fractal properties
               (prev.fractal as Record<string, unknown>)[name] = value;
-            });
-          },
-
-          toggleAnimation: () => {
-            set((prev) => {
-              prev.play = !prev.play;
-            });
-          },
-
-          changeAnimationSpeed: (speed) => {
-            set((prev) => {
-              prev.timeMultiplier = speed;
             });
           },
 
@@ -602,8 +642,8 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             });
           },
         },
-      }),
-    ),
+      };
+    }),
   );
 
   return store;
