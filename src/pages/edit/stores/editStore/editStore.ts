@@ -296,7 +296,6 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
               if (prev.fractalOverrides.dynamic === undefined) {
                 prev.fractalOverrides.dynamic = {};
               }
-
               const overrides = prev.fractalOverrides.dynamic;
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               let target: any = overrides;
@@ -304,19 +303,21 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
               for (let i = 0; i < route.length - 1; i++) {
                 const part = route[i];
 
-                if (isNaN(Number(part))) {
-                  if (target[part] === undefined) {
-                    target[part] = [];
-                  }
+                if (route[i + 1] !== undefined) {
+                  const isNextNumberPart = !isNaN(Number(route[i + 1]));
 
-                  target = target[part];
-                } else {
-                  if (target[part] === undefined) {
-                    target[part] = {};
+                  if (isNextNumberPart) {
+                    if (target[part] === undefined) {
+                      target[part] = [];
+                    }
+                  } else {
+                    if (target[part] === undefined) {
+                      target[part] = {};
+                    }
                   }
-
-                  target = target[part];
                 }
+
+                target = target[part];
               }
 
               target[route[route.length - 1]] = value;

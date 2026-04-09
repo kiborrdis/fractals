@@ -1,4 +1,4 @@
-import { getDynamicParamLabel } from "@/features/fractals";
+import { getDynamicParamLabel, getDynamicColoringParamLabels, getDynamicMirroringPassesParamLabels } from "@/features/fractals";
 import {
   useFractalCustomRules,
   useFractalDynamicRules,
@@ -77,6 +77,65 @@ export const isNumberItem = (
 export const useDynamicNumberRules = (): TimelineItem[] => {
   const rawDynamic = useFractalDynamicRules();
 
+  const dynamicColoringRules = Object.entries(rawDynamic.coloring).reduce<
+    TimelineItem[]
+  >((memo, [key, rule]) => {
+    const route = ["d", "coloring", key, "2"];
+
+    rule[2].forEach((paramRule, paramIndex) => {
+      if (typeof paramRule === "number" || Array.isArray(paramRule)) {
+        return;
+      }
+
+      if (
+        paramRule.t === RuleType.RangeNumber ||
+        paramRule.t === RuleType.StepNumber
+      ) {
+        const itemRoute = [...route, String(paramIndex)];
+        memo.push({
+          kind: "number",
+          id: itemRoute.join("."),
+          route: itemRoute,
+          name: getDynamicColoringParamLabels(rule[0], paramIndex),
+          color: routeToColor(itemRoute),
+          rule: paramRule,
+        });
+      }
+    });
+
+    return memo;
+  }, []);
+
+
+  const dynamicMirroringRules = Object.entries(rawDynamic.mirroringPasses).reduce<
+    TimelineItem[]
+  >((memo, [key, pass]) => {
+    const route = ["d", "mirroringPasses", key];
+
+    pass.forEach((paramRule, paramIndex) => {
+      if (typeof paramRule === "number" || Array.isArray(paramRule)) {
+        return;
+      }
+
+      if (
+        paramRule.t === RuleType.RangeNumber ||
+        paramRule.t === RuleType.StepNumber
+      ) {
+        const itemRoute = [...route, String(paramIndex)];
+        memo.push({
+          kind: "number",
+          id: itemRoute.join("."),
+          route: itemRoute,
+          name: getDynamicMirroringPassesParamLabels(pass[0], paramIndex) + ' ' + key,
+          color: routeToColor(itemRoute),
+          rule: paramRule,
+        });
+      }
+    });
+
+    return memo;
+  }, []);
+
   const dynamic = Object.entries(rawDynamic).reduce<TimelineItem[]>(
     (memo, [key, rule]) => {
       if ("t" in rule) {
@@ -154,7 +213,7 @@ export const useDynamicNumberRules = (): TimelineItem[] => {
             kind: "vector2",
             id: route.join("."),
             route,
-            name: getDynamicParamLabel(route.slice(1)),
+            name: `Custom ${key}`,
             color: routeToColor(route),
             rule: rule as Vector2BSplineRule | NVectorStepRule<2>,
           });
@@ -170,7 +229,7 @@ export const useDynamicNumberRules = (): TimelineItem[] => {
               kind: "number",
               id: route.join("."),
               route,
-              name: getDynamicParamLabel(route.slice(1)),
+              name: `Custom ${key} [${i}]`,
               color: routeToColor(route),
               rule: aRule as RangeNumberRule | StepNumberRule,
             });
@@ -182,5 +241,5 @@ export const useDynamicNumberRules = (): TimelineItem[] => {
     [],
   );
 
-  return [...dynamic, ...custom];
+  return [...dynamic,...dynamicColoringRules, ...dynamicMirroringRules, ...custom];
 };

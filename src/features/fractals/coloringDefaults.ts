@@ -12,7 +12,7 @@ export const COLORING_MODE_GRADIENT_COUNT: Record<ColoringMode, number> = {
 
 export const COLORING_MODE_DEFAULT_PARAMS: Record<ColoringMode, number[]> = {
   [ColoringMode.Iterations]: [],
-  [ColoringMode.Trap]: [25, 0.5],
+  [ColoringMode.Trap]: [32, 0.3],
   [ColoringMode.Border]: [10, 0.5],
   [ColoringMode.Normal]: [0],
   [ColoringMode.StripesAverage]: [],

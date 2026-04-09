@@ -1,5 +1,5 @@
 import { Vector2 } from "@/shared/libs/vectors";
-import { FractalDynamicParams } from "./types";
+import { ColoringMode, FractalDynamicParams, MirroringPassType } from "./types";
 
 const routeToLabelMap: {
   [K in keyof FractalDynamicParams]?: FractalDynamicParams[K] extends
@@ -35,5 +35,41 @@ export const getDynamicParamLabel = (route: string[]) => {
     routeToLabelMap[route[0] as keyof FractalDynamicParams]?.[1]?.[
       Number(route[1])
     ] ?? route.join(".")
+  );
+};
+
+const coloringRouteToLabelMap: {
+  [K in ColoringMode]?: string[];
+} = {
+  [ColoringMode.Trap]: ["Trap Dist Multiplier", "Trap Dist Pow"],
+  [ColoringMode.Border]: ["Border Dist Multiplier", "Border Dist Pow"],
+  [ColoringMode.Normal]: ["Normal angle"],
+};
+
+export const getDynamicColoringParamLabels = (
+  coloringType: ColoringMode,
+  paramIndex: number,
+) => {
+  return (
+    coloringRouteToLabelMap[coloringType]?.[paramIndex] ??
+    `Coloring param ${paramIndex}`
+  );
+};
+
+const mirroringPassesRouteToLabelMap: {
+  [K in MirroringPassType]?: string[];
+} = {
+  [MirroringPassType.Hex]: ["", "Hex Mirroring Factor", "Hex Mirroring Factor Distance Variation"],
+  [MirroringPassType.Linear]: ["", "Square Mirroring Factor", "Square Mirroring Factor Distance Variation"],
+  [MirroringPassType.Radial]: ["", "Mirroring Angle", "Mirroring Angle Distance Variation"],
+};
+
+export const getDynamicMirroringPassesParamLabels = (
+  mirroringPassType: MirroringPassType,
+  paramIndex: number,
+) => {
+  return (
+    mirroringPassesRouteToLabelMap[mirroringPassType]?.[paramIndex] ??
+    `Mirroring pass param ${paramIndex}`
   );
 };

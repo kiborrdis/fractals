@@ -154,7 +154,7 @@ export const GraphDimsRuleEdit = ({
 
         {previewMode && onPreview && <GraphValueHover onHover={handleHover} />}
 
-        {bothStatic && <GraphValueClick onClick={handleClick} />}
+        <GraphValueClick onClick={handleClick} />
       </GraphEdit>
 
       <GraphToolbar
