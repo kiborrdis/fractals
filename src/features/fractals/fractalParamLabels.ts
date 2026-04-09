@@ -59,9 +59,21 @@ export const getDynamicColoringParamLabels = (
 const mirroringPassesRouteToLabelMap: {
   [K in MirroringPassType]?: string[];
 } = {
-  [MirroringPassType.Hex]: ["", "Hex Mirroring Factor", "Hex Mirroring Factor Distance Variation"],
-  [MirroringPassType.Linear]: ["", "Square Mirroring Factor", "Square Mirroring Factor Distance Variation"],
-  [MirroringPassType.Radial]: ["", "Mirroring Angle", "Mirroring Angle Distance Variation"],
+  [MirroringPassType.Hex]: [
+    "",
+    "Hex Mirroring Factor",
+    "Hex Mirroring Factor Distance Variation",
+  ],
+  [MirroringPassType.Linear]: [
+    "",
+    "Square Mirroring Factor",
+    "Square Mirroring Factor Distance Variation",
+  ],
+  [MirroringPassType.Radial]: [
+    "",
+    "Mirroring Angle",
+    "Mirroring Angle Distance Variation",
+  ],
 };
 
 export const getDynamicMirroringPassesParamLabels = (

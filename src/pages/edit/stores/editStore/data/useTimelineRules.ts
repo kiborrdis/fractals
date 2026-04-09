@@ -1,4 +1,8 @@
-import { getDynamicParamLabel, getDynamicColoringParamLabels, getDynamicMirroringPassesParamLabels } from "@/features/fractals";
+import {
+  getDynamicParamLabel,
+  getDynamicColoringParamLabels,
+  getDynamicMirroringPassesParamLabels,
+} from "@/features/fractals";
 import {
   useFractalCustomRules,
   useFractalDynamicRules,
@@ -106,10 +110,9 @@ export const useDynamicNumberRules = (): TimelineItem[] => {
     return memo;
   }, []);
 
-
-  const dynamicMirroringRules = Object.entries(rawDynamic.mirroringPasses).reduce<
-    TimelineItem[]
-  >((memo, [key, pass]) => {
+  const dynamicMirroringRules = Object.entries(
+    rawDynamic.mirroringPasses,
+  ).reduce<TimelineItem[]>((memo, [key, pass]) => {
     const route = ["d", "mirroringPasses", key];
 
     pass.forEach((paramRule, paramIndex) => {
@@ -126,7 +129,10 @@ export const useDynamicNumberRules = (): TimelineItem[] => {
           kind: "number",
           id: itemRoute.join("."),
           route: itemRoute,
-          name: getDynamicMirroringPassesParamLabels(pass[0], paramIndex) + ' ' + key,
+          name:
+            getDynamicMirroringPassesParamLabels(pass[0], paramIndex) +
+            " " +
+            key,
           color: routeToColor(itemRoute),
           rule: paramRule,
         });
@@ -241,5 +247,10 @@ export const useDynamicNumberRules = (): TimelineItem[] => {
     [],
   );
 
-  return [...dynamic,...dynamicColoringRules, ...dynamicMirroringRules, ...custom];
+  return [
+    ...dynamic,
+    ...dynamicColoringRules,
+    ...dynamicMirroringRules,
+    ...custom,
+  ];
 };
