@@ -16,7 +16,6 @@ const createMemoryTexture = (
       context.RGBA32F, // internal format
       targetTextureWidth,
       targetTextureHeight,
-
     );
 
     // set the filtering so we don't need mips
@@ -149,7 +148,7 @@ export class FractalsRenderer {
     this.canvasSize = newSize;
 
     this.context.deleteTexture(this.tex0);
-    this.context.deleteTexture(this.tex1); 
+    this.context.deleteTexture(this.tex1);
 
     this.tex0 = createMemoryTexture(this.context, this.canvasSize);
     this.tex1 = createMemoryTexture(this.context, this.canvasSize);
@@ -286,5 +285,5 @@ export class FractalsRenderer {
         fractalImage?.cleanup();
       }
     }
-  }
+  };
 }

@@ -137,7 +137,11 @@ export function EditFractalLoaded() {
               <ShareButton />
             </Group>
           </Group>
-          {isSettingsOpen ? <EditorSettings onClose={() => setIsSettingsOpen(false)} /> : <ShapeParams />}
+          {isSettingsOpen ? (
+            <EditorSettings onClose={() => setIsSettingsOpen(false)} />
+          ) : (
+            <ShapeParams />
+          )}
         </AppShellAside>
         <AppShellMain h='100vh'>
           <Stack w='100%' h='100%' gap={0}>

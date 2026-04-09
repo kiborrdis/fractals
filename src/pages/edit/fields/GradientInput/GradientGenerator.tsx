@@ -34,7 +34,11 @@ export const GradientGenerator = ({
   const previewStopsRef = useRef<GradientStop[]>([]);
   const rawStopsRef = useRef<GradientStop[]>([]);
 
-  const applyDistribution = (stops: GradientStop[], type: DistributionType, max = maxPosition) => {
+  const applyDistribution = (
+    stops: GradientStop[],
+    type: DistributionType,
+    max = maxPosition,
+  ) => {
     const distributedStops = distributeStops(stops, max, type);
     previewStopsRef.current = distributedStops;
     onPreview(distributedStops);

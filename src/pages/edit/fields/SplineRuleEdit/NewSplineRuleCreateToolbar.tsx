@@ -24,12 +24,7 @@ export const NewSplineRuleCreateToolbar = ({
         <>
           <DocTooltip
             docKeys={mergeDocKeys("graph-new-spline")}
-            anchor={
-              <ToolbarItem
-                icon={BiQuestionMark}
-                color='gray'
-              />
-            }
+            anchor={<ToolbarItem icon={BiQuestionMark} color='gray' />}
           />
           <ToolbarItem
             icon={FiScissors}

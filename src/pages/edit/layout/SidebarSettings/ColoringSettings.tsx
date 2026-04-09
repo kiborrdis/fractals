@@ -1,35 +1,31 @@
 import { SegmentedControl } from "@mantine/core";
-import { BlendMode, ColoringMode } from "@/features/fractals";
-import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
-import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
+import { ColoringMode } from "@/features/fractals";
 import { useActions } from "../../stores/editStore/data/useActions";
-import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
+import { useColoringRules } from "../../stores/editStore/data/useColoringRules";
 import { useSetting } from "../../stores/settings";
 import { ColoringLayersAccordion } from "./ColoringLayersAccordion";
-import { InterationColoringSettings } from "./InterationColoringSettings";
-import { TrapColoringSettings } from "./TrapColoringSettings";
+import { InterationColoringEdit } from "../../fields/IterationColoringEdit/InterationColoringEdit";
+import { TrapColoringEdit } from "../../fields/TrapColoringEdit/TrapColoringEdit";
+import { BorderColoringEdit } from "../../fields/BorderColoringEdit/BorderColoringEdit";
 import { EditorLabel } from "../../ui/EditorLabel";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { SettingsSection } from "./SettingsSection";
 
-const defaultTab = String(ColoringMode.Iterations);
-
 export const ColoringSettings = () => {
   const coloringLayers = useSetting("coloringLayers");
   const normalColoring = useSetting("normalColoring");
-  const [coloring] = useStaticRule("coloring");
-  const { staticRuleChange } = useActions();
+  const coloring = useColoringRules();
+  const { replaceColoringMode } = useActions();
 
   if (coloringLayers) {
     return <ColoringLayersAccordion />;
   }
 
-  const activeTab = coloring?.[0] ? String(coloring[0].type) : defaultTab;
+  const activeMode = coloring[0]?.[0] ?? ColoringMode.Iterations;
+  const activeTab = String(activeMode);
 
   const handleTabChange = (value: string) => {
-    staticRuleChange("coloring", [
-      { type: Number(value) as ColoringMode, blend: BlendMode.Normal },
-    ]);
+    replaceColoringMode(0, Number(value) as ColoringMode);
   };
 
   const tabData = [
@@ -46,9 +42,7 @@ export const ColoringSettings = () => {
 
   return (
     <SettingsSection>
-      <EditorLabel docKeys={mergeDocKeys("coloring")}>
-        Coloring
-      </EditorLabel>
+      <EditorLabel docKeys={mergeDocKeys("coloring")}>Coloring</EditorLabel>
       <SegmentedControl
         value={activeTab}
         data={tabData}
@@ -56,15 +50,15 @@ export const ColoringSettings = () => {
         onChange={handleTabChange}
         fullWidth
       />
-      {activeTab === String(ColoringMode.Iterations) && <InterationColoringSettings />}
-      {activeTab === String(ColoringMode.Border) && (
-        <>
-          <StaticRuleEdit name='borderColor' />
-          <DynamicRuleEdit name='borderDistMult' />
-          <DynamicRuleEdit name='borderDistPow' />
-        </>
+      {activeMode === ColoringMode.Iterations && (
+        <InterationColoringEdit coloringIndex={0} />
       )}
-      {activeTab === String(ColoringMode.Trap) && <TrapColoringSettings />}
+      {activeMode === ColoringMode.Border && (
+        <BorderColoringEdit coloringIndex={0} />
+      )}
+      {activeMode === ColoringMode.Trap && (
+        <TrapColoringEdit coloringIndex={0} />
+      )}
     </SettingsSection>
   );
 };

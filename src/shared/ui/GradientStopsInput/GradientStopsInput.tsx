@@ -82,10 +82,7 @@ export const GradientStopsInput = ({
 
   const handlePositionChange = (index: number, newPosition: number) => {
     const newStops = [...stopsInternal];
-    newStops[index] = [
-      newPosition,
-      stopsInternal[index][1],
-    ] as GradientStop;
+    newStops[index] = [newPosition, stopsInternal[index][1]] as GradientStop;
     setStopsInternal(newStops);
     setStops(newStops);
   };

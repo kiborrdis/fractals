@@ -4,9 +4,7 @@ import {
   TimelineVector2Item,
   isNumberItem,
 } from "../../stores/editStore/data/useTimelineRules";
-import {
-  convertRuleOrArrayToResult,
-} from "@/shared/libs/numberRule";
+import { convertRuleOrArrayToResult } from "@/shared/libs/numberRule";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
   GraphEdit,
@@ -65,7 +63,10 @@ export const RecordingTimelineGraph = ({
       if (rules.length > 0) {
         onDynamicParamOverride(
           rules.map((item): number | [number, number] => {
-            return convertRuleOrArrayToResult(item.rule, time) as [number, number];
+            return convertRuleOrArrayToResult(item.rule, time) as [
+              number,
+              number,
+            ];
           }),
         );
       }

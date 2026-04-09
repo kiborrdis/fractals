@@ -32,16 +32,18 @@ export const ToolbarItem = React.forwardRef<
     },
     ref,
   ) => {
-    const actionIcon = <ActionIcon
-            ref={ref}
-            variant={variant}
-            size={size}
-            color={color}
-            onClick={onClick}
-            disabled={disabled}
-          >
-            <Icon size={12} />
-          </ActionIcon>;
+    const actionIcon = (
+      <ActionIcon
+        ref={ref}
+        variant={variant}
+        size={size}
+        color={color}
+        onClick={onClick}
+        disabled={disabled}
+      >
+        <Icon size={12} />
+      </ActionIcon>
+    );
     return (
       <div className={styles.toolbarItemWrapper}>
         {label && <Tooltip label={label}>{actionIcon}</Tooltip>}

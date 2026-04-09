@@ -1,15 +1,12 @@
-import { ColoringEntry, ColoringMode, BlendMode } from "@/features/fractals";
+import { ColoringMode } from "@/features/fractals";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { Stack, Paper, Group, Text, Switch, Collapse } from "@mantine/core";
 import { ReactNode } from "react";
 import { useActions } from "../../stores/editStore/data/useActions";
-import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
+import { useColoringRules } from "../../stores/editStore/data/useColoringRules";
 import { useSetting } from "../../stores/settings";
 import { EditorDocTooltip } from "../../ui/EditorDocTooltip";
 
-const defaultColoring: ColoringEntry[] = [
-  { type: ColoringMode.Iterations, blend: BlendMode.Normal },
-];
 const coloringTypeToMode = {
   gradient: ColoringMode.Iterations,
   border: ColoringMode.Border,
@@ -25,39 +22,32 @@ const coloringLabels = {
   stripesAverage: "Stripes Average Coloring",
 };
 export const ColoringBlock = ({
-  coloringType, children,
+  coloringType,
+  children,
 }: {
   coloringType: "gradient" | "border" | "trap" | "normal" | "stripesAverage";
   children: ReactNode;
 }) => {
-  const [coloring] = useStaticRule("coloring");
-  const { staticRuleChange } = useActions();
+  const coloring = useColoringRules();
+  const { addColoringMode, removeColoringMode } = useActions();
   const coloringLayers = useSetting("coloringLayers");
 
-  const currentColoring = coloring ?? defaultColoring;
   const thisMode = coloringTypeToMode[coloringType];
-  const isEnabled = currentColoring.some((c) => c.type === thisMode);
+  const modeIndex = coloring.findIndex((c) => c[0] === thisMode);
+  const isEnabled = modeIndex !== -1;
 
   const handleToggle = () => {
     if (coloringLayers) {
       if (isEnabled) {
-        if (currentColoring.length > 1) {
-          staticRuleChange(
-            "coloring",
-            currentColoring.filter((c) => c.type !== thisMode)
-          );
+        if (coloring.length > 1) {
+          removeColoringMode(modeIndex);
         }
       } else {
-        staticRuleChange("coloring", [
-          ...currentColoring,
-          { type: thisMode, blend: BlendMode.Normal },
-        ]);
+        addColoringMode(thisMode);
       }
     } else {
       if (!isEnabled) {
-        staticRuleChange("coloring", [
-          { type: thisMode, blend: BlendMode.Normal },
-        ]);
+        addColoringMode(thisMode);
       }
     }
   };
@@ -76,7 +66,8 @@ export const ColoringBlock = ({
               {coloringLabels[coloringType]}
             </Text>
             <EditorDocTooltip
-              docKeys={mergeDocKeys(`coloring-${coloringType}`)} />
+              docKeys={mergeDocKeys(`coloring-${coloringType}`)}
+            />
           </Group>
           <Switch checked={isEnabled} onClick={(e) => e.stopPropagation()} />
         </Group>

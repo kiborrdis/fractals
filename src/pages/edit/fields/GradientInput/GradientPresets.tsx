@@ -32,9 +32,13 @@ const scaleStops = (
   reverse = false,
 ): GradientStop[] => {
   let stopsToScale = stops;
-  
+
   if (reverse) {
-    stopsToScale = stops.map(([, rgba], i) => [stops[stops.length - 1 - i][0], rgba] as GradientStop).reverse();
+    stopsToScale = stops
+      .map(
+        ([, rgba], i) => [stops[stops.length - 1 - i][0], rgba] as GradientStop,
+      )
+      .reverse();
   }
 
   const maxPresetPos = stops[stops.length - 1][0] || 1;
@@ -72,7 +76,9 @@ export const GradientPresets = ({
   const handleMaxPositionChange = (val: number) => {
     setMaxPosition(val);
     if (selectedIndex !== null) {
-      onPreview(scaleStops(GRADIENT_PRESETS[selectedIndex].stops, val, reverse));
+      onPreview(
+        scaleStops(GRADIENT_PRESETS[selectedIndex].stops, val, reverse),
+      );
     }
   };
 
@@ -105,7 +111,9 @@ export const GradientPresets = ({
                 <Text size='xs'>{preset.name}</Text>
                 <div
                   className={styles.gradientBar}
-                  style={{ background: presetToHorizontalGradient(preset.stops) }}
+                  style={{
+                    background: presetToHorizontalGradient(preset.stops),
+                  }}
                 />
               </Stack>
             </UnstyledButton>
@@ -132,7 +140,11 @@ export const GradientPresets = ({
           onClick={() => {
             if (selectedIndex !== null) {
               onApply(
-                scaleStops(GRADIENT_PRESETS[selectedIndex].stops, maxPosition, reverse),
+                scaleStops(
+                  GRADIENT_PRESETS[selectedIndex].stops,
+                  maxPosition,
+                  reverse,
+                ),
               );
             }
           }}

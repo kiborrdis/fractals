@@ -16,7 +16,11 @@ import { createGradientTexture } from "./texture";
 
 export const createColoringShader = (context: WebGL2RenderingContext) => {
   const vertexShader = createShader(context, context.VERTEX_SHADER, vertex);
-  const fragmentShader = createShader(context, context.FRAGMENT_SHADER, fragment);
+  const fragmentShader = createShader(
+    context,
+    context.FRAGMENT_SHADER,
+    fragment,
+  );
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
 
   if (!shaderProgram) {
@@ -62,13 +66,13 @@ export const createColoringShader = (context: WebGL2RenderingContext) => {
 
       if (vertexShader) {
         context.deleteShader(vertexShader);
-      } 
+      }
       if (fragmentShader) {
         context.deleteShader(fragmentShader);
       }
 
       context.deleteTexture(gradientTexture);
-    }
+    },
   };
 };
 

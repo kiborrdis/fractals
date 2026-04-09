@@ -126,15 +126,11 @@ export const TrapEditModePanel = memo(
           )}
 
           <Divider />
-          <Group wrap="nowrap">
+          <Group wrap='nowrap'>
             <DocTooltip
               docKeys={mergeDocKeys("trap-edit-mode")}
               anchor={
-                <ActionIcon
-                  size='sm'
-                  variant='outline'
-                  color="gray"
-                >
+                <ActionIcon size='sm' variant='outline' color='gray'>
                   <BiQuestionMark />
                 </ActionIcon>
               }

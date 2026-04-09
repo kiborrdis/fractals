@@ -1,16 +1,19 @@
-import { FractalParams, ColoringMode, BlendMode, ColoringEntry } from "../types";
-import { encodeGradientsInTexture, encodeTrapsAsUniforms } from "./texture";
+import { FractalParams, ColoringMode, ColoringEntry } from "../types";
+import {
+  encodeGradientsInTexture,
+  encodeTrapsAsUniforms,
+  MAX_BLEND,
+} from "./texture";
 import {
   createUniformApplier,
   UniformApplierMemory,
 } from "@/shared/libs/webgl";
 
-const defaultColoring: ColoringEntry[] = [
-  { type: ColoringMode.Iterations, blend: BlendMode.Normal },
-];
-
-const getColoring = (data: FractalParams): ColoringEntry[] =>
-  data.coloring ?? defaultColoring;
+const getColoring = (data: FractalParams): ColoringEntry[] => {
+  const c = data.dynamic.coloring;
+  if (c && c.length > 0) return c;
+  return [[ColoringMode.Iterations, [0], [], 1] as ColoringEntry];
+};
 
 export const createResolutionUniformApplier = (
   ctx: WebGL2RenderingContext,
@@ -66,7 +69,11 @@ export const createFractalUniformApplier = (
         ] as const,
     ],
 
-    ["1i", "u_mirroring_passes_size", (data) => data.dynamic.mirroringPasses.length],
+    [
+      "1i",
+      "u_mirroring_passes_size",
+      (data) => data.dynamic.mirroringPasses.length,
+    ],
     [
       "4fv",
       "u_mirroring_passes",
@@ -97,7 +104,13 @@ export const createFractalUniformApplier = (
       "1i",
       "u_derivative_enabled",
       (data) =>
-        getColoring(data).some((c) => c.type === ColoringMode.Border || c.type === ColoringMode.Normal) ? 1 : 0,
+        getColoring(data).some(
+          (c) =>
+            (c as ColoringEntry)[0] === ColoringMode.Border ||
+            (c as ColoringEntry)[0] === ColoringMode.Normal,
+        )
+          ? 1
+          : 0,
     ],
     ["1i", "u_supersampling_level", (data) => data.antialiasingLevel ?? 1],
 
@@ -105,17 +118,30 @@ export const createFractalUniformApplier = (
       "1i",
       "u_trap_calculation_enabled",
       (data) =>
-        getColoring(data).some((c) => c.type === ColoringMode.Trap) ? 1 : 0,
+        getColoring(data).some(
+          (c) => (c as ColoringEntry)[0] === ColoringMode.Trap,
+        )
+          ? 1
+          : 0,
     ],
 
-    ["1i", "u_stripe_enabled", (data) => data.coloring?.some((c) => c.type === ColoringMode.StripesAverage) ? 1 : 0],
+    [
+      "1i",
+      "u_stripe_enabled",
+      (data) =>
+        data.dynamic.coloring?.some(
+          (c) => (c as ColoringEntry)[0] === ColoringMode.StripesAverage,
+        )
+          ? 1
+          : 0,
+    ],
 
     [
       "1i",
       "u_traps_size",
       (data) => {
         const trapEnabled = getColoring(data).some(
-          (c) => c.type === ColoringMode.Trap,
+          (c) => (c as ColoringEntry)[0] === ColoringMode.Trap,
         );
         const trapsLength = data.traps?.length ?? 0;
         return trapEnabled && trapsLength > 0 ? trapsLength : 0;
@@ -126,7 +152,7 @@ export const createFractalUniformApplier = (
       "u_trap_types",
       (data) => {
         const trapEnabled = getColoring(data).some(
-          (c) => c.type === ColoringMode.Trap,
+          (c) => (c as ColoringEntry)[0] === ColoringMode.Trap,
         );
         const traps = data.traps ?? [];
         if (!trapEnabled || traps.length === 0) return null;
@@ -138,7 +164,7 @@ export const createFractalUniformApplier = (
       "u_trap_data",
       (data) => {
         const trapEnabled = getColoring(data).some(
-          (c) => c.type === ColoringMode.Trap,
+          (c) => (c as ColoringEntry)[0] === ColoringMode.Trap,
         );
         const traps = data.traps ?? [];
         if (!trapEnabled || traps.length === 0) return null;
@@ -155,9 +181,7 @@ export const createColoringUniformApplier = (
 ) =>
   createUniformApplier<FractalParams>(ctx, program, memory, [
     ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
-     
-    ["1f", "u_border_intensity", (data) => data.dynamic.borderDistMult],
-    ["1f", "u_border_distance_pow", (data) => data.dynamic.borderDistPow],
+
     [
       "4f",
       "u_border_color",
@@ -165,53 +189,66 @@ export const createColoringUniformApplier = (
         data.borderColor ?? [1, 1, 1, 0],
     ],
 
-    ["1f", "u_trap_intensity", (data) => data.dynamic.trapDistMult],
-    ["1f", "u_trap_distance_pow", (data) => data.dynamic.trapDistPow],
-    
     [
       "texture",
       "u_gradients_sampler",
-      (data, ctx) => {
-        const trapGradient = data.trapGradient;
-        const iterationGradient = data.gradient;
-        
-        const texture = encodeGradientsInTexture(ctx, gradientTexture, iterationGradient, trapGradient || []);
-        return texture;
-      },
-    ],
-    ["1i", "u_sampler_wl", (data) => data.gradient.length],
-    [
-      "1i",
-      "u_trap_gradient_wl",
-      (data) => {
-        if (!getColoring(data).some((c) => c.type === ColoringMode.Trap)) {
-          return 0;
-        }
-        return (
-          data.trapGradient ?? [
-            [0, [1, 1, 1, 1]],
-            [100, [0, 0, 0, 1]],
-          ]
-        ).length;
-      },
+      (data, ctx) =>
+        encodeGradientsInTexture(ctx, gradientTexture, data.gradients),
     ],
 
     [
-      "2iv",
-      "u_blend_types",
+      "1iv",
+      "u_gradient_wls",
       (data) => {
-        const coloring = getColoring(data);
-        const arr = new Int32Array(coloring.length * 2);
-        coloring.forEach((entry, i) => {
-          arr[i * 2] = entry.type;
-          arr[i * 2 + 1] = entry.blend;
+        const arr = new Int32Array(MAX_BLEND);
+        data.gradients.forEach((grad, i) => {
+          if (i < MAX_BLEND) arr[i] = grad?.length ?? 0;
         });
         return arr;
       },
     ],
-    ["1i", "u_blend_types_size", (data) => getColoring(data).length],
-  ]);
 
+    [
+      "4iv",
+      "u_blend_configs",
+      (data) => {
+        const coloring = getColoring(data);
+        const arr = new Int32Array(MAX_BLEND * 4);
+        coloring.forEach((entry, i) => {
+          const [mode, gradIds, , blend] = entry as [
+            number,
+            number[],
+            unknown[],
+            number,
+          ];
+          arr[i * 4 + 0] = mode;
+          arr[i * 4 + 1] = blend;
+          arr[i * 4 + 2] = gradIds[0] ?? 0;
+          arr[i * 4 + 3] = 0;
+        });
+        return arr;
+      },
+    ],
+
+    [
+      "4fv",
+      "u_blend_params",
+      (data) => {
+        const coloring = getColoring(data);
+        const arr = new Float32Array(MAX_BLEND * 4);
+        coloring.forEach((entry, i) => {
+          const params = (entry as unknown[])[2] as number[];
+          arr[i * 4 + 0] = params[0] ?? 0;
+          arr[i * 4 + 1] = params[1] ?? 0;
+          arr[i * 4 + 2] = 0;
+          arr[i * 4 + 3] = 0;
+        });
+        return arr;
+      },
+    ],
+
+    ["1i", "u_blend_configs_size", (data) => getColoring(data).length],
+  ]);
 
 export const createTimeUniformApplier = (
   ctx: WebGL2RenderingContext,

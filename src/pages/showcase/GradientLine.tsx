@@ -2,10 +2,7 @@ import { useMemo } from "react";
 import { useMove } from "@mantine/hooks";
 import styles from "./GradientLine.module.css";
 
-type GradientStop = [
-  iteration: number,
-  rgba: [number, number, number, number],
-];
+type GradientStop = [iteration: number, rgba: [number, number, number, number]];
 
 export const GradientLine = ({
   gradient,

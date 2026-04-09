@@ -106,7 +106,7 @@ export const useDynamicNumberRules = (): TimelineItem[] => {
         }
       } else if (Array.isArray(rule)) {
         rule.forEach((aRule, i) => {
-          if (typeof aRule === 'number' || Array.isArray(aRule)) {
+          if (typeof aRule === "number" || Array.isArray(aRule)) {
             return;
           }
 

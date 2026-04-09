@@ -125,7 +125,7 @@ const SecondScreen = () => {
           </p>
           <div className={styles.demonstrationContent}>
             <GradientLine
-              gradient={exampleFractal.gradient}
+              gradient={exampleFractal.gradients[0]}
               maxIterations={maxIter}
               currentIteration={makeNumberFromRangeRule(
                 exampleFractal.dynamic.maxIterations,

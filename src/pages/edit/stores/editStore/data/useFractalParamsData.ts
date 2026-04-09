@@ -19,11 +19,13 @@ export const useFractalParamsData = () => {
     return fractal;
   }
 
+  const mergedGradients = fractal.gradients.map(
+    (g, i) => (overrides.gradients?.[i] as GradientStop[] | undefined) ?? g,
+  );
+
   return {
     ...fractal,
-    gradient: (overrides.gradient as GradientStop[]) ?? fractal.gradient,
-    trapGradient:
-      (overrides.trapGradient as GradientStop[]) ?? fractal.trapGradient,
+    gradients: mergedGradients,
     custom: mergeFractalParams(
       mergeFractalParams({}, fractal.custom),
       overrides.custom,

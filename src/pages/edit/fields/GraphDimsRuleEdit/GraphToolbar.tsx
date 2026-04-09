@@ -22,12 +22,10 @@ export const GraphToolbar = ({
     <BaseGraphToolbar
       left={
         <>
-          <DocTooltip docKeys={mergeDocKeys('graph-sep-dims')} anchor={
-            <ToolbarItem
-              icon={BiQuestionMark}
-              color="gray"
-            />
-          }/>
+          <DocTooltip
+            docKeys={mergeDocKeys("graph-sep-dims")}
+            anchor={<ToolbarItem icon={BiQuestionMark} color='gray' />}
+          />
           <ToolbarItem
             icon={FiEye}
             label={previewMode ? "Disable preview" : "Enable preview"}

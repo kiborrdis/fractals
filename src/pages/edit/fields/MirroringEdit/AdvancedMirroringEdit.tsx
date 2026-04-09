@@ -56,7 +56,10 @@ const PassRow = ({
 }: {
   pass: [MirroringPassType, NumberBuildRule, NumberBuildRule];
   index: number;
-  onChange: (index: number, pass: [MirroringPassType, NumberBuildRule, NumberBuildRule]) => void;
+  onChange: (
+    index: number,
+    pass: [MirroringPassType, NumberBuildRule, NumberBuildRule],
+  ) => void;
   onDelete: (index: number) => void;
 }) => {
   const [type, factor, variation] = pass;
@@ -103,7 +106,7 @@ const PassRow = ({
         max={fr.max}
         minRange={1}
         step={fr.step}
-        onChange={(_,val) => onChange(index, [type, val, variation])}
+        onChange={(_, val) => onChange(index, [type, val, variation])}
       />
       <NumberRuleEdit
         name='2'
@@ -113,7 +116,7 @@ const PassRow = ({
         min={vr.min}
         max={vr.max}
         step={vr.step}
-        onChange={(_,val) => onChange(index, [type, factor, val])}
+        onChange={(_, val) => onChange(index, [type, factor, val])}
       />
     </Stack>
   );
@@ -122,7 +125,10 @@ const PassRow = ({
 export const AdvancedMirroringEdit = () => {
   const [passes, setPasses] = useMirroringPasses();
 
-  const handleChange = (index: number, updated: [MirroringPassType, NumberBuildRule, NumberBuildRule]) => {
+  const handleChange = (
+    index: number,
+    updated: [MirroringPassType, NumberBuildRule, NumberBuildRule],
+  ) => {
     const next = passes.map((p, i) => (i === index ? updated : p));
     setPasses(next);
   };

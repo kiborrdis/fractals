@@ -58,7 +58,7 @@ export const GraphFractalBackground = ({
           initialCFormula: "fCoord",
           initialZFormula: "c0",
           formula,
-          gradient,
+          gradients: [gradient],
           dynamic: {
             ...defaultParams.dynamic,
             maxIterations: 100,

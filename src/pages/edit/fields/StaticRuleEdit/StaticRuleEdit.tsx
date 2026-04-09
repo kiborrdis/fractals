@@ -1,8 +1,4 @@
-import {
-  formulaVars,
-  FractalParamsBuildRules,
-  GradientStop,
-} from "@/features/fractals";
+import { formulaVars, FractalParamsBuildRules } from "@/features/fractals";
 import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 import { ReactNode } from "react";
 import { Checkbox, ColorInput, Select } from "@mantine/core";
@@ -11,8 +7,6 @@ import { InitialTimeEdit } from "../InitialTimeEdit/InitialTimeEdit";
 import { BandSmoothingOptions } from "../BandSmoothingOptions/BandSmoothingOptions";
 import { EditorLabel } from "../../ui/EditorLabel";
 import { TrapEditor } from "../TrapEditor/TrapEditor";
-import { TrapColoringGradient } from "../GradientInput/TrapColoringGradient";
-import { EscapeColoringGradient } from "../GradientInput/EscapeColoringGradient";
 
 type RuleRenderProps<K extends keyof Omit<FractalParamsBuildRules, "dynamic">> =
   {
@@ -100,13 +94,7 @@ const ruleConfigs: RuleRenderers = {
     />
   ),
 
-  gradient: (props) => (
-    <EscapeColoringGradient
-      value={props.value as GradientStop[]}
-      onChange={props.onChange}
-      name={props.name}
-    />
-  ),
+  gradients: () => null,
 
   borderColor: (props) => {
     const val = props.value || [0, 0, 0, 255];
@@ -141,19 +129,6 @@ const ruleConfigs: RuleRenderers = {
   },
 
   traps: (_props) => <TrapEditor />,
-
-  trapGradient: (props) => (
-    <TrapColoringGradient
-      value={
-        (props.value as GradientStop[]) ?? [
-          [0, [1, 1, 1, 1]],
-          [100, [0, 0, 0, 1]],
-        ]
-      }
-      onChange={props.onChange}
-      name={props.name as "trapGradient"}
-    />
-  ),
 };
 
 export const StaticRuleEdit = ({

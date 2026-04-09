@@ -3,6 +3,8 @@ import {
   makeRulesBasedOnParams,
   GradientStop,
   FractalParamsBuildRules,
+  BlendMode,
+  ColoringMode,
 } from "@/features/fractals";
 import { Vector2 } from "@/shared/libs/vectors";
 import { FractalImage } from "@/features/fractals/shader/FractalImage";
@@ -27,35 +29,35 @@ import { FullViewport } from "@/shared/ui/FullViewport/FullViewport";
 // formula = "exp(z^-2*(1.00 + -7.20i))*(1.00 + 8.78i)+c";
 
 const BACKGROUND_GRADIENT: GradientStop[] = [
-  [0, 0, 0, 0, 1],
-  [10, 0, 0, 0, 1],
-  [30, 0, 0, 0, 1],
-  [40, 0, 0, 0, 1],
-  [90, 0, 0.1, 0, 1],
-  [98, 0, 0.1, 0, 1],
-  [99, 0, 1, 0, 1],
-  [100, 1, 0, 0, 1],
+  [0, [0, 0, 0, 1]],
+  [10, [0, 0, 0, 1]],
+  [30, [0, 0, 0, 1]],
+  [40, [0, 0, 0, 1]],
+  [90, [0, 0.1, 0, 1]],
+  [98, [0, 0.1, 0, 1]],
+  [99, [0, 1, 0, 1]],
+  [100, [1, 0, 0, 1]],
 ];
 
 const BACKGROUND_GRADIENT_STEP_SEARCH: GradientStop[] = [
-  [0, 0, 0, 0, 1],
-  [10, 0, 0.1, 0, 1],
-  [30, 0, 0.2, 0, 1],
-  [40, 0, 0.7, 0, 1],
-  [70, 0, 0.8, 0, 1],
-  [99, 0, 0.01, 0, 1],
-  [100, 1, 0, 0, 1],
+  [0, [0, 0, 0, 1]],
+  [10, [0, 0.1, 0, 1]],
+  [30, [0, 0.2, 0, 1]],
+  [40, [0, 0.7, 0, 1]],
+  [70, [0, 0.8, 0, 1]],
+  [99, [0, 0.01, 0, 1]],
+  [100, [1, 0, 0, 1]],
 ];
 
 const BACKGROUND_GRADIENT_GOOD_FRAME: GradientStop[] = [
-  [0, 0, 0, 0, 1],
-  [10, 0, 1, 0, 1],
-  [20, 0, 1, 0, 1],
-  [30, 0, 0, 0, 1],
-  [40, 1, 0, 0, 1],
-  [70, 1, 0, 0, 1],
-  [80, 0, 0, 0, 1],
-  [100, 0, 0, 0, 1],
+  [0, [0, 0, 0, 1]],
+  [10, [0, 1, 0, 1]],
+  [20, [0, 1, 0, 1]],
+  [30, [0, 0, 0, 1]],
+  [40, [1, 0, 0, 1]],
+  [70, [1, 0, 0, 1]],
+  [80, [0, 0, 0, 1]],
+  [100, [0, 0, 0, 1]],
 ];
 
 const getParamsWithC = (
@@ -65,7 +67,7 @@ const getParamsWithC = (
 ) => {
   return makeRulesBasedOnParams({
     formula: formula,
-    gradient: gradient || BACKGROUND_GRADIENT,
+    gradients: [gradient || BACKGROUND_GRADIENT],
     invert: false,
     initialTime: 0,
     initialCFormula: "fCoord",
@@ -81,6 +83,7 @@ const getParamsWithC = (
       cDistVariation: [0, 0],
       rDistVariation: 0,
       iterationsDistVariation: 0,
+      coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
     },
     custom: {},
   });
@@ -254,7 +257,7 @@ const lookForValidCForMap = async (
 const makeToDisplayParams = () => {
   return makeRulesBasedOnParams({
     formula: formula,
-    gradient: BACKGROUND_GRADIENT_GOOD_FRAME,
+    gradients: [BACKGROUND_GRADIENT_GOOD_FRAME],
     invert: false,
     initialTime: 0,
     bandSmoothing: formula.match(/(exp|sin|cos|tan|sinh|cosh)/)
@@ -271,6 +274,7 @@ const makeToDisplayParams = () => {
       cDistVariation: [0, 0],
       rDistVariation: 0,
       iterationsDistVariation: 0,
+      coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
     },
     custom: {},
   });
@@ -406,7 +410,7 @@ const generateGradient = (maxIterations: number): GradientStop[] => {
     const b = Math.random();
     const a = 1;
 
-    stops.push([position, r, g, b, a]);
+    stops.push([position, [r, g, b, a]]);
   }
 
   return stops;
@@ -432,7 +436,9 @@ export function RandomFractal() {
       const defaultParams = makeToDisplayParams();
       defaultParams.dynamic.c = rule;
 
-      const goodFrame = await lookForGoodFrame(convertRuleOrArrayToResult(rule, 0));
+      const goodFrame = await lookForGoodFrame(
+        convertRuleOrArrayToResult(rule, 0),
+      );
       defaultParams.dynamic.rlVisibleRange = makeRuleFromArray(
         goodFrame.rlVisibleRange,
       );
@@ -440,7 +446,7 @@ export function RandomFractal() {
         goodFrame.imVisibleRange,
       );
 
-      defaultParams.gradient = generateGradient(100);
+      defaultParams.gradients = [generateGradient(100)];
       console.timeEnd("Generating interesting fractal");
       console.log("rule", rule);
       setParams(defaultParams);

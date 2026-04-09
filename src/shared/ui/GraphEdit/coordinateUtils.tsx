@@ -4,7 +4,7 @@ import { GraphEditMappingMode, GraphEditOptions } from "./context";
 /**
  * Converts normalized canvas coordinates (0-1) to value space coordinates.
  * @param canvasCoords Normalized 0-1
- * @param axisRangeSizes 
+ * @param axisRangeSizes
  * @param offset Offset in value space
  */
 export const toValueSpace = (
@@ -21,7 +21,7 @@ export const toValueSpace = (
 /**
  * Converts a size from normalized canvas space to value space.
  * @param canvasCoords Normalized 0-1
- * @param axisRangeSizes 
+ * @param axisRangeSizes
  */
 export const toValueSpaceSize = (
   canvasCoords: Vector2,
@@ -35,9 +35,9 @@ export const toValueSpaceSize = (
 
 /**
  * Converts a size from value space to normalized canvas space.
- * @param valueCoords 
- * @param axisRangeSizes 
- * @returns 
+ * @param valueCoords
+ * @param axisRangeSizes
+ * @returns
  */
 export const toCanvasSpaceSize = (
   valueCoords: Vector2,
@@ -65,7 +65,7 @@ export const fromCanvasPixelsSize = (
 
   const lowestDim = Math.min(size[0], size[1]);
   return [pixelSize[0] / lowestDim, pixelSize[1] / lowestDim];
-}
+};
 
 /** * Converts normalized canvas coordinates (0-1) to pixel coordinates.
  * @param canvasCoord Normalized 0-1
@@ -87,7 +87,7 @@ export const toCanvasPixelsSize = (
 
 /** * Converts value space coordinates to normalized canvas coordinates (0-1).
  * @param valueCoords Value space coordinates
- * @param axisRangeSizes 
+ * @param axisRangeSizes
  * @param offset Offset in value space
  */
 export const toCanvasSpace = (

@@ -36,6 +36,12 @@ type UniformArray2IV<Data> = [
   string,
   (data: Data, ctx: WebGL2RenderingContext) => Int32Array | null,
 ];
+
+type UniformArray4IV<Data> = [
+  "4iv",
+  string,
+  (data: Data, ctx: WebGL2RenderingContext) => Int32Array | null,
+];
 type UniformArray3FV<Data> = [
   "3fv",
   string,
@@ -55,6 +61,7 @@ export type UniformApplicationRule<Data> =
   | UniformTexture<Data>
   | UniformArray1IV<Data>
   | UniformArray2IV<Data>
+  | UniformArray4IV<Data>
   | UniformArray3FV<Data>
   | UniformArray4FV<Data>;
 
@@ -142,6 +149,11 @@ export const createUniformApplier = <Data>(
         const value = rule[2](data, ctx);
         if (value !== null) {
           ctx.uniform2iv(location, value);
+        }
+      } else if (rule[0] === "4iv") {
+        const value = rule[2](data, ctx);
+        if (value !== null) {
+          ctx.uniform4iv(location, value);
         }
       } else if (rule[0] === "3fv") {
         const value = rule[2](data, ctx);

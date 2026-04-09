@@ -15,20 +15,19 @@ import {
   TbPlus,
   TbTrash,
 } from "react-icons/tb";
-import { BlendMode, ColoringEntry, ColoringMode } from "@/features/fractals";
+import {
+  BlendMode,
+  ColoringBuildRule,
+  ColoringMode,
+} from "@/features/fractals";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
-import { StaticRuleEdit } from "../../fields/StaticRuleEdit/StaticRuleEdit";
-import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
 import { useActions } from "../../stores/editStore/data/useActions";
-import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
+import { useColoringRules } from "../../stores/editStore/data/useColoringRules";
 import { EditorLabel } from "../../ui/EditorLabel";
-import { InterationColoringSettings } from "./InterationColoringSettings";
-import { TrapColoringSettings } from "./TrapColoringSettings";
+import { InterationColoringEdit } from "../../fields/IterationColoringEdit/InterationColoringEdit";
+import { TrapColoringEdit } from "../../fields/TrapColoringEdit/TrapColoringEdit";
+import { BorderColoringEdit } from "../../fields/BorderColoringEdit/BorderColoringEdit";
 import { SettingsSection } from "./SettingsSection";
-
-const defaultColoring: ColoringEntry[] = [
-  { type: ColoringMode.Iterations, blend: BlendMode.Normal },
-];
 
 const coloringModeLabels: Record<ColoringMode, string> = {
   [ColoringMode.Iterations]: "Gradient",
@@ -64,63 +63,34 @@ const allColoringModes: ColoringMode[] = [
   ColoringMode.StripesAverage,
 ];
 
-const coloringSettings: Partial<Record<ColoringMode, ReactNode>> = {
-  [ColoringMode.Iterations]: <InterationColoringSettings />,
-  [ColoringMode.Border]: (
-    <>
-      <StaticRuleEdit name='borderColor' />
-      <DynamicRuleEdit name='borderDistMult' />
-      <DynamicRuleEdit name='borderDistPow' />
-    </>
-  ),
-  [ColoringMode.Trap]: <TrapColoringSettings />,
-};
-
 export const ColoringLayersAccordion = () => {
-  const [coloring] = useStaticRule("coloring");
-  const { staticRuleChange } = useActions();
+  const coloring = useColoringRules();
+  const {
+    editColoringBlend,
+    moveColoringLayer,
+    addColoringMode,
+    removeColoringMode,
+  } = useActions();
 
-  const currentColoring = coloring ?? defaultColoring;
-
-  const handleBlendChange = (index: number, blend: BlendMode) => {
-    staticRuleChange(
-      "coloring",
-      currentColoring.map((entry, i) =>
-        i === index ? { ...entry, blend } : entry,
-      ),
-    );
-  };
-
-  const handleMoveUp = (index: number) => {
-    if (index === 0) return;
-    const next = [...currentColoring];
-    [next[index - 1], next[index]] = [next[index], next[index - 1]];
-    staticRuleChange("coloring", next);
-  };
-
-  const handleMoveDown = (index: number) => {
-    if (index === currentColoring.length - 1) return;
-    const next = [...currentColoring];
-    [next[index], next[index + 1]] = [next[index + 1], next[index]];
-    staticRuleChange("coloring", next);
-  };
-
-  const handleAdd = (mode: ColoringMode) => {
-    staticRuleChange("coloring", [
-      ...currentColoring,
-      { type: mode, blend: BlendMode.Normal },
-    ]);
-  };
-
-  const handleDelete = (index: number) => {
-    staticRuleChange(
-      "coloring",
-      currentColoring.filter((_, i) => i !== index),
-    );
+  const renderColoringSettings = (
+    entry: ColoringBuildRule,
+    index: number,
+  ): ReactNode => {
+    const mode = entry[0];
+    switch (mode) {
+      case ColoringMode.Iterations:
+        return <InterationColoringEdit coloringIndex={index} />;
+      case ColoringMode.Border:
+        return <BorderColoringEdit coloringIndex={index} />;
+      case ColoringMode.Trap:
+        return <TrapColoringEdit coloringIndex={index} />;
+      default:
+        return null;
+    }
   };
 
   const availableModes = allColoringModes.filter(
-    (mode) => !currentColoring.some((c) => c.type === mode),
+    (mode) => !coloring.some((c) => c[0] === mode),
   );
 
   return (
@@ -143,7 +113,7 @@ export const ColoringLayersAccordion = () => {
             </Menu.Target>
             <Menu.Dropdown>
               {availableModes.map((mode) => (
-                <Menu.Item key={mode} onClick={() => handleAdd(mode)}>
+                <Menu.Item key={mode} onClick={() => addColoringMode(mode)}>
                   {coloringModeLabels[mode]}
                 </Menu.Item>
               ))}
@@ -153,17 +123,22 @@ export const ColoringLayersAccordion = () => {
       </SettingsSection>
 
       <Accordion variant='default' chevron={null}>
-        {currentColoring.map((entry, index) => (
-          <Accordion.Item key={String(entry.type)} value={String(entry.type)}>
-            <Group gap={0} wrap='nowrap' style={{ position: 'relative' }}>
-              <Accordion.Control style={{ position: 'absolute', left: 0, right: 0 }}>
+        {coloring.map((entry, index) => (
+          <Accordion.Item key={String(entry[0])} value={String(entry[0])}>
+            <Group gap={0} wrap='nowrap' style={{ position: "relative" }}>
+              <Accordion.Control
+                style={{ position: "absolute", left: 0, right: 0 }}
+              >
                 <Text size='sm' fw={500}>
-                  {coloringModeLabels[entry.type]}
+                  {coloringModeLabels[entry[0]]}
                 </Text>
               </Accordion.Control>
-              <Accordion.Control disabled style={{ flex: 1, opacity: 0, pointerEvents: 'none' }}>
+              <Accordion.Control
+                disabled
+                style={{ flex: 1, opacity: 0, pointerEvents: "none" }}
+              >
                 <Text size='sm' fw={500}>
-                  {coloringModeLabels[entry.type]}
+                  {coloringModeLabels[entry[0]]}
                 </Text>
               </Accordion.Control>
               <Group gap={4} wrap='nowrap' pr='xs'>
@@ -171,9 +146,9 @@ export const ColoringLayersAccordion = () => {
                   size='xs'
                   w={100}
                   disabled={index === 0}
-                  value={String(entry.blend)}
+                  value={String(entry[3])}
                   onChange={(val) =>
-                    val && handleBlendChange(index, Number(val) as BlendMode)
+                    val && editColoringBlend(index, Number(val) as BlendMode)
                   }
                   data={blendModeOptions}
                   allowDeselect={false}
@@ -192,23 +167,23 @@ export const ColoringLayersAccordion = () => {
                     <Menu.Item
                       disabled={index === 0}
                       leftSection={<TbArrowUp size={14} />}
-                      onClick={() => handleMoveUp(index)}
+                      onClick={() => moveColoringLayer(index, "up")}
                     >
                       Move up
                     </Menu.Item>
                     <Menu.Item
-                      disabled={index === currentColoring.length - 1}
+                      disabled={index === coloring.length - 1}
                       leftSection={<TbArrowDown size={14} />}
-                      onClick={() => handleMoveDown(index)}
+                      onClick={() => moveColoringLayer(index, "down")}
                     >
                       Move down
                     </Menu.Item>
                     <Menu.Divider />
                     <Menu.Item
                       color='red'
-                      disabled={currentColoring.length <= 1}
+                      disabled={coloring.length <= 1}
                       leftSection={<TbTrash size={14} />}
-                      onClick={() => handleDelete(index)}
+                      onClick={() => removeColoringMode(index)}
                     >
                       Delete layer
                     </Menu.Item>
@@ -218,8 +193,8 @@ export const ColoringLayersAccordion = () => {
             </Group>
             <Accordion.Panel>
               <Stack gap='md' mt='sm'>
-               {coloringSettings[entry.type] ?? null}
-              </Stack>  
+                {renderColoringSettings(entry, index)}
+              </Stack>
             </Accordion.Panel>
           </Accordion.Item>
         ))}

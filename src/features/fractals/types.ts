@@ -1,4 +1,8 @@
-import { ConvertToRule, NumberBuildRule } from "@/shared/libs/numberRule";
+import {
+  ConvertRuleArrayToResult,
+  ConvertToRule,
+  NumberBuildRule,
+} from "@/shared/libs/numberRule";
 import { Vector2, Vector4 } from "@/shared/libs/vectors";
 
 export type RGBAVector = Vector4;
@@ -38,10 +42,42 @@ export enum BlendMode {
   SoftLight = 15,
 }
 
-export type ColoringEntry = {
-  type: ColoringMode;
-  blend: BlendMode;
-};
+// Per-mode coloring build rule tuples:
+// [mode, gradientIds[], params[], blendMode]
+export type IterationsColoringBuildRule = [
+  ColoringMode.Iterations,
+  [number],
+  [],
+  BlendMode,
+];
+export type TrapColoringBuildRule = [
+  ColoringMode.Trap,
+  [number],
+  [pow: NumberBuildRule, multiplier: NumberBuildRule],
+  BlendMode,
+];
+export type BorderColoringBuildRule = [
+  ColoringMode.Border,
+  [],
+  [pow: NumberBuildRule, multiplier: NumberBuildRule],
+  BlendMode,
+];
+export type NormalColoringBuildRule = [ColoringMode.Normal, [], [], BlendMode];
+export type StripesColoringBuildRule = [
+  ColoringMode.StripesAverage,
+  [],
+  [],
+  BlendMode,
+];
+
+export type ColoringBuildRule =
+  | IterationsColoringBuildRule
+  | TrapColoringBuildRule
+  | BorderColoringBuildRule
+  | NormalColoringBuildRule
+  | StripesColoringBuildRule;
+
+export type ColoringEntry = ConvertRuleArrayToResult<ColoringBuildRule>;
 
 type LineTrap = {
   type: "line";
@@ -79,12 +115,9 @@ export type FractalParams = {
   initialTime?: number;
   antialiasingLevel?: number;
 
-  coloring?: ColoringEntry[];
-
   traps?: FractalTrap[];
-  trapGradient?: GradientStop[];
 
-  gradient: GradientStop[];
+  gradients: GradientStop[][];
   borderColor?: RGBAVector;
 
   /**
@@ -101,6 +134,7 @@ export type FractalParams = {
 
 export type FractalDynamicParams = {
   mirroringPasses: MirroringPass[];
+  coloring: ColoringEntry[];
   c: Vector2;
   r: number;
   maxIterations: number;
@@ -113,12 +147,6 @@ export type FractalDynamicParams = {
   cDistVariation: Vector2;
   rDistVariation: number;
   iterationsDistVariation: number;
-
-  trapDistMult: number;
-  trapDistPow: number;
-
-  borderDistMult: number;
-  borderDistPow: number;
 };
 
 export type GradientStop = [
@@ -126,7 +154,10 @@ export type GradientStop = [
   [number, number, number, number], // RGBA, each value 0 to 1
 ];
 
-type FractalDynamicParamsRulable = Omit<FractalDynamicParams, "mirroringPasses">;
+type FractalDynamicParamsRulable = Omit<
+  FractalDynamicParams,
+  "mirroringPasses" | "coloring"
+>;
 
 export type FractalDynamicParamsBuildRules = {
   [K in keyof FractalDynamicParamsRulable]: ConvertToRule<
@@ -134,6 +165,7 @@ export type FractalDynamicParamsBuildRules = {
   >;
 } & {
   mirroringPasses: [MirroringPassType, NumberBuildRule, NumberBuildRule][];
+  coloring: ColoringBuildRule[];
 };
 
 export type FractalCustomRules = Record<

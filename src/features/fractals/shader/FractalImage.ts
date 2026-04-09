@@ -1,10 +1,7 @@
 import { Vector2 } from "@/shared/libs/vectors";
 import { makeFractalParamsFromRules } from "../ruleConversion";
 import { FractalParams, FractalParamsBuildRules } from "../types";
-import {
-  createFractalShader,
-  FractalShader,
-} from "./createFractalShader";
+import { createFractalShader, FractalShader } from "./createFractalShader";
 import { FractalRendererContext } from "./FractalsRenderer";
 import { ColoringShader, createColoringShader } from "./createColoringShader";
 
@@ -92,10 +89,10 @@ export class FractalImage {
 
     context.enable(context.SCISSOR_TEST);
     context.scissor(
-      size[0][0] * canvasSize[0]-0.01,
-      (1 - size[0][1] - ySize) * canvasSize[1] -0.01,
+      size[0][0] * canvasSize[0] - 0.01,
+      (1 - size[0][1] - ySize) * canvasSize[1] - 0.01,
       (size[1][0] - size[0][0] + 0.01) * canvasSize[0],
-      (size[1][1] - size[0][1]+ 0.01) * canvasSize[1],
+      (size[1][1] - size[0][1] + 0.01) * canvasSize[1],
     );
     context.useProgram(this.shader.program);
     context.bindFramebuffer(context.FRAMEBUFFER, framebuffer);
@@ -142,8 +139,9 @@ export class FractalImage {
       new Float32Array(positions),
       context.STATIC_DRAW,
     );
-    context.enableVertexAttribArray(      context.getAttribLocation(this.shader.program, "a_position"),
-);
+    context.enableVertexAttribArray(
+      context.getAttribLocation(this.shader.program, "a_position"),
+    );
     context.vertexAttribPointer(
       context.getAttribLocation(this.shader.program, "a_position"),
       3, // 3 components per iteration
@@ -189,10 +187,10 @@ export class FractalImage {
 
     context.enable(context.SCISSOR_TEST);
     context.scissor(
-      size[0][0] * canvasSize[0]-0.01,
-      (1 - size[0][1] - ySize) * canvasSize[1] -0.01,
+      size[0][0] * canvasSize[0] - 0.01,
+      (1 - size[0][1] - ySize) * canvasSize[1] - 0.01,
       (size[1][0] - size[0][0] + 0.01) * canvasSize[0],
-      (size[1][1] - size[0][1]+ 0.01) * canvasSize[1],
+      (size[1][1] - size[0][1] + 0.01) * canvasSize[1],
     );
 
     context.bindFramebuffer(context.FRAMEBUFFER, null);

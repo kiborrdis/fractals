@@ -27,16 +27,28 @@ export const FractalGraphOverlay = () => {
   >(null);
 
   const offset: Vector2 = useMemo(() => {
-    const imRange = convertRuleOrArrayToResult(fractal.dynamic.imVisibleRange, 0);
-    const reRange = convertRuleOrArrayToResult(fractal.dynamic.rlVisibleRange, 0);
+    const imRange = convertRuleOrArrayToResult(
+      fractal.dynamic.imVisibleRange,
+      0,
+    );
+    const reRange = convertRuleOrArrayToResult(
+      fractal.dynamic.rlVisibleRange,
+      0,
+    );
     return [
       -1 * (reRange[0] + (reRange[1] - reRange[0]) / 2),
       -1 * (imRange[0] + (imRange[1] - imRange[0]) / 2),
     ];
   }, [fractal.dynamic.imVisibleRange, fractal.dynamic.rlVisibleRange]);
   const axisRangeSizes: Vector2 = useMemo(() => {
-    const imRange = convertRuleOrArrayToResult(fractal.dynamic.imVisibleRange, 0);
-    const reRange = convertRuleOrArrayToResult(fractal.dynamic.rlVisibleRange, 0);
+    const imRange = convertRuleOrArrayToResult(
+      fractal.dynamic.imVisibleRange,
+      0,
+    );
+    const reRange = convertRuleOrArrayToResult(
+      fractal.dynamic.rlVisibleRange,
+      0,
+    );
     return [reRange[1] - reRange[0], imRange[1] - imRange[0]];
   }, [fractal.dynamic.imVisibleRange, fractal.dynamic.rlVisibleRange]);
   const { panAndZoomViewport, zoomToArea, updateTrap } = useActions();
@@ -69,7 +81,7 @@ export const FractalGraphOverlay = () => {
           />
         )}
       </GraphEdit>
-      <Stack gap='sm' align="flex-end" className={styles.toolbarArea}>
+      <Stack gap='sm' align='flex-end' className={styles.toolbarArea}>
         <FractalViewportToolbar
           zoomValue={axisRangeSizes[0]}
           panEnabled={panEnabled}

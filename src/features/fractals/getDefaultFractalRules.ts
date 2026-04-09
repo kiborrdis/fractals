@@ -1,22 +1,28 @@
 import { rangeRule } from "@/shared/libs/numberRule";
 import { makeRulesBasedOnParams } from "./ruleConversion";
-import { BlendMode, ColoringMode, FractalParams, FractalParamsBuildRules } from "./types";
+import {
+  BlendMode,
+  ColoringMode,
+  FractalParams,
+  FractalParamsBuildRules,
+} from "./types";
 
 export const getDefaultFractalParams = (): FractalParams => {
   const initialFractalParams: FractalParams = {
     formula: "z^2 + c",
-    gradient: [
-      [0, [0, 0, 0, 1]],
-      [10, [0.8, 0, 0, 1]],
-      [30, [1, 0.6666666666666666, 0, 1]],
-      [40, [1, 0.9490196078431372, 0, 1]],
-      [70, [0.9921568627450981, 1, 0.6, 1]],
-      [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+    gradients: [
+      [
+        [0, [0, 0, 0, 1]],
+        [10, [0.8, 0, 0, 1]],
+        [30, [1, 0.6666666666666666, 0, 1]],
+        [40, [1, 0.9490196078431372, 0, 1]],
+        [70, [0.9921568627450981, 1, 0.6, 1]],
+        [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+      ],
     ],
 
     invert: false,
 
-    coloring: [{ type: ColoringMode.Iterations, blend: BlendMode.Normal }],
     traps: [
       {
         type: "line",
@@ -35,15 +41,6 @@ export const getDefaultFractalParams = (): FractalParams => {
         radius: 0.047084123256274646,
       },
     ],
-    trapGradient: [
-      [0, [1, 0.9372549019607843, 0.8392156862745098, 1]],
-      [1, [1, 0.9372549019607843, 0.8392156862745098, 1]],
-      [1.7, [0.9921568627450981, 1, 0.6, 1]],
-      [3, [1, 0.9490196078431372, 0, 1]],
-      [5, [1, 0.6666666666666666, 0, 1]],
-      [8, [0.8, 0, 0, 1]],
-      [15, [0, 0, 0, 1]],
-    ],
 
     borderColor: [1, 1, 1, 1],
 
@@ -60,10 +57,7 @@ export const getDefaultFractalParams = (): FractalParams => {
       cDistVariation: [0, 0],
       rDistVariation: 0,
       iterationsDistVariation: 0,
-      trapDistMult: 25,
-      trapDistPow: 0.5,
-      borderDistMult: 25,
-      borderDistPow: 0.5,
+      coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
     },
     custom: {},
   };

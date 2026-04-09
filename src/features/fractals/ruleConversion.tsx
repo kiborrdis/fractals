@@ -4,6 +4,9 @@ import {
   makeRuleFromNumber,
 } from "@/shared/libs/numberRule";
 import {
+  BlendMode,
+  ColoringBuildRule,
+  ColoringMode,
   FractalDynamicParamsBuildRules,
   FractalDynamicParams,
   FractalParams,
@@ -29,6 +32,15 @@ export const makeRulesBasedOnParams = ({
       return acc;
     }, {} as FractalCustomRules),
     dynamic: {
+      coloring: params.coloring.map((entry) => {
+        const [mode, gradIds, entryParams, blend] = entry as [
+          number,
+          number[],
+          number[],
+          number,
+        ];
+        return [mode, gradIds, entryParams.map(makeRuleFromNumber), blend];
+      }) as ColoringBuildRule[],
       mirroringPasses: params.mirroringPasses.map(([type, param1, param2]) => [
         type,
         makeRuleFromNumber(param1),
@@ -45,10 +57,6 @@ export const makeRulesBasedOnParams = ({
       iterationsDistVariation: makeRuleFromNumber(
         params.iterationsDistVariation,
       ),
-      trapDistMult: makeRuleFromNumber(params.trapDistMult),
-      trapDistPow: makeRuleFromNumber(params.trapDistPow),
-      borderDistMult: makeRuleFromNumber(params.borderDistMult),
-      borderDistPow: makeRuleFromNumber(params.borderDistPow),
     },
   };
 
@@ -77,5 +85,12 @@ const makeFractalDynamicParamsFromRules = (
   rules: FractalDynamicParamsBuildRules,
   time: number = 0,
 ): FractalDynamicParams => {
-  return convertBuildObjectToResult(rules, time);
+  const result = convertBuildObjectToResult(
+    rules,
+    time,
+  ) as FractalDynamicParams;
+  if (!result.coloring || result.coloring.length === 0) {
+    result.coloring = [[ColoringMode.Iterations, [0], [], BlendMode.Normal]];
+  }
+  return result;
 };

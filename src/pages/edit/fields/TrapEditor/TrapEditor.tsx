@@ -12,7 +12,9 @@ export const TrapEditor = () => {
   return (
     <Stack gap='xs'>
       <Group justify='space-between' align='center'>
-        <EditorLabel docKeys="trap-edit-sidebar" size="xs">Traps</EditorLabel>
+        <EditorLabel docKeys='trap-edit-sidebar' size='xs'>
+          Traps
+        </EditorLabel>
         <Text size='xs' c='dimmed'>
           {traps.length} trap{traps.length !== 1 ? "s" : ""}
         </Text>

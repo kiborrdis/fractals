@@ -161,160 +161,164 @@ function segmentCenter(seg: [Vector2, Vector2]): Vector2 {
   return [(seg[0][0] + seg[1][0]) / 2, (seg[0][1] + seg[1][1]) / 2];
 }
 
-const LineTrapEdit = memo(({
-  trap,
-  index,
-  highlighted,
-  onTrapUpdate,
-}: {
-  trap: Extract<FractalTrap, { type: "line" }>;
-  index: number;
-  highlighted: boolean;
-  onTrapUpdate: (i: number, t: FractalTrap) => void;
-}) => {
-  const [rotating, setRotating] = useState(false);
-  const bounds = useViewportBounds();
-  const { axisRangeSizes } = useGraphEditContext();
-  const segment = useMemo(() => {
-    return getLineVisibleSegment(trap, {
-      xMax: bounds.xMax,
-      xMin: bounds.xMin,
-      yMax: bounds.yMax,
-      yMin: bounds.yMin,
-    });
-  }, [bounds.xMax, bounds.xMin, bounds.yMax, bounds.yMin, trap]);
+const LineTrapEdit = memo(
+  ({
+    trap,
+    index,
+    highlighted,
+    onTrapUpdate,
+  }: {
+    trap: Extract<FractalTrap, { type: "line" }>;
+    index: number;
+    highlighted: boolean;
+    onTrapUpdate: (i: number, t: FractalTrap) => void;
+  }) => {
+    const [rotating, setRotating] = useState(false);
+    const bounds = useViewportBounds();
+    const { axisRangeSizes } = useGraphEditContext();
+    const segment = useMemo(() => {
+      return getLineVisibleSegment(trap, {
+        xMax: bounds.xMax,
+        xMin: bounds.xMin,
+        yMax: bounds.yMax,
+        yMin: bounds.yMin,
+      });
+    }, [bounds.xMax, bounds.xMin, bounds.yMax, bounds.yMin, trap]);
 
-  const trapRef = useRef(trap);
-  trapRef.current = trap;
+    const trapRef = useRef(trap);
+    trapRef.current = trap;
 
-  const [center, setCenter] = useState<Vector2 | null>(() =>
-    segment ? segmentCenter(segment) : null,
-  );
+    const [center, setCenter] = useState<Vector2 | null>(() =>
+      segment ? segmentCenter(segment) : null,
+    );
 
-  const { xMin, xMax, yMin, yMax } = bounds;
-  useEffect(() => {
-    const seg = getLineVisibleSegment(trapRef.current, {
-      xMin,
-      xMax,
-      yMin,
-      yMax,
-    });
-    if (seg) {
-      setCenter(segmentCenter(seg));
-    }
-  }, [xMin, xMax, yMin, yMax]);
-
-  const handlePointMove = useCallback(
-    (i: number, newPos: Vector2) => {
-      if (!center) {
-        return;
+    const { xMin, xMax, yMin, yMax } = bounds;
+    useEffect(() => {
+      const seg = getLineVisibleSegment(trapRef.current, {
+        xMin,
+        xMax,
+        yMin,
+        yMax,
+      });
+      if (seg) {
+        setCenter(segmentCenter(seg));
       }
+    }, [xMin, xMax, yMin, yMax]);
 
-      if (i === 0) {
-        setCenter(newPos);
-        onTrapUpdate(index, {
-          ...trapRef.current,
-          c: -(trapRef.current.a * newPos[0] + trapRef.current.b * newPos[1]),
-        });
-      } else {
-        const dx = newPos[0] - center[0];
-        const dy = newPos[1] - center[1];
-        const len = Math.hypot(dx, dy);
-        if (len < 0.00001) {
+    const handlePointMove = useCallback(
+      (i: number, newPos: Vector2) => {
+        if (!center) {
           return;
         }
-        const a = -dy / len;
-        const b = dx / len;
-        onTrapUpdate(index, {
-          ...trapRef.current,
-          a,
-          b,
-          c: -(a * center[0] + b * center[1]),
-        });
-      }
-    },
-    [center, index, onTrapUpdate],
-  );
 
-  if (!segment || !center) return null;
+        if (i === 0) {
+          setCenter(newPos);
+          onTrapUpdate(index, {
+            ...trapRef.current,
+            c: -(trapRef.current.a * newPos[0] + trapRef.current.b * newPos[1]),
+          });
+        } else {
+          const dx = newPos[0] - center[0];
+          const dy = newPos[1] - center[1];
+          const len = Math.hypot(dx, dy);
+          if (len < 0.00001) {
+            return;
+          }
+          const a = -dy / len;
+          const b = dx / len;
+          onTrapUpdate(index, {
+            ...trapRef.current,
+            a,
+            b,
+            c: -(a * center[0] + b * center[1]),
+          });
+        }
+      },
+      [center, index, onTrapUpdate],
+    );
 
-  const handleDist = Math.min(axisRangeSizes[0], axisRangeSizes[1]) * 0.15;
-  const dirLen = Math.hypot(trap.b, trap.a);
-  const rotationHandle: Vector2 = [
-    center[0] + (trap.b / dirLen) * handleDist,
-    center[1] + (-trap.a / dirLen) * handleDist,
-  ];
+    if (!segment || !center) return null;
 
-  return (
-    <>
-      <Graph2DLine
-        lineWidth={2}
-        data={segment}
-        getColor={highlighted ? colorFnHighlighted : colorFn}
-      />
-      {rotating && (
-        <Graph2DCircle
-          center={center}
-          lineWidth={1.2}
-          lineDash={10}
-          radius={handleDist}
-          color={TRAP_COLOR}
+    const handleDist = Math.min(axisRangeSizes[0], axisRangeSizes[1]) * 0.15;
+    const dirLen = Math.hypot(trap.b, trap.a);
+    const rotationHandle: Vector2 = [
+      center[0] + (trap.b / dirLen) * handleDist,
+      center[1] + (-trap.a / dirLen) * handleDist,
+    ];
+
+    return (
+      <>
+        <Graph2DLine
+          lineWidth={2}
+          data={segment}
+          getColor={highlighted ? colorFnHighlighted : colorFn}
         />
-      )}
-      <PointsEdit
-        points={[center, rotationHandle]}
-        renderPoint={renderLinePoints}
-        onPointMoveStart={(i) => {
-          if (i === 1) {
-            setRotating(true);
-          }
-        }}
-        onPointMoveEnd={(i) => {
-          if (i === 1) {
-            setRotating(false);
-          }
-        }}
-        onPointMove={handlePointMove}
-      />
-    </>
-  );
-});
+        {rotating && (
+          <Graph2DCircle
+            center={center}
+            lineWidth={1.2}
+            lineDash={10}
+            radius={handleDist}
+            color={TRAP_COLOR}
+          />
+        )}
+        <PointsEdit
+          points={[center, rotationHandle]}
+          renderPoint={renderLinePoints}
+          onPointMoveStart={(i) => {
+            if (i === 1) {
+              setRotating(true);
+            }
+          }}
+          onPointMoveEnd={(i) => {
+            if (i === 1) {
+              setRotating(false);
+            }
+          }}
+          onPointMove={handlePointMove}
+        />
+      </>
+    );
+  },
+);
 LineTrapEdit.displayName = "LineTrapEdit";
 
-const SegmentTrapEdit = memo(({
-  trap,
-  index,
-  highlighted,
-  onTrapUpdate,
-}: {
-  trap: Extract<FractalTrap, { type: "segment" }>;
-  index: number;
-  highlighted: boolean;
-  onTrapUpdate: (i: number, t: FractalTrap) => void;
-}) => {
-  const segment: [Vector2, Vector2] = [trap.p1, trap.p2];
+const SegmentTrapEdit = memo(
+  ({
+    trap,
+    index,
+    highlighted,
+    onTrapUpdate,
+  }: {
+    trap: Extract<FractalTrap, { type: "segment" }>;
+    index: number;
+    highlighted: boolean;
+    onTrapUpdate: (i: number, t: FractalTrap) => void;
+  }) => {
+    const segment: [Vector2, Vector2] = [trap.p1, trap.p2];
 
-  return (
-    <>
-      <Graph2DLine
-        lineWidth={2}
-        data={segment}
-        getColor={highlighted ? colorFnHighlighted : colorFn}
-      />
-      <PointsEdit
-        points={[trap.p1, trap.p2]}
-        renderPoint={renderSegmentPoints}
-        onPointMove={(i, newPos) => {
-          if (i === 0) {
-            onTrapUpdate(index, { ...trap, p1: newPos });
-          } else {
-            onTrapUpdate(index, { ...trap, p2: newPos });
-          }
-        }}
-      />
-    </>
-  );
-});
+    return (
+      <>
+        <Graph2DLine
+          lineWidth={2}
+          data={segment}
+          getColor={highlighted ? colorFnHighlighted : colorFn}
+        />
+        <PointsEdit
+          points={[trap.p1, trap.p2]}
+          renderPoint={renderSegmentPoints}
+          onPointMove={(i, newPos) => {
+            if (i === 0) {
+              onTrapUpdate(index, { ...trap, p1: newPos });
+            } else {
+              onTrapUpdate(index, { ...trap, p2: newPos });
+            }
+          }}
+        />
+      </>
+    );
+  },
+);
 SegmentTrapEdit.displayName = "SegmentTrapEdit";
 
 export const TrapOverlay = ({

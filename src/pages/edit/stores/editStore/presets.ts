@@ -1,18 +1,24 @@
-import { FractalParamsBuildRules } from "@/features/fractals";
+import {
+  BlendMode,
+  ColoringMode,
+  FractalParamsBuildRules,
+} from "@/features/fractals";
 import { RuleType } from "@/shared/libs/numberRule";
 
 const julia: FractalParamsBuildRules = {
   formula: "z^3 + c",
 
-  gradient: [
-    [0, [0.05, 0.01, 0.15, 1]], // Deep blue-purple
-    [15, [0.2, 0.05, 0.4, 1]], // Royal purple
-    [30, [0.6, 0.15, 0.7, 1]], // Vibrant purple
-    [45, [0.9, 0.4, 0.8, 1]], // Pink-purple
-    [60, [1, 0.7, 0.5, 1]], // Coral
-    [75, [1, 0.9, 0.3, 1]], // Golden
-    [90, [0.95, 1, 0.7, 1]], // Pale yellow
-    [100, [1, 1, 0.95, 1]], // Near white
+  gradients: [
+    [
+      [0, [0.05, 0.01, 0.15, 1]], // Deep blue-purple
+      [15, [0.2, 0.05, 0.4, 1]], // Royal purple
+      [30, [0.6, 0.15, 0.7, 1]], // Vibrant purple
+      [45, [0.9, 0.4, 0.8, 1]], // Pink-purple
+      [60, [1, 0.7, 0.5, 1]], // Coral
+      [75, [1, 0.9, 0.3, 1]], // Golden
+      [90, [0.95, 1, 0.7, 1]], // Pale yellow
+      [100, [1, 1, 0.95, 1]], // Near white
+    ],
   ],
 
   invert: false,
@@ -100,22 +106,7 @@ const julia: FractalParamsBuildRules = {
       t: RuleType.StaticNumber,
       value: 5,
     },
-    borderDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    borderDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
-    trapDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    trapDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
+    coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
   },
 
   custom: {},
@@ -123,13 +114,15 @@ const julia: FractalParamsBuildRules = {
 
 const mandelbrot: FractalParamsBuildRules = {
   formula: "z^2 + c",
-  gradient: [
-    [0, [0, 0, 0, 1]],
-    [10, [0.8, 0, 0, 1]],
-    [30, [1, 0.6666666666666666, 0, 1]],
-    [40, [1, 0.9490196078431372, 0, 1]],
-    [70, [0.9921568627450981, 1, 0.6, 1]],
-    [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+  gradients: [
+    [
+      [0, [0, 0, 0, 1]],
+      [10, [0.8, 0, 0, 1]],
+      [30, [1, 0.6666666666666666, 0, 1]],
+      [40, [1, 0.9490196078431372, 0, 1]],
+      [70, [0.9921568627450981, 1, 0.6, 1]],
+      [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+    ],
   ],
   invert: false,
   custom: {},
@@ -199,22 +192,7 @@ const mandelbrot: FractalParamsBuildRules = {
       t: 0,
       value: 0,
     },
-    borderDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    borderDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
-    trapDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    trapDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
+    coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
   },
   initialZFormula: "c0",
   initialCFormula: "fCoord",
@@ -222,13 +200,15 @@ const mandelbrot: FractalParamsBuildRules = {
 
 const burningship: FractalParamsBuildRules = {
   formula: "cmpl(abs(re(z)), abs(im(z)))^2 + c",
-  gradient: [
-    [0, [0, 0, 0, 1]],
-    [10, [0.8, 0, 0, 1]],
-    [30, [1, 0.6666666666666666, 0, 1]],
-    [40, [1, 0.9490196078431372, 0, 1]],
-    [70, [0.9921568627450981, 1, 0.6, 1]],
-    [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+  gradients: [
+    [
+      [0, [0, 0, 0, 1]],
+      [10, [0.8, 0, 0, 1]],
+      [30, [1, 0.6666666666666666, 0, 1]],
+      [40, [1, 0.9490196078431372, 0, 1]],
+      [70, [0.9921568627450981, 1, 0.6, 1]],
+      [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+    ],
   ],
   invert: false,
   custom: {},
@@ -298,23 +278,7 @@ const burningship: FractalParamsBuildRules = {
       t: 0,
       value: 0,
     },
-    borderDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    borderDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
-    trapDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    trapDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
-
+    coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
   },
   initialZFormula: "c0",
   initialCFormula: "fCoord",
@@ -323,13 +287,15 @@ const burningship: FractalParamsBuildRules = {
 
 const tricorn: FractalParamsBuildRules = {
   formula: "conjugate(z)^2 + c",
-  gradient: [
-    [0, [0, 0, 0, 1]],
-    [10, [0.8, 0, 0, 1]],
-    [30, [1, 0.6666666666666666, 0, 1]],
-    [40, [1, 0.9490196078431372, 0, 1]],
-    [70, [0.9921568627450981, 1, 0.6, 1]],
-    [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+  gradients: [
+    [
+      [0, [0, 0, 0, 1]],
+      [10, [0.8, 0, 0, 1]],
+      [30, [1, 0.6666666666666666, 0, 1]],
+      [40, [1, 0.9490196078431372, 0, 1]],
+      [70, [0.9921568627450981, 1, 0.6, 1]],
+      [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+    ],
   ],
   invert: false,
   custom: {},
@@ -399,23 +365,7 @@ const tricorn: FractalParamsBuildRules = {
       t: 0,
       value: 0,
     },
-    borderDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    borderDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
-    trapDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    trapDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
-
+    coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
   },
   initialZFormula: "c0",
   initialCFormula: "fCoord",
@@ -424,13 +374,15 @@ const tricorn: FractalParamsBuildRules = {
 
 const multibrot: FractalParamsBuildRules = {
   formula: "z^5 + c",
-  gradient: [
-    [0, [0, 0, 0, 1]],
-    [10, [0.8, 0, 0, 1]],
-    [30, [1, 0.6666666666666666, 0, 1]],
-    [40, [1, 0.9490196078431372, 0, 1]],
-    [70, [0.9921568627450981, 1, 0.6, 1]],
-    [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+  gradients: [
+    [
+      [0, [0, 0, 0, 1]],
+      [10, [0.8, 0, 0, 1]],
+      [30, [1, 0.6666666666666666, 0, 1]],
+      [40, [1, 0.9490196078431372, 0, 1]],
+      [70, [0.9921568627450981, 1, 0.6, 1]],
+      [100, [1, 0.9372549019607843, 0.8392156862745098, 1]],
+    ],
   ],
   invert: false,
   custom: {},
@@ -500,22 +452,7 @@ const multibrot: FractalParamsBuildRules = {
       t: 0,
       value: 0,
     },
-    borderDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    borderDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
-    trapDistMult: {
-      t: RuleType.StaticNumber,
-      value: 20,
-    },
-    trapDistPow: {
-      t: RuleType.StaticNumber,
-      value: 0.5,
-    },
+    coloring: [[ColoringMode.Iterations, [0], [], BlendMode.Normal]],
   },
   initialZFormula: "c0",
   initialCFormula: "fCoord",

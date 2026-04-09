@@ -22,7 +22,6 @@ import {
   createResolutionUniformApplier,
 } from "./prepareFractalUniforms";
 
-
 export const createFractalShader = (
   context: WebGL2RenderingContext,
   formula: string,
@@ -163,14 +162,14 @@ export const createFractalShader = (
     applyCustomVars,
     cleanup: () => {
       context.deleteProgram(shaderProgram);
-      
+
       if (vertexShader) {
         context.deleteShader(vertexShader);
-      } 
+      }
       if (fragmentShader) {
         context.deleteShader(fragmentShader);
       }
-    }
+    },
   };
 };
 

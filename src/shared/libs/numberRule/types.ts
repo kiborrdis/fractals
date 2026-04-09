@@ -115,7 +115,10 @@ type TupleWithLength<
   R extends T[] = [],
 > = R["length"] extends L ? R : TupleWithLength<T, L, [T, ...R]>;
 
-export type AnyRule = NumberBuildRule | Vector2BSplineRule | NVectorStepRule<number>;
+export type AnyRule =
+  | NumberBuildRule
+  | Vector2BSplineRule
+  | NVectorStepRule<number>;
 export type AnyScalar = number;
 export type AnyRuleOrScalar = AnyRule | AnyScalar;
 
@@ -201,4 +204,4 @@ export type ConvertRuleArrayToResult<
 // };
 export type ConvertBuildObjectToResult<O extends BuildObject> = {
   [K in keyof O]: ConvertRuleArrayToResult<O[K]>;
-}
+};

@@ -3,11 +3,6 @@
 precision highp float;
 const float T = 1000000.0f;
 
-uniform float u_border_intensity;
-uniform float u_border_distance_pow;
-uniform float u_trap_intensity;
-uniform float u_trap_distance_pow;
-
 uniform vec4 u_border_color;
 
 uniform vec2 u_resolution;
@@ -15,12 +10,12 @@ uniform vec2 u_resolution;
 uniform float u_max_iterations;
 
 uniform sampler2D u_gradients_sampler;
-uniform int u_sampler_wl;
-uniform int u_trap_gradient_wl;
 
 const int MAX_BLEND = 6;
-uniform int u_blend_types_size;
-uniform ivec2 u_blend_types[MAX_BLEND];
+uniform int u_blend_configs_size;
+uniform ivec4 u_blend_configs[MAX_BLEND]; // [mode, blendMode, gradId, 0]
+uniform vec4 u_blend_params[MAX_BLEND];   // [param0, param1, 0, 0]
+uniform int u_gradient_wls[MAX_BLEND];    // stop count per gradient row
 
 uniform sampler2D u_fractal_data1;
 uniform sampler2D u_fractal_data2;
@@ -30,6 +25,7 @@ in highp vec2 vTextureCoord;
 uniform float u_time;
 
 const float GRADIENT_TEXTURE_LENGTH = 32.0f * 2.0f;
+const float GRADIENT_TEXTURE_ROWS = float(MAX_BLEND);
 
 out vec4 myOutputColor;
 
@@ -61,15 +57,15 @@ vec2 getTexCoord(vec2 pixelCoord, vec2 texDim) {
   return (pixelCoord + 0.5f) / texDim;
 }
 
-vec4 createTrapGradient(float dist) {
-  int numColors = u_trap_gradient_wl * 2;
-  vec2 texDim = vec2(GRADIENT_TEXTURE_LENGTH, 2.0f);
+vec4 createTrapGradient(float dist, int gradRow, int wl) {
+  int numColors = wl * 2;
+  vec2 texDim = vec2(GRADIENT_TEXTURE_LENGTH, GRADIENT_TEXTURE_ROWS);
   if (numColors == 0) {
     return vec4(1.0f, 0.0f, 1.0f, 1.0f);
   }
 
-  vec4 prevTexel = texture(u_gradients_sampler, getTexCoord(vec2(0, 1), texDim));
-  float prevPos = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(1, 1), texDim)));
+  vec4 prevTexel = texture(u_gradients_sampler, getTexCoord(vec2(0, float(gradRow)), texDim));
+  float prevPos = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(1, float(gradRow)), texDim)));
   vec4 color = prevTexel;
 
   for (int i = 2; i < 256; i += 2) {
@@ -77,8 +73,8 @@ vec4 createTrapGradient(float dist) {
       break;
     }
 
-    vec4 texel = texture(u_gradients_sampler, getTexCoord(vec2(i, 1), texDim));
-    float curPos = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(i + 1, 1), texDim)));
+    vec4 texel = texture(u_gradients_sampler, getTexCoord(vec2(i, float(gradRow)), texDim));
+    float curPos = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(i + 1, float(gradRow)), texDim)));
     color = mix(color, texel, smoothstep(prevPos, curPos, dist));
     prevPos = curPos;
   }
@@ -86,22 +82,22 @@ vec4 createTrapGradient(float dist) {
   return color;
 }
 
-vec4 createGradient(float part, int maxIterations) {
-  int numColors = u_sampler_wl * 2;
-  vec2 texDim = vec2(GRADIENT_TEXTURE_LENGTH, 2.0f);
+vec4 createGradient(float part, int maxIterations, int gradRow, int wl) {
+  int numColors = wl * 2;
+  vec2 texDim = vec2(GRADIENT_TEXTURE_LENGTH, GRADIENT_TEXTURE_ROWS);
   if (numColors == 0) {
     return vec4(1.0f, 0.0f, 1.0f, 1.0f);
   }
 
   if (abs(1.0f - part) < 0.00001f) {
-    vec4 lastTexel = texture(u_gradients_sampler, getTexCoord(vec2(numColors - 2, 0), texDim));
+    vec4 lastTexel = texture(u_gradients_sampler, getTexCoord(vec2(numColors - 2, float(gradRow)), texDim));
     return lastTexel;
   }
 
-  vec4 prevTexel = texture(u_gradients_sampler, getTexCoord(vec2(0, 0), texDim));
+  vec4 prevTexel = texture(u_gradients_sampler, getTexCoord(vec2(0, float(gradRow)), texDim));
 
   vec4 color = prevTexel;
-  float prevPos = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(1, 0), texDim))) / float(maxIterations);
+  float prevPos = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(1, float(gradRow)), texDim))) / float(maxIterations);
 
   bool nextBailOut = false;
   for (int i = 2; i < 256; i += 2) {
@@ -109,14 +105,14 @@ vec4 createGradient(float part, int maxIterations) {
       break;
     }
 
-    vec4 texel = texture(u_gradients_sampler, getTexCoord(vec2(i, 0), texDim));
-    float stopCoord = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(i + 1, 0), texDim)));
+    vec4 texel = texture(u_gradients_sampler, getTexCoord(vec2(i, float(gradRow)), texDim));
+    float stopCoord = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(i + 1, float(gradRow)), texDim)));
     float curPos = stopCoord / float(maxIterations);
 
     if (stopCoord > float(maxIterations)) {
       if (nextBailOut) {
         curPos = 1.0f;
-        texel = texture(u_gradients_sampler, getTexCoord(vec2(numColors - 2, 0), texDim));
+        texel = texture(u_gradients_sampler, getTexCoord(vec2(numColors - 2, float(gradRow)), texDim));
       }
       nextBailOut = true;
     }
@@ -242,24 +238,28 @@ vec4 doColoring(FractalInfo info) {
   vec4 resultColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
   int colorIndex = 0;
 
-  for (int i = 0; i < u_blend_types_size; i++) {
-    int coloringType = u_blend_types[i].x;
+  for (int i = 0; i < u_blend_configs_size; i++) {
+    int coloringMode = u_blend_configs[i].x;
+    int blendMode = u_blend_configs[i].y;
+    int gradId = u_blend_configs[i].z;
+    float param0 = u_blend_params[i].x;
+    float param1 = u_blend_params[i].y;
 
     vec4 currentColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Time escape gradient coloring
-    if (coloringType == 1) {
+    if (coloringMode == 1) {
       float colorInt = info.escapeIteration / u_max_iterations;
-      currentColor = createGradient(colorInt, int(u_max_iterations));
-    } else if (coloringType == 2) { // Border coloring
-      float dist = clamp(pow(info.borderDistance, u_border_distance_pow) * u_border_intensity, 0.0f, 1.0f);
+      currentColor = createGradient(colorInt, int(u_max_iterations), gradId, u_gradient_wls[gradId]);
+    } else if (coloringMode == 2) { // Border coloring
+      float dist = clamp(pow(info.borderDistance, param1) * param0, 0.0f, 1.0f);
 
       currentColor = vec4(u_border_color.xyz * (1.0f - sqrt(sqrt(dist))), 1.0f);
-    } else if (coloringType == 3) { // Trap coloring
-      float scaledDist = pow(info.trapDistance, u_trap_distance_pow) * u_trap_intensity;
+    } else if (coloringMode == 3) { // Trap coloring
+      float scaledDist = pow(info.trapDistance, param1) * param0;
 
-      currentColor = createTrapGradient(scaledDist);
-    } else if (coloringType == 40) { // Normal coloring
+      currentColor = createTrapGradient(scaledDist, gradId, u_gradient_wls[gradId]);
+    } else if (coloringMode == 40) { // Normal coloring
       if (info.escapeIteration == u_max_iterations) {
         currentColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
         continue;
@@ -269,12 +269,10 @@ vec4 doColoring(FractalInfo info) {
       t = t * 0.5f + 0.5f;
 
       currentColor = vec4(t, t, t, 1.0f);
-    } else if (coloringType == 50) { // Stripe averaging
+    } else if (coloringMode == 50) { // Stripe averaging
       float original = info.stripeAvg;
       currentColor = vec4(original, original, original, 1.0f);
     }
-
-    int blendMode = int(u_blend_types[i].y);
 
     if (colorIndex == 0) {
       resultColor = currentColor;

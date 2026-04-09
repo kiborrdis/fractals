@@ -15,7 +15,10 @@ export const GraphSplinePositionIndicator = ({
 
   const timeToUse = currTime;
 
-  const prevPosition = convertRuleOrArrayToResult(rule, Math.max(timeToUse - 1, 0));
+  const prevPosition = convertRuleOrArrayToResult(
+    rule,
+    Math.max(timeToUse - 1, 0),
+  );
   const currPosition = convertRuleOrArrayToResult(rule, timeToUse);
   const direction = [
     currPosition[0] - prevPosition[0],

@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { renderFractalFrame } from "./renderFractalFrame";
 import { getDefaultFractalRules } from "../src/features/fractals/getDefaultFractalRules";
+import { COLORING_MODE_DEFAULT_GRADIENT, makeDefaultColoringEntry } from "../src/features/fractals/coloringDefaults";
+
 // import { BlendMode, ColoringMode } from "../src/features/fractals";
 
 test("FractalsRenderer renders one frame with FractalImage using default fractal rules", async ({
@@ -19,9 +21,10 @@ test("FractalsRenderer renders one frame with FractalImage using trap coloring",
 }) => {
   await page.goto("/");
   const rules = getDefaultFractalRules();
-  rules.coloring = [
-    { type: 3, blend: 1 },
+  rules.dynamic.coloring = [
+    makeDefaultColoringEntry(3, 0),
   ]
+  rules.gradients[0] = COLORING_MODE_DEFAULT_GRADIENT[3];
 
   const buffer = await renderFractalFrame(page, rules, [400, 400]);
 
@@ -33,8 +36,8 @@ test("FractalsRenderer renders one frame with FractalImage using border coloring
 }) => {
   await page.goto("/");
   const rules = getDefaultFractalRules();
-  rules.coloring = [
-    { type: 2, blend: 1 },
+  rules.dynamic.coloring = [
+    makeDefaultColoringEntry(2, 0),
   ];
 
   const buffer = await renderFractalFrame(page, rules, [400, 400]);
@@ -47,8 +50,8 @@ test("FractalsRenderer renders one frame with FractalImage using normal coloring
 }) => {
   await page.goto("/");
   const rules = getDefaultFractalRules();
-  rules.coloring = [
-    { type: 40, blend: 1 },
+  rules.dynamic.coloring = [
+    makeDefaultColoringEntry(40, 0),
   ];
 
   const buffer = await renderFractalFrame(page, rules, [400, 400]);

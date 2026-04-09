@@ -9,11 +9,9 @@ import {
 import { useSettings } from "../../stores/settings";
 import { EditorLabel } from "../../ui/EditorLabel";
 import { TbX } from "react-icons/tb";
-import { useStaticRule } from "../../stores/editStore/data/useStaticRule";
 
 export const EditorSettings = ({ onClose }: { onClose: () => void }) => {
   const { settings, setSetting } = useSettings();
-  const [coloring, setColoring] = useStaticRule("coloring");
 
   return (
     <Stack p='md' gap='md'>
@@ -39,9 +37,6 @@ export const EditorSettings = ({ onClose }: { onClose: () => void }) => {
         onChange={(e) => {
           {
             setSetting("coloringLayers", e.currentTarget.checked);
-            if (!e.currentTarget.checked && coloring) {
-              setColoring("coloring", [coloring[0]]);
-            }
           }
         }}
       />
@@ -49,10 +44,12 @@ export const EditorSettings = ({ onClose }: { onClose: () => void }) => {
         label='Advanced mirroring'
         description='Enable multi-pass mirroring editor in the Mirroring tab'
         checked={settings.advancedMirroringSettings}
-        onChange={(e) => setSetting("advancedMirroringSettings", e.currentTarget.checked)}
+        onChange={(e) =>
+          setSetting("advancedMirroringSettings", e.currentTarget.checked)
+        }
       />
 
-       <Switch
+      <Switch
         label='Normal coloring'
         description='Enable normal coloring mode in the Coloring tab'
         checked={settings.normalColoring}

@@ -106,7 +106,7 @@ export const createShowcaseFractalsVisualizer = (
   }
   const fractalImagesGrid: FractalImage[][] = fractals.map((row) => {
     return row.map((fractalParams) => {
-      return new FractalImage(context, fractalParams);
+      return new FractalImage(context as WebGL2RenderingContext, fractalParams);
     });
   });
   const renderer = new FractalsRenderer(context, canvasSize, fractalImagesGrid);

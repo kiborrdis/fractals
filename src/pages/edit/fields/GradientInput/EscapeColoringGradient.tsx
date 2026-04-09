@@ -11,18 +11,16 @@ import {
   GradientStopsInput,
 } from "@/shared/ui/GradientStopsInput/GradientStopsInput";
 import { EditorLabel } from "../../ui/EditorLabel";
-import { useActions } from "../../stores/editStore/data/useActions";
 
 export const EscapeColoringGradient = ({
   value,
   onChange,
-  name,
+  onPreview,
 }: {
   value: GradientStop[];
-  onChange: (name: "gradient", value: GradientStop[]) => void;
-  name: "gradient";
+  onChange: (value: GradientStop[]) => void;
+  onPreview: (stops: GradientStop[] | undefined) => void;
 }) => {
-  const { staticParamOverride } = useActions();
   const maxPosition = useMaxIteration();
   const [activePanel, setActivePanel] = useState<
     "generator" | "presets" | null
@@ -30,16 +28,13 @@ export const EscapeColoringGradient = ({
 
   useEffect(() => {
     return () => {
-      staticParamOverride(name, undefined);
+      onPreview(undefined);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setStops = (newStops: GradientStop[]) => {
-    onChange(
-      name,
-      [...newStops].sort((a, b) => a[0] - b[0]),
-    );
+    onChange([...newStops].sort((a, b) => a[0] - b[0]));
   };
 
   const actions = (
@@ -77,13 +72,13 @@ export const EscapeColoringGradient = ({
   );
 
   const handleApply = (previewStops: GradientStop[]) => {
-    onChange(name, previewStops);
-    staticParamOverride(name, undefined);
+    onChange(previewStops);
+    onPreview(undefined);
     setActivePanel(null);
   };
 
   const handleCancel = () => {
-    staticParamOverride(name, undefined);
+    onPreview(undefined);
     setActivePanel(null);
   };
 
@@ -112,16 +107,14 @@ export const EscapeColoringGradient = ({
       </Group>
       {activePanel === "generator" ? (
         <GradientGenerator
-          onPreview={(newStops) => staticParamOverride(name, newStops)}
+          onPreview={onPreview}
           onApply={handleApply}
           onCancel={handleCancel}
           initialMaxPosition={maxPosition}
         />
       ) : activePanel === "presets" ? (
         <GradientPresets
-          onPreview={(newStops: GradientStop[]) =>
-            staticParamOverride(name, newStops)
-          }
+          onPreview={onPreview}
           onApply={handleApply}
           onCancel={handleCancel}
           initialMaxPosition={maxPosition}
@@ -129,7 +122,7 @@ export const EscapeColoringGradient = ({
       ) : (
         <EscapeColoringGradientContent
           stops={value}
-          onChange={(newStops) => onChange(name, newStops)}
+          onChange={(newStops) => onChange(newStops)}
         />
       )}
     </>

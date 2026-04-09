@@ -59,7 +59,7 @@ export const FractalViewportToolbar = memo(
             label='Zoom out'
             onClick={() => magnifyViewport(2)}
           />
-        <Divider orientation='vertical' />
+          <Divider orientation='vertical' />
           <DocTooltip
             docKeys={mergeDocKeys("main-content-area")}
             anchor={<ToolbarItem icon={BiQuestionMark} color='gray' />}

@@ -1,11 +1,18 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
+  BlendMode,
+  ColoringBuildRule,
+  ColoringMode,
   FractalCustomRules,
   FractalDynamicParamsBuildRules,
   FractalParams,
   FractalParamsBuildRules,
   FractalTrap,
+  GradientStop,
+  COLORING_MODE_GRADIENT_COUNT,
+  COLORING_MODE_DEFAULT_PARAMS,
+  COLORING_MODE_DEFAULT_GRADIENT,
 } from "@/features/fractals";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
@@ -59,6 +66,7 @@ export type EditStoreActions = {
     name: keyof Omit<FractalParamsBuildRules, "dynamic" | "custom">,
     value: unknown,
   ) => void;
+  gradientsOverride: (index: number, value: GradientStop[] | undefined) => void;
 
   staticRuleChange: (
     name: keyof Omit<FractalParamsBuildRules, "dynamic">,
@@ -84,6 +92,17 @@ export type EditStoreActions = {
   updateTrap: (index: number, trap: FractalTrap) => void;
   addTrap: (trap: FractalTrap) => void;
   removeTrap: (index: number) => void;
+
+  addColoringMode: (mode: ColoringMode) => void;
+  removeColoringMode: (coloringIndex: number) => void;
+  replaceColoringMode: (coloringIndex: number, newMode: ColoringMode) => void;
+  editColoringParams: (
+    coloringIndex: number,
+    paramIndex: number,
+    rule: NumberBuildRule,
+  ) => void;
+  editColoringBlend: (coloringIndex: number, blend: BlendMode) => void;
+  moveColoringLayer: (index: number, direction: "up" | "down") => void;
 };
 
 export type EditStore = EditStoreData & { actions: EditStoreActions };
@@ -315,6 +334,27 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
             });
           },
 
+          gradientsOverride: (index, value) => {
+            set((prev) => {
+              if (!prev.fractalOverrides.gradients) {
+                prev.fractalOverrides.gradients = [];
+              }
+              const gradients = prev.fractalOverrides.gradients as (
+                | GradientStop[]
+                | undefined
+              )[];
+              if (value === undefined) {
+                gradients[index] = undefined;
+                if (gradients.every((g) => g === undefined)) {
+                  delete (prev.fractalOverrides as Record<string, unknown>)
+                    .gradients;
+                }
+              } else {
+                gradients[index] = value;
+              }
+            });
+          },
+
           staticRuleChange: (name, value) => {
             set((prev) => {
               // Use index signature to safely assign to fractal properties
@@ -462,6 +502,136 @@ export const createEditStore = (fractalRules: FractalParamsBuildRules) => {
                   e.value += move;
                 }
               });
+            });
+          },
+
+          addColoringMode: (mode: ColoringMode) => {
+            set((prev) => {
+              const coloring = prev.fractal.dynamic.coloring;
+              const gradients = prev.fractal.gradients;
+              const neededGradCount = COLORING_MODE_GRADIENT_COUNT[mode];
+              const newGradIds: number[] = [];
+
+              for (let i = 0; i < neededGradCount; i++) {
+                newGradIds.push(gradients.length);
+                gradients.push([...COLORING_MODE_DEFAULT_GRADIENT[mode]]);
+              }
+              const paramRules = COLORING_MODE_DEFAULT_PARAMS[mode].map(
+                (v) => ({
+                  t: RuleType.StaticNumber as const,
+                  value: v,
+                }),
+              );
+              coloring.push([
+                mode,
+                newGradIds,
+                paramRules,
+                BlendMode.Normal,
+              ] as unknown as ColoringBuildRule);
+            });
+          },
+
+          removeColoringMode: (coloringIndex: number) => {
+            set((prev) => {
+              const coloring = prev.fractal.dynamic.coloring;
+              if (coloringIndex < 0 || coloringIndex >= coloring.length) return;
+              // Sort descending so splicing from the end doesn't shift earlier indices
+              const removedGradIds = [
+                ...(coloring[coloringIndex][1] as number[]),
+              ].sort((a, b) => b - a);
+              coloring.splice(coloringIndex, 1);
+
+              const gradients = prev.fractal.gradients;
+              for (const id of removedGradIds) {
+                gradients.splice(id, 1);
+              }
+
+              // Fix gradient IDs in remaining coloring entries
+              for (const entry of coloring) {
+                const gradIds = entry[1];
+                for (let i = 0; i < gradIds.length; i++) {
+                  gradIds[i] -= removedGradIds.filter(
+                    (rid) => rid < gradIds[i],
+                  ).length;
+                }
+              }
+            });
+          },
+
+          replaceColoringMode: (
+            coloringIndex: number,
+            newMode: ColoringMode,
+          ) => {
+            set((prev) => {
+              const coloring = prev.fractal.dynamic.coloring;
+              const gradients = prev.fractal.gradients;
+              if (coloringIndex < 0 || coloringIndex >= coloring.length) return;
+              const otherGradIds = new Set(
+                coloring
+                  .filter((_, i) => i !== coloringIndex)
+                  .flatMap((e) => e[1]),
+              );
+              const neededGradCount = COLORING_MODE_GRADIENT_COUNT[newMode];
+              const newGradIds: number[] = [];
+              let nextId = 0;
+              while (newGradIds.length < neededGradCount) {
+                if (!otherGradIds.has(nextId)) {
+                  newGradIds.push(nextId);
+                  if (!gradients[nextId] || gradients[nextId].length === 0) {
+                    gradients[nextId] = [
+                      ...COLORING_MODE_DEFAULT_GRADIENT[newMode],
+                    ];
+                  }
+                  otherGradIds.add(nextId);
+                }
+                nextId++;
+              }
+              const paramRules = COLORING_MODE_DEFAULT_PARAMS[newMode].map(
+                (v) => ({
+                  t: RuleType.StaticNumber as const,
+                  value: v,
+                }),
+              );
+              coloring[coloringIndex] = [
+                newMode,
+                newGradIds,
+                paramRules,
+                BlendMode.Normal,
+              ] as unknown as ColoringBuildRule;
+            });
+          },
+
+          editColoringParams: (
+            coloringIndex: number,
+            paramIndex: number,
+            rule: NumberBuildRule,
+          ) => {
+            set((prev) => {
+              const coloring = prev.fractal.dynamic.coloring;
+              const entry = coloring[coloringIndex];
+              if (!entry) return;
+              entry[2][paramIndex] = rule;
+            });
+          },
+
+          editColoringBlend: (coloringIndex: number, blend: BlendMode) => {
+            set((prev) => {
+              const coloring = prev.fractal.dynamic.coloring;
+              const entry = coloring[coloringIndex];
+              if (!entry) return;
+              entry[3] = blend;
+            });
+          },
+
+          moveColoringLayer: (index: number, direction: "up" | "down") => {
+            set((prev) => {
+              const coloring = prev.fractal.dynamic.coloring;
+              const targetIndex = direction === "up" ? index - 1 : index + 1;
+              if (targetIndex < 0 || targetIndex >= coloring.length) return;
+              [coloring[index], coloring[targetIndex]] = [
+                coloring[targetIndex],
+                coloring[index],
+              ];
             });
           },
         },

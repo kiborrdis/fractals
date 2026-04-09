@@ -1,6 +1,10 @@
 import { useDrag } from "@/shared/hooks/useDrag";
 import { mul, sum, Vector2 } from "@/shared/libs/vectors";
-import { fromCanvasPixels, fromCanvasPixelsSize, toValueSpaceSize } from "./coordinateUtils";
+import {
+  fromCanvasPixels,
+  fromCanvasPixelsSize,
+  toValueSpaceSize,
+} from "./coordinateUtils";
 import { useGraphEditContext, useGraphEditRegisterHandler } from "./context";
 
 export const GraphViewportControls = ({

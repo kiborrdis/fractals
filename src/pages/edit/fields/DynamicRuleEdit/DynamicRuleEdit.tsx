@@ -52,9 +52,7 @@ const ruleConfigs: RuleRenderers = {
     />
   ),
   mirroringPasses: () => {
-    return (
-      <div>Mirroring</div>
-    );
+    return <div>Mirroring</div>;
   },
 
   c: (props) => {
@@ -186,49 +184,7 @@ const ruleConfigs: RuleRenderers = {
     />
   ),
 
-  trapDistMult: (props) => (
-    <NumberRuleEdit
-      label='Trap Distance Multiplier'
-      min={0}
-      max={1000000}
-      step={1}
-      minRange={1}
-      {...props}
-    />
-  ),
-
-  trapDistPow: (props) => (
-    <NumberRuleEdit
-      label='Trap Distance Power'
-      min={0}
-      max={50}
-      step={0.1}
-      minRange={0.1}
-      {...props}
-    />
-  ),
-
-  borderDistMult: (props) => (
-    <NumberRuleEdit
-      label='Border Distance Multiplier'
-      min={0}
-      max={1000000}
-      step={1}
-      minRange={1}
-      {...props}
-    />
-  ),
-
-  borderDistPow: (props) => (
-    <NumberRuleEdit
-      label='Border Distance Power'
-      min={0}
-      max={50}
-      step={0.1}
-      minRange={0.1}
-      {...props}
-    />
-  ),
+  coloring: () => null,
 };
 
 const Vector2RuleEditContainer = (
@@ -251,9 +207,19 @@ export const DynamicRuleEdit = ({
 }: {
   name: keyof FractalDynamicParamsBuildRules;
 }) => {
-  const [rule, setRule] = useDynamicRule(name as keyof FractalDynamicParamsBuildRules);
+  const [rule, setRule] = useDynamicRule(
+    name as keyof FractalDynamicParamsBuildRules,
+  );
 
-  const Component = (ruleConfigs as Record<string, ((props: RuleRenderProps<keyof FractalDynamicParamsBuildRules>) => ReactNode) | undefined>)[name];
+  const Component = (
+    ruleConfigs as Record<
+      string,
+      | ((
+          props: RuleRenderProps<keyof FractalDynamicParamsBuildRules>,
+        ) => ReactNode)
+      | undefined
+    >
+  )[name];
 
   if (!Component) {
     console.warn(`No DynamicRuleEdit component for rule: ${name}`);

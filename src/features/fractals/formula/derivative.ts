@@ -35,17 +35,13 @@ const customDerivatives: CustomDerivatives = {
       return {
         t: CalcNodeType.FuncCall,
         n: "rotate",
-        o: [
-          der(node.o[0], varName, ...rest),
-          node.o[1],
-        ],
+        o: [der(node.o[0], varName, ...rest), node.o[1]],
         r: node.r,
       };
     }
 
     return node;
   },
-
 
   // These ones probably not complex differentiable
   // I just define some random derivatives to avoid errors

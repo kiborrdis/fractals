@@ -13,7 +13,12 @@ export type StdFnNames = {
 export type CustomDerivatives = Record<
   string,
   (
-    derivative: (node: CalcNode, variable: string, stdFnNames: StdFnNames, custom: CustomDerivatives) => CalcNode,
+    derivative: (
+      node: CalcNode,
+      variable: string,
+      stdFnNames: StdFnNames,
+      custom: CustomDerivatives,
+    ) => CalcNode,
     node: CalcNode,
     variable: string,
     stdFnNames: StdFnNames,

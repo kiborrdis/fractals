@@ -1,6 +1,5 @@
 import { GradientStop } from "@/features/fractals";
 import { EditorLabel } from "../../ui/EditorLabel";
-import { useActions } from "../../stores/editStore/data/useActions";
 import {
   GradientStopsInput,
   stopsToLinearGradient,
@@ -14,20 +13,19 @@ import { GradientPresets } from "./GradientPresets";
 export const TrapColoringGradient = ({
   value,
   onChange,
-  name,
+  onPreview,
 }: {
   value: GradientStop[];
-  onChange: (name: "trapGradient", value: GradientStop[]) => void;
-  name: "trapGradient";
+  onChange: (value: GradientStop[]) => void;
+  onPreview: (stops: GradientStop[] | undefined) => void;
 }) => {
-  const { staticParamOverride } = useActions();
   const [activePanel, setActivePanel] = useState<
     "generator" | "presets" | null
   >(null);
 
   useEffect(() => {
     return () => {
-      staticParamOverride(name, undefined);
+      onPreview(undefined);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -52,20 +50,20 @@ export const TrapColoringGradient = ({
   );
 
   const handleApply = (newStops: GradientStop[]) => {
-    onChange(name, newStops);
-    staticParamOverride(name, undefined);
+    onChange(newStops);
+    onPreview(undefined);
     setActivePanel(null);
   };
 
   const handleCancel = () => {
-    staticParamOverride(name, undefined);
+    onPreview(undefined);
     setActivePanel(null);
   };
 
   return (
     <>
       <Group justify='space-between' wrap='nowrap'>
-        <EditorLabel docKeys="trap-gradient">Trap Gradient</EditorLabel>
+        <EditorLabel docKeys='trap-gradient'>Trap Gradient</EditorLabel>
         {activePanel === null && (
           <Group gap={4} wrap='nowrap'>
             <Tooltip label='New stop' position='left'>
@@ -73,10 +71,7 @@ export const TrapColoringGradient = ({
                 size='sm'
                 variant='transparent'
                 onClick={() =>
-                  onChange(name, [
-                    ...value,
-                    [50, [0.5, 0.5, 0.5, 1]] as GradientStop,
-                  ])
+                  onChange([...value, [50, [0.5, 0.5, 0.5, 1]] as GradientStop])
                 }
               >
                 <FiPlus />
@@ -88,7 +83,7 @@ export const TrapColoringGradient = ({
       </Group>
       {activePanel === "generator" ? (
         <GradientGenerator
-          onPreview={(newStops) => staticParamOverride(name, newStops)}
+          onPreview={onPreview}
           onApply={handleApply}
           onCancel={handleCancel}
           initialMaxPosition={value[value.length - 1][0] || 100}
@@ -97,9 +92,7 @@ export const TrapColoringGradient = ({
         />
       ) : activePanel === "presets" ? (
         <GradientPresets
-          onPreview={(newStops: GradientStop[]) =>
-            staticParamOverride(name, newStops)
-          }
+          onPreview={onPreview}
           onApply={handleApply}
           onCancel={handleCancel}
           initialMaxPosition={value[value.length - 1][0] || 100}
@@ -110,7 +103,7 @@ export const TrapColoringGradient = ({
       ) : (
         <TrapGradientInput
           stops={value}
-          onChange={(newStops) => onChange(name, newStops)}
+          onChange={(newStops) => onChange(newStops)}
         />
       )}
     </>

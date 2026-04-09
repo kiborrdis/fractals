@@ -5,9 +5,7 @@ import { useCallback } from "react";
 import { NumberBuildRule } from "@/shared/libs/numberRule";
 
 export const useMirroringPasses = () => {
-  const passes = useEditStore(
-    (state) => state.fractal.dynamic.mirroringPasses,
-  );
+  const passes = useEditStore((state) => state.fractal.dynamic.mirroringPasses);
   const { dynamicRuleChange } = useActions();
 
   const setPasses = useCallback(

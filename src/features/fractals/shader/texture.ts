@@ -34,6 +34,7 @@ export const encodeUnsignedFloatTo4Bytes = (
   return [byte1, byte2, byte3, byte4];
 };
 
+export const MAX_BLEND = 6;
 export const MAX_TRAPS = 64;
 
 export function encodeTrapsAsUniforms(traps: FractalTrap[]): {
@@ -73,7 +74,7 @@ export function encodeTrapsAsUniforms(traps: FractalTrap[]): {
 
 const MAX_STOPS = 32;
 const GRADIENT_TEXTURE_WIDTH = MAX_STOPS * 2;
-const GRADIENT_TEXTURE_HEIGHT = 2;
+const GRADIENT_TEXTURE_HEIGHT = MAX_BLEND;
 
 const padEndWithZeros = (arr: number[], targetLength: number) => {
   while (arr.length < targetLength) {
@@ -92,7 +93,13 @@ export const createGradientTexture = (gl: WebGL2RenderingContext) => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texStorage2D(gl.TEXTURE_2D, 1, internalFormat, GRADIENT_TEXTURE_WIDTH, GRADIENT_TEXTURE_HEIGHT);
+  gl.texStorage2D(
+    gl.TEXTURE_2D,
+    1,
+    internalFormat,
+    GRADIENT_TEXTURE_WIDTH,
+    GRADIENT_TEXTURE_HEIGHT,
+  );
 
   return texture;
 };
@@ -100,11 +107,13 @@ export const createGradientTexture = (gl: WebGL2RenderingContext) => {
 export const encodeGradientsInTexture = (
   gl: WebGL2RenderingContext,
   texture: WebGLTexture,
-  iterationGradient: GradientStop[],
-  trapsGradient: GradientStop[],
+  gradients: GradientStop[][],
 ) => {
-  const iterationGradientPixels = iterationGradient.reduce<number[]>(
-    (memo, s) => {
+  const allPixels: number[] = [];
+
+  for (let row = 0; row < MAX_BLEND; row++) {
+    const gradient = gradients[row] ?? [];
+    const rowPixels = gradient.reduce<number[]>((memo, s) => {
       memo.push(
         Math.round(s[1][0] * 255),
         Math.round(s[1][1] * 255),
@@ -113,37 +122,23 @@ export const encodeGradientsInTexture = (
         ...encodeUnsignedFloatTo4Bytes(s[0]),
       );
       return memo;
-    },
-    [],
-  );
-  padEndWithZeros(iterationGradientPixels, MAX_STOPS * 8);
-
-  const trapsGradientPixels = trapsGradient.reduce<number[]>((memo, s) => {
-    memo.push(
-      Math.round(s[1][0] * 255),
-      Math.round(s[1][1] * 255),
-      Math.round(s[1][2] * 255),
-      Math.round(s[1][3] * 255),
-      ...encodeUnsignedFloatTo4Bytes(s[0]),
-    );
-    return memo;
-  }, []);
-  padEndWithZeros(trapsGradientPixels, MAX_STOPS * 8);
-
-  const textPixels = [...iterationGradientPixels, ...trapsGradientPixels];
+    }, []);
+    padEndWithZeros(rowPixels, MAX_STOPS * 8);
+    allPixels.push(...rowPixels);
+  }
 
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
   gl.texSubImage2D(
     gl.TEXTURE_2D,
-    0, // mipmap level to update
-    0, // x offset, y offset
-    0, 
-    GRADIENT_TEXTURE_WIDTH, // width, height of the data being uploaded
-    GRADIENT_TEXTURE_HEIGHT, 
-    gl.RGBA, // format of your source data
-    gl.UNSIGNED_BYTE, // type of your source data
-    new Uint8Array(textPixels), // data
+    0,
+    0,
+    0,
+    GRADIENT_TEXTURE_WIDTH,
+    GRADIENT_TEXTURE_HEIGHT,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    new Uint8Array(allPixels),
   );
 
   return texture;

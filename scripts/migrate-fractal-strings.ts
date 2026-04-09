@@ -12,6 +12,11 @@ const FRACTAL_STRINGS_PATH = path.resolve(
 
 const staticNumberRule = (value: number) => ({ t: 0, value });
 
+// ColoringMode enum values
+const ColoringMode = { Iterations: 1, Border: 2, Trap: 3, Normal: 40, StripesAverage: 50 };
+// BlendMode.Normal value
+const BLEND_NORMAL = 1;
+
 function migrate(data: unknown): unknown {
   if (typeof data !== "object" || data === null) return data;
 
@@ -38,23 +43,54 @@ function migrate(data: unknown): unknown {
       ? { ...(result.dynamic as Record<string, unknown>) }
       : {};
 
+  // Migrate old named dist params if not yet present (step from previous migration version)
   if (!("trapDistMult" in dynamic)) {
     dynamic.trapDistMult = staticNumberRule(oldTrapIntensity ?? 0);
   }
-
   if (!("trapDistPow" in dynamic)) {
     dynamic.trapDistPow = staticNumberRule(oldTrapDistancepow ?? 0.5);
   }
-
   if (!("borderDistMult" in dynamic)) {
     dynamic.borderDistMult = staticNumberRule(oldBorderIntensity ?? 10);
   }
-
   if (!("borderDistPow" in dynamic)) {
     dynamic.borderDistPow = staticNumberRule(0.5);
   }
 
+  // Migrate coloring from top-level {type,blend}[] to dynamic coloring tuple[]
+  if (!("coloring" in dynamic)) {
+    const topColoring = Array.isArray(result.coloring) ? result.coloring : [{ type: ColoringMode.Iterations, blend: BLEND_NORMAL }];
+    const trapDistMult = dynamic.trapDistMult as { t: number; value: number };
+    const trapDistPow = dynamic.trapDistPow as { t: number; value: number };
+    const borderDistMult = dynamic.borderDistMult as { t: number; value: number };
+    const borderDistPow = dynamic.borderDistPow as { t: number; value: number };
+
+    dynamic.coloring = topColoring.map((entry: unknown) => {
+      const e = entry as { type: number; blend: number };
+      const mode = e.type;
+      const blend = e.blend ?? BLEND_NORMAL;
+      if (mode === ColoringMode.Iterations) {
+        return [mode, [0], [], blend];
+      } else if (mode === ColoringMode.Trap) {
+        return [mode, [1], [trapDistMult, trapDistPow], blend];
+      } else if (mode === ColoringMode.Border) {
+        return [mode, [], [borderDistMult, borderDistPow], blend];
+      } else {
+        return [mode, [], [], blend];
+      }
+    });
+  }
+
+  // Remove old named dist params now that they live in coloring
+  delete dynamic.trapDistMult;
+  delete dynamic.trapDistPow;
+  delete dynamic.borderDistMult;
+  delete dynamic.borderDistPow;
+
   result.dynamic = dynamic;
+
+  // Remove top-level coloring (now lives in dynamic)
+  delete result.coloring;
 
   const migrateGradientStop = (stop: unknown): unknown => {
     if (!Array.isArray(stop)) return stop;
@@ -70,12 +106,20 @@ function migrate(data: unknown): unknown {
     return gradient.map(migrateGradientStop);
   };
 
+  const gradients: unknown[] = [];
+
   if ("gradient" in result) {
-    result.gradient = migrateGradient(result.gradient);
+    gradients[0] = migrateGradient(result.gradient);
+    delete result.gradient;
   }
 
   if ("trapGradient" in result) {
-    result.trapGradient = migrateGradient(result.trapGradient);
+    gradients[1] = migrateGradient(result.trapGradient);
+    delete result.trapGradient;
+  }
+
+  if (gradients.length > 0) {
+    result.gradients = gradients;
   }
 
   return result;
