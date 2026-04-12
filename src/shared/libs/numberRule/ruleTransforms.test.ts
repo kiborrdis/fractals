@@ -2,10 +2,8 @@ import { describe, expect, it } from "vitest";
 import { moveRuleStep } from "./ruleTransforms";
 import { RuleType, StepNumberRule } from "./types";
 
-
 const totalDuration = (rule: StepNumberRule): number =>
   rule.transitions.reduce((sum, t) => sum + t.len, 0);
-
 
 const makeRule = (lens: number[], steps: number[]): StepNumberRule => ({
   t: RuleType.StepNumber,
@@ -13,7 +11,6 @@ const makeRule = (lens: number[], steps: number[]): StepNumberRule => ({
   steps,
   transitions: lens.map((len) => ({ fn: { t: "linear" as const }, len })),
 });
-
 
 describe("moveRuleStep", () => {
   describe("preserves total duration", () => {
@@ -140,8 +137,7 @@ describe("moveRuleStep", () => {
 
       const result = moveRuleStep(rule, 2, 7000, 0.5);
 
-      const timeOfStep2 =
-        result.transitions[0].len + result.transitions[1].len;
+      const timeOfStep2 = result.transitions[0].len + result.transitions[1].len;
       expect(timeOfStep2).toBe(7);
     });
 

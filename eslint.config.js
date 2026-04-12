@@ -8,7 +8,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 const config = [
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    ignores: ["**/*.gen.{js,mjs,cjs,ts,jsx,tsx}"],
+    ignores: ["**/*.gen.{js,mjs,cjs,ts,jsx,tsx}", "src/generated/**"],
   },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,

@@ -9,18 +9,14 @@ import {
   Stack,
   Tooltip,
 } from "@mantine/core";
-import {
-  FractalParamsBuildRules,
-  serializeBuildRules,
-} from "@/features/fractals";
+import { FractalParamsBuildRules } from "@/features/fractals";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { EditStoreProvider, useEditStore } from "./stores/editStore/provider";
+import { EditStoreProvider } from "./stores/editStore/provider";
 import { createEditStore } from "./stores/editStore/editStore";
 import { useActions } from "./stores/editStore/data/useActions";
 import { useAnimationData } from "./stores/editStore/data/useAnimationData";
 import { TimelineTool } from "./layout/Timeline/TimelineTool";
 import { ShapeParams } from "./layout/SidebarSettings/SidebarSettings";
-import { FiShare2 } from "react-icons/fi";
 import styles from "./EditFractal.module.css";
 import { DocModalProvider } from "@/shared/ui/DocTooltip";
 import { TbSettings, TbVideo } from "react-icons/tb";
@@ -28,6 +24,7 @@ import { RecordingScreen } from "./Recording/RecordingScreen";
 import { SettingsProvider } from "./stores/settings";
 import { ContentArea } from "./layout/ContentArea/ContentArea";
 import { EditorSettings } from "./layout/EditorSettings/EditorSettings";
+import { ShareButton } from "./ShareButton";
 
 export function EditFractal({
   data,
@@ -64,12 +61,6 @@ export function EditFractal({
     </SettingsProvider>
   );
 }
-
-export const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text).catch((err) => {
-    console.error("Could not copy text: ", err);
-  });
-};
 
 export function EditFractalLoaded() {
   const [isRecordingMode, setIsRecordingMode] = useState(false);
@@ -155,21 +146,3 @@ export function EditFractalLoaded() {
     </div>
   );
 }
-
-const ShareButton = () => {
-  const fractal = useEditStore((state) => state.fractal);
-
-  return (
-    <ActionIcon
-      variant='subtle'
-      onClick={async () => {
-        const encoded = await serializeBuildRules(fractal);
-        copyToClipboard(
-          window.location.origin + "/view?s=" + encodeURIComponent(encoded),
-        );
-      }}
-    >
-      <FiShare2 />
-    </ActionIcon>
-  );
-};

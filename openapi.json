@@ -1,0 +1,963 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API for fractals-be-worker",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/fractals/publish": {
+      "post": {
+        "summary": "post_fractals_publish",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "serializedFractal",
+                  "name"
+                ],
+                "properties": {
+                  "serializedFractal": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response with status 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response with status 400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Response with status 409",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "oneOf": [
+                        {
+                          "enum": [
+                            "not_found"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "not_pending"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "already_exists"
+                          ],
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Response with status 429",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Response with status 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fractals": {
+      "get": {
+        "summary": "get_fractals",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response with status 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "list"
+                  ],
+                  "properties": {
+                    "list": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response with status 400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Response with status 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StatusResponse<0, 1>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              409
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "not_found"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "not_pending"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "already_exists"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<4, 5>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              200
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "success"
+            ],
+            "properties": {
+              "success": {
+                "type": "boolean"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<8, 9>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              429
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<12, 13>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              429
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<16, 17>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "oneOf": [
+              {
+                "enum": [
+                  400
+                ],
+                "type": "number"
+              },
+              {
+                "enum": [
+                  500
+                ],
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<20, 21>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              200
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "list"
+            ],
+            "properties": {
+              "list": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<24, 25>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "oneOf": [
+              {
+                "enum": [
+                  400
+                ],
+                "type": "number"
+              },
+              {
+                "enum": [
+                  500
+                ],
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<28, 29>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              200
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "list"
+            ],
+            "properties": {
+              "list": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<32, 33>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              404
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<36, 37>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "oneOf": [
+              {
+                "enum": [
+                  400
+                ],
+                "type": "number"
+              },
+              {
+                "enum": [
+                  500
+                ],
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<40, 41>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              404
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "not_found"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "not_pending"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "already_exists"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<44, 45>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              200
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "success"
+            ],
+            "properties": {
+              "success": {
+                "type": "boolean"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<48, 49>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              404
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<52, 53>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "oneOf": [
+              {
+                "enum": [
+                  400
+                ],
+                "type": "number"
+              },
+              {
+                "enum": [
+                  500
+                ],
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<56, 57>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              404
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "not_found"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "not_pending"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "already_exists"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<60, 61>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              200
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "success"
+            ],
+            "properties": {
+              "success": {
+                "type": "boolean"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<64, 65>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              404
+            ],
+            "type": "number"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StatusResponse<68, 69>": {
+        "type": "object",
+        "required": [
+          "status",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "oneOf": [
+              {
+                "enum": [
+                  400
+                ],
+                "type": "number"
+              },
+              {
+                "enum": [
+                  500
+                ],
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+              }
+            }
+          },
+          "cookies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
