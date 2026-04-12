@@ -112,40 +112,42 @@ export const moveRuleStep = (
     steps: [...rule.steps],
   };
 
-  for (let i = 0; i < newRule.transitions.length; i++) {
-    if (i === index - 1) {
-      newRule.transitions[i] = {
-        ...newRule.transitions[i],
-        len: roundToClosestMinStep(newPrevLen),
-      };
-    } else if (i === index) {
-      newRule.transitions[i] = {
-        ...newRule.transitions[i],
-        len: roundToClosestMinStep(
-          Math.max(curLen - (newPrevLen - prevLen), minStepLength),
-        ),
-      };
-    } else if (
-      roundToClosestMinStep(newRule.transitions[i].len) !==
-      newRule.transitions[i].len
-    ) {
-      newRule.transitions[i] = {
-        ...newRule.transitions[i],
-        len: roundToClosestMinStep(newRule.transitions[i].len),
-      };
+  if (index > 0) {
+    for (let i = 0; i < newRule.transitions.length; i++) {
+      if (i === index - 1) {
+        newRule.transitions[i] = {
+          ...newRule.transitions[i],
+          len: roundToClosestMinStep(newPrevLen),
+        };
+      } else if (i === index) {
+        newRule.transitions[i] = {
+          ...newRule.transitions[i],
+          len: roundToClosestMinStep(
+            Math.max(curLen - (newPrevLen - prevLen), minStepLength),
+          ),
+        };
+      } else if (
+        roundToClosestMinStep(newRule.transitions[i].len) !==
+        newRule.transitions[i].len
+      ) {
+        newRule.transitions[i] = {
+          ...newRule.transitions[i],
+          len: roundToClosestMinStep(newRule.transitions[i].len),
+        };
+      }
     }
-  }
 
-  newRule.transitions[index - 1] = {
-    ...newRule.transitions[index - 1],
-    len: roundToClosestMinStep(newPrevLen),
-  };
-  newRule.transitions[index] = {
-    ...newRule.transitions[index],
-    len: roundToClosestMinStep(
-      Math.max(curLen - (newPrevLen - prevLen), minStepLength),
-    ),
-  };
+    newRule.transitions[index - 1] = {
+      ...newRule.transitions[index - 1],
+      len: roundToClosestMinStep(newPrevLen),
+    };
+    newRule.transitions[index] = {
+      ...newRule.transitions[index],
+      len: roundToClosestMinStep(
+        Math.max(curLen - (newPrevLen - prevLen), minStepLength),
+      ),
+    };
+  }
 
   const newY = Math.max(Math.min(newMagnitude, 1.0), 0.0);
 
