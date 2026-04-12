@@ -188,9 +188,9 @@ export class FractalsRenderer {
     // context.blendFunc(context.SRC_ALPHA, context.ONE_MINUS_SRC_ALPHA);
 
     const gridRows = this.grid.length;
-    const gridCols = this.grid[0]?.length || 0;
 
     for (let row = 0; row < gridRows; row++) {
+      const gridCols = this.grid[row]?.length || 0;
       for (let col = 0; col < gridCols; col++) {
         const fractalImage = this.grid[row][col];
 
@@ -216,6 +216,7 @@ export class FractalsRenderer {
     }
 
     for (let row = 0; row < gridRows; row++) {
+      const gridCols = this.grid[row]?.length || 0;
       for (let col = 0; col < gridCols; col++) {
         const fractalImage = this.grid[row][col];
 

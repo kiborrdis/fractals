@@ -30,7 +30,7 @@ const DisplayExampleFractal = ({
   } | null>(null);
 
   useEffect(() => {
-    if (!canvas) {
+    if (!canvas || width === 0 || height === 0) {
       return;
     }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DisplayCanvas } from "@/shared/ui/DisplayCanvas/DisplayCanvas";
-import { createShowcaseFractalsVisualizer } from "@/features/fractals/fractals";
-import { FractalParamsBuildRules } from "@/features/fractals";
+import { FractalParamsBuildRules } from "./types";
+import { createShowcaseFractalsVisualizer } from "./fractals";
 
 export const DisplayFractals = ({
   play,

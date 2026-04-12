@@ -185,9 +185,10 @@
                   ],
                   "properties": {
                     "list": {
-                      "type": "object",
-                      "required": [],
-                      "properties": {}
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/FractalRecordOut"
+                      }
                     }
                   }
                 }
@@ -460,9 +461,10 @@
             ],
             "properties": {
               "list": {
-                "type": "object",
-                "required": [],
-                "properties": {}
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FractalRecordOut"
+                }
               }
             }
           },
@@ -471,6 +473,25 @@
             "additionalProperties": {
               "type": "string"
             }
+          }
+        }
+      },
+      "FractalRecordOut": {
+        "type": "object",
+        "required": [
+          "id",
+          "serialiazedStr",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "serialiazedStr": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
           }
         }
       },
@@ -541,9 +562,10 @@
             ],
             "properties": {
               "list": {
-                "type": "object",
-                "required": [],
-                "properties": {}
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FractalRecordOut"
+                }
               }
             }
           },

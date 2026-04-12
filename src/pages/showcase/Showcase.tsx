@@ -1,5 +1,4 @@
-import { FractalParamsBuildRules } from "@/features/fractals";
-import { DisplayFractals } from "./DisplayFractals";
+import { DisplayFractals, FractalParamsBuildRules } from "@/features/fractals";
 import { HeroOverlay } from "./HeroOverlay";
 import styles from "./Showcase.module.css";
 import { useEffect, useRef, useState } from "react";

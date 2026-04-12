@@ -5,9 +5,11 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "target": "es2022",
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "downlevelIteration": true
   },
   "include": ["vite.config.ts", "vite-plugins/**/*", "codegen/**/*", "scripts/**/*"]
 }

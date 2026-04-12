@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from "./routes/__root"
 import { Route as ViewRouteImport } from "./routes/view"
 import { Route as SimRouteImport } from "./routes/sim"
 import { Route as RandomRouteImport } from "./routes/random"
+import { Route as GalleryRouteImport } from "./routes/gallery"
 import { Route as EditRouteImport } from "./routes/edit"
 import { Route as SplatRouteImport } from "./routes/$"
 import { Route as IndexRouteImport } from "./routes/index"
@@ -29,6 +30,11 @@ const SimRoute = SimRouteImport.update({
 const RandomRoute = RandomRouteImport.update({
   id: "/random",
   path: "/random",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: "/gallery",
+  path: "/gallery",
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditRoute = EditRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/$": typeof SplatRoute
   "/edit": typeof EditRoute
+  "/gallery": typeof GalleryRoute
   "/random": typeof RandomRoute
   "/sim": typeof SimRoute
   "/view": typeof ViewRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/$": typeof SplatRoute
   "/edit": typeof EditRoute
+  "/gallery": typeof GalleryRoute
   "/random": typeof RandomRoute
   "/sim": typeof SimRoute
   "/view": typeof ViewRoute
@@ -68,22 +76,32 @@ export interface FileRoutesById {
   "/": typeof IndexRoute
   "/$": typeof SplatRoute
   "/edit": typeof EditRoute
+  "/gallery": typeof GalleryRoute
   "/random": typeof RandomRoute
   "/sim": typeof SimRoute
   "/view": typeof ViewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/$" | "/edit" | "/random" | "/sim" | "/view"
+  fullPaths: "/" | "/$" | "/edit" | "/gallery" | "/random" | "/sim" | "/view"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/$" | "/edit" | "/random" | "/sim" | "/view"
-  id: "__root__" | "/" | "/$" | "/edit" | "/random" | "/sim" | "/view"
+  to: "/" | "/$" | "/edit" | "/gallery" | "/random" | "/sim" | "/view"
+  id:
+    | "__root__"
+    | "/"
+    | "/$"
+    | "/edit"
+    | "/gallery"
+    | "/random"
+    | "/sim"
+    | "/view"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   EditRoute: typeof EditRoute
+  GalleryRoute: typeof GalleryRoute
   RandomRoute: typeof RandomRoute
   SimRoute: typeof SimRoute
   ViewRoute: typeof ViewRoute
@@ -110,6 +128,13 @@ declare module "@tanstack/react-router" {
       path: "/random"
       fullPath: "/random"
       preLoaderRoute: typeof RandomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/gallery": {
+      id: "/gallery"
+      path: "/gallery"
+      fullPath: "/gallery"
+      preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/edit": {
@@ -140,6 +165,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   EditRoute: EditRoute,
+  GalleryRoute: GalleryRoute,
   RandomRoute: RandomRoute,
   SimRoute: SimRoute,
   ViewRoute: ViewRoute,
