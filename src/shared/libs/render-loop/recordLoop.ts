@@ -1,6 +1,7 @@
 export class RecordLoop {
   private running: boolean = false;
   private timePassed: number = 0;
+  private initialTime: number = 0;
   private timeIncrement: number;
   private duration: number;
   private animationRequestId: number | null = null;
@@ -15,7 +16,7 @@ export class RecordLoop {
       timeMultiplier?: number;
     } = {},
   ) {
-    this.timePassed = params.initialTime || 0;
+    this.initialTime = params.initialTime || 0;
     this.duration = params.duration || 1000;
     this.timeIncrement =
       1000 / ((params.fps || 60) * (params.timeMultiplier || 1));
@@ -54,7 +55,7 @@ export class RecordLoop {
   }
 
   private async performLoopIteration() {
-    await this.callback({ time: this.timePassed });
+    await this.callback({ time: this.initialTime + this.timePassed });
 
     this.timePassed += this.timeIncrement;
 

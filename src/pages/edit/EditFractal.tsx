@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActionIcon,
   AppShell,
@@ -68,10 +68,10 @@ export function EditFractalLoaded() {
   const { play, timeMultiplier } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed } = useActions();
 
-  const handleExitRecording = () => {
+  const handleExitRecording = useCallback(() => {
     setIsRecordingMode(false);
     changeAnimationSpeed("1.0x");
-  };
+  }, [changeAnimationSpeed]);
 
   if (isRecordingMode) {
     return (

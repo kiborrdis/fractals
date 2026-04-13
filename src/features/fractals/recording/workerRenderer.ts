@@ -4,9 +4,9 @@ import {
   Mp4OutputFormat,
   Output,
 } from "mediabunny";
-import { FractalImage } from "./shader/FractalImage";
+import { FractalImage } from "../shader/FractalImage";
 import { RecordLoop } from "@/shared/libs/render-loop";
-import { FractalsRenderer } from "./shader/FractalsRenderer";
+import { FractalsRenderer } from "../shader/FractalsRenderer";
 import { RenderRequestMessage } from "./message";
 
 const IDLE_TIMEOUT_MS = 10000;
@@ -58,7 +58,10 @@ self.addEventListener("message", async (event) => {
       startTime,
       scale,
       offset,
+      supersampling,
     } = data as RenderRequestMessage["data"];
+
+    const patchedFractal = { ...fractal, antialiasingLevel: supersampling };
 
     const adjustedDuration = duration / timeMultiplier;
     const canvas = new OffscreenCanvas(width, height);
@@ -76,7 +79,7 @@ self.addEventListener("message", async (event) => {
       return;
     }
 
-    const fractalImage = new FractalImage(context, fractal);
+    const fractalImage = new FractalImage(context, patchedFractal);
     const renderer = new FractalsRenderer(
       context,
       [width, height],
@@ -129,7 +132,7 @@ self.addEventListener("message", async (event) => {
           lastProgressUpdate = now;
         }
 
-        await canvasSource.add(time / 1000, 1 / fps);
+        await canvasSource.add((time - startTime) / 1000, 1 / fps);
       };
 
       let resolveRecording: () => void = () => {};

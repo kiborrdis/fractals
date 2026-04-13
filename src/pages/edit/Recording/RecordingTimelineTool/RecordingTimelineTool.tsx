@@ -9,12 +9,9 @@ import { calcPeriod } from "../../helpers/timelineUtils";
 import { TimelineCollapseButton } from "../../layout/Timeline/TimelineCollapseButton";
 import { DocTooltip, mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { BiQuestionMark } from "react-icons/bi";
+import { useCurrentTime } from "../../stores/editStore/data/useCurrentTime";
 
-export const RecordingTimelineTool = ({
-  currentTime,
-}: {
-  currentTime: number;
-}) => {
+export const RecordingTimelineTool = () => {
   const [collapsed, setCollapsed] = useState(true);
   const [collapseEnded, setCollapseEnded] = useState(true);
 
@@ -37,7 +34,6 @@ export const RecordingTimelineTool = ({
       {(!collapsed || !collapseEnded) && (
         <div className={styles.timelineContent}>
           <RecordingTimelineToolInner
-            currentTime={currentTime}
             collapsed={collapsed}
             onCollapseToggle={() => setCollapsed(true)}
             onCollapseEnd={() => setCollapseEnded(true)}
@@ -49,16 +45,15 @@ export const RecordingTimelineTool = ({
 };
 
 const RecordingTimelineToolInner = ({
-  currentTime,
   collapsed,
   onCollapseToggle,
   onCollapseEnd,
 }: {
-  currentTime: number;
   collapsed: boolean;
   onCollapseToggle: () => void;
   onCollapseEnd: () => void;
 }) => {
+  const currentTime = useCurrentTime();
   const settings = useRecordingSettings();
   const { dynamicParamOverride, customParamOverride } = useActions();
 

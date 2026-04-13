@@ -1,4 +1,4 @@
-import { FractalParamsBuildRules } from "./types";
+import { FractalParamsBuildRules } from "../types";
 
 export type RenderRequestMessage = {
   type: "render_start";
@@ -12,6 +12,7 @@ export type RenderRequestMessage = {
     scale: number;
     fps: number;
     duration: number;
+    supersampling: number;
   };
 };
 

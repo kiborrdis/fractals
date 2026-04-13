@@ -5,7 +5,7 @@ import {
   sendMessageToWorker,
   WorkerToMainMessage,
 } from "./message";
-import { FractalParamsBuildRules } from "./types";
+import { FractalParamsBuildRules } from "../types";
 
 export type RecordingSettings = {
   width: number;
@@ -16,6 +16,7 @@ export type RecordingSettings = {
   duration: number;
   timeMultiplier: number;
   startTime: number;
+  supersampling?: number;
 };
 
 export type RecordingCallbacks = {
@@ -79,6 +80,7 @@ export const recordFractal = ({
       scale: settings.scale,
       fps: settings.fps,
       duration: settings.duration,
+      supersampling: settings.supersampling ?? 1,
     }),
   );
 

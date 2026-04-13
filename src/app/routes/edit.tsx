@@ -7,7 +7,7 @@ import {
   FractalParamsBuildRules,
   serializeBuildRules,
 } from "@/features/fractals";
-import { getDefaultFractalRules } from "@/features/fractals/getDefaultFractalRules";
+import { getDefaultFractalRules } from "@/features/fractals";
 
 export const Route = createFileRoute("/edit")({
   beforeLoad: () => {

@@ -1,4 +1,4 @@
-import { GraphFractalBackground } from "@/features/fractals/GraphBackground";
+import { GraphFractalBackground } from "@/features/fractals";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
   formulaVars,

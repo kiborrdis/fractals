@@ -17,6 +17,7 @@ export { getDefaultFractalRules } from "./getDefaultFractalRules";
 export * from "./ruleConversion";
 export { DisplayFractal } from "./DisplayFractal";
 export { DisplayFractals } from "./DisplayFractals";
+export { GraphFractalBackground } from "./GraphBackground";
 export type * from "./types";
 export { ColoringMode, BlendMode, MirroringPassType } from "./types";
 export {

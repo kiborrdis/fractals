@@ -55,7 +55,6 @@ export const RecordingSettings = () => {
         onChange={handleResolutionChange}
         disabled={isRecording}
       />
-
       {isCustomResolution && (
         <Group grow>
           <NumberInput
@@ -80,7 +79,6 @@ export const RecordingSettings = () => {
           />
         </Group>
       )}
-
       <Select
         label={<EditorLabel docKeys='recording-fps'>Framerate</EditorLabel>}
         value={String(settings.fps)}
@@ -91,7 +89,6 @@ export const RecordingSettings = () => {
         onChange={(val) => actions.updateSettings({ fps: Number(val) || 60 })}
         disabled={isRecording}
       />
-
       <NumberInput
         label={
           <EditorLabel docKeys={"recording-start-time"}>
@@ -107,7 +104,6 @@ export const RecordingSettings = () => {
         step={0.1}
         disabled={isRecording}
       />
-
       <NumberInput
         label={
           <EditorLabel docKeys={"recording-duration"}>
@@ -123,6 +119,22 @@ export const RecordingSettings = () => {
         step={1}
         disabled={isRecording}
       />
+      <Select
+        label={<EditorLabel docKeys='supersampling'>Supersampling</EditorLabel>}
+        value={String(settings.supersampling ?? 1)}
+        data={[
+          { value: "1", label: "1x (No AA)" },
+          { value: "2", label: "2x" },
+          { value: "4", label: "4x" },
+          { value: "8", label: "8x" },
+          { value: "16", label: "16x" },
+          { value: "32", label: "32x" },
+        ]}
+        onChange={(val) =>
+          actions.updateSettings({ supersampling: Number(val) || 1 })
+        }
+        disabled={isRecording}
+      />{" "}
     </Stack>
   );
 };

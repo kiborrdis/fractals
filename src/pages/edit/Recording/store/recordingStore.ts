@@ -4,7 +4,7 @@ import {
   recordFractal,
   RecordingController,
   RecordingSettings,
-} from "@/features/fractals/recordFractal";
+} from "@/features/fractals/recording/recordFractal";
 import { FractalParamsBuildRules } from "@/features/fractals";
 
 export type RecordingStatus =
@@ -49,16 +49,16 @@ const defaultSettings: RecordingSettings = {
   duration: 10000, // 10 seconds in ms
   timeMultiplier: 1,
   startTime: 0,
+  supersampling: 1,
 };
 
-export const createRecordingStore = () => {
+export const createRecordingStore = (time: number | undefined) => {
   let recordingController: RecordingController | null = null;
-
   return create<RecordingStore>()(
     immer((set, get) => ({
       isRecordingMode: false,
       status: "idle",
-      settings: defaultSettings,
+      settings: { ...defaultSettings, startTime: time ?? 0 },
       progress: {
         framesRendered: 0,
         totalFrames: 0,

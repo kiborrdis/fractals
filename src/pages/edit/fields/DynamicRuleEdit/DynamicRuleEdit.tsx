@@ -1,4 +1,4 @@
-import { FractalDynamicParamsBuildRules } from "@/features/fractals/types";
+import { FractalDynamicParamsBuildRules } from "@/features/fractals";
 import { useDynamicRule } from "../../stores/editStore/data/useDynamicRule";
 import { NumberRuleEdit } from "../NumberRuleEdit/NumberRuleEdit";
 import { Vector2DimsRuleEdit } from "../Vector2DimsRuleEdit/Vector2DimsRuleEdit";

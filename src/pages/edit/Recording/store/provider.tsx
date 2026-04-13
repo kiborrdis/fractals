@@ -8,11 +8,13 @@ const recordingStoreContext = createContext<RecordingStoreInstance | null>(
 );
 
 export const RecordingStoreProvider = ({
+  time,
   children,
 }: {
+  time: number | undefined;
   children: ReactNode;
 }) => {
-  const store = useMemo(() => createRecordingStore(), []);
+  const store = useMemo(() => createRecordingStore(time), [time]);
 
   return (
     <recordingStoreContext.Provider value={store}>

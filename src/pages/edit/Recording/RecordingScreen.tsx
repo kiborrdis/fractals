@@ -6,26 +6,29 @@ import { useRecordingStatus } from "./store/data/useRecordingStatus";
 import { useFractalParamsData } from "../stores/editStore/data/useFractalParamsData";
 import { useAnimationData } from "../stores/editStore/data/useAnimationData";
 import { useActions } from "../stores/editStore/data/useActions";
-import { useEditStore } from "../stores/editStore/provider";
 import { RecordingSidebar } from "./Sidebar/RecordingSidebar";
 import { RecordingRenderingState } from "./States/RecordingRenderingState";
 import { RecordingPreviewState } from "./States/RecordingPreviewState";
 import { RecordingTimelineTool } from "./RecordingTimelineTool/RecordingTimelineTool";
 import styles from "./RecordingScreen.module.css";
-
-const initialLoopStateDefault = { time: 0 };
+import { useInitialTime } from "../stores/editStore/data/useCurrentTime";
+import { useMemo } from "react";
 
 const RecordingScreenContent = ({ onExit }: { onExit: () => void }) => {
   const recordingActions = useRecordingActions();
   const status = useRecordingStatus();
+  const time = useInitialTime();
+
+  const initialLoopState = useMemo(() => {
+    return { time: time ?? 0 };
+  }, [time]);
+
   const settings = useRecordingSettings();
+  const fractal = useFractalParamsData();
   const { play } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed, updateCurrentTime } =
     useActions();
-  const fractal = useFractalParamsData();
-  const currentTime = useEditStore(
-    (state: { currentTime: number }) => state.currentTime,
-  );
+
   const isRecording = status === "recording";
 
   return (
@@ -62,19 +65,23 @@ const RecordingScreenContent = ({ onExit }: { onExit: () => void }) => {
                 fractal={fractal}
                 play={play}
                 timeMultiplier={settings.timeMultiplier}
-                initialLoopState={initialLoopStateDefault}
+                initialLoopState={initialLoopState}
                 onRender={updateCurrentTime}
               />
             )}
           </div>
-          <RecordingTimelineTool currentTime={currentTime} />
+          <RecordingTimelineTool />
         </Stack>
       </AppShellMain>
     </AppShell>
   );
 };
-export const RecordingScreen = ({ onExit }: { onExit: () => void }) => (
-  <RecordingStoreProvider>
-    <RecordingScreenContent onExit={onExit} />
-  </RecordingStoreProvider>
-);
+export const RecordingScreen = ({ onExit }: { onExit: () => void }) => {
+  const time = useInitialTime();
+
+  return (
+    <RecordingStoreProvider time={time}>
+      <RecordingScreenContent onExit={onExit} />
+    </RecordingStoreProvider>
+  );
+};
