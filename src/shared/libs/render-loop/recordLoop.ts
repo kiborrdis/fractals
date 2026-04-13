@@ -1,10 +1,13 @@
+// Small delay between renders to avoid blocking gpu for too long and allow it to process other tasks
+const MIN_TIME_BETWEEN_RENDERS = 5;
+
 export class RecordLoop {
   private running: boolean = false;
   private timePassed: number = 0;
   private initialTime: number = 0;
   private timeIncrement: number;
   private duration: number;
-  private animationRequestId: number | null = null;
+  private animationRequestId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private callback: (context: { time: number }) => Promise<void>,
@@ -39,7 +42,7 @@ export class RecordLoop {
     this.running = false;
 
     if (this.animationRequestId !== null) {
-      cancelAnimationFrame(this.animationRequestId);
+      clearTimeout(this.animationRequestId);
       this.animationRequestId = null;
     }
 
@@ -65,7 +68,10 @@ export class RecordLoop {
     }
 
     if (this.running) {
-      this.animationRequestId = requestAnimationFrame(() => this.loop());
+      this.animationRequestId = setTimeout(
+        () => this.loop(),
+        MIN_TIME_BETWEEN_RENDERS,
+      );
     }
   }
 }
