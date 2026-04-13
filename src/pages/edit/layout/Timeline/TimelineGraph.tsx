@@ -31,6 +31,7 @@ import {
 import { TimelineVector2Line } from "../../ui/TimelineVector2Line";
 import { RenderGridRulerFn } from "@/shared/ui/GraphEdit/Graph2DGrid";
 import styles from "./TimelineGraph.module.css";
+import { Text } from "@mantine/core";
 
 const formatTime = (ms: number) => {
   const time = ms / 1000;
@@ -287,6 +288,11 @@ export const TimelineGraph = ({
           <PointsEdit points={stepPoints} onPointMove={handlePointMove} />
         )}
       </GraphEdit>
+      {rules.length === 0 && (
+        <div className={styles.noRulesOverlay}>
+          <Text size='sm'>There are no animated parameters to display</Text>
+        </div>
+      )}
     </div>
   );
 };
