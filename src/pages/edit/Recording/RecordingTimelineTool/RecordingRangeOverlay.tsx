@@ -91,11 +91,27 @@ export const RecordingRangeOverlay = ({
 
       <div className={styles.endLine} style={{ left: `${endPos}px` }} />
 
-      <div className={styles.startLabel} style={{ left: `${startPos + 4}px` }}>
+      <div
+        className={styles.startLabel}
+        style={{
+          left: `${startPos + 4}px`,
+          paddingRight: endTime % period < period / 2 ? "6px" : "none",
+          transform:
+            endTime % period < period / 2 ? "translateX(-100%)" : "none",
+        }}
+      >
         Start: {(startTime / 1000).toFixed(1)}s
       </div>
 
-      <div className={styles.endLabel} style={{ left: `${endPos + 4}px` }}>
+      <div
+        className={styles.endLabel}
+        style={{
+          left: `${endPos + 4}px`,
+          paddingRight: endTime % period > period / 2 ? "6px" : "none",
+          transform:
+            endTime % period > period / 2 ? "translateX(-100%)" : "none",
+        }}
+      >
         End: {(endTime / 1000).toFixed(1)}s
         {loopCount > 0 && ` (${loopCount}+ loops)`}
       </div>

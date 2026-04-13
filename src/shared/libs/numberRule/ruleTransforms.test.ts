@@ -258,7 +258,6 @@ describe("moveRuleStep", () => {
     });
   });
 
-
   describe("edge cases", () => {
     it("index 0: total duration is preserved", () => {
       // Step 0 is fixed at t=0. When index=0 is passed:
