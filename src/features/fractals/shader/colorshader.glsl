@@ -249,6 +249,10 @@ vec4 doColoring(FractalInfo info) {
     if (coloringMode == 1) {
       float colorInt = info.escapeIteration / u_max_iterations;
       currentColor = createGradient(colorInt, int(u_max_iterations), gradId, u_gradient_wls[gradId]);
+     
+      // 8-bit per color channel are too small sometimes for smooth gradients, add dithering to hide this shameful fact
+      float dither = (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898f, 78.233f))) * 43758.5453f) - 0.5f) / 255.0f;
+      currentColor.rgb += dither;
     } else if (coloringMode == 2) { // Border coloring
       float dist = clamp(pow(info.borderDistance, param1) * param0, 0.0f, 1.0f);
 
@@ -302,6 +306,7 @@ FractalInfo getFractalData() {
 }
 
 void main() {
-  myOutputColor = doColoring(getFractalData()); 
-  // myOutputColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+  myOutputColor = doColoring(getFractalData());
+  // Triangular dither to break 8-bit banding
+
 }
