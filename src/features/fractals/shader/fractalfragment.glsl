@@ -489,6 +489,7 @@ void main() {
   float rowStep = 1.0f / (numOfRows + 1.0f);
   vec2 halfDistanceBetweenPixels = vec2(0.5f);
 
+
   FractalInfo final;
   final.escapeIteration = 0.0f;
   final.borderDistance = 0.0f;
@@ -497,33 +498,48 @@ void main() {
   final.finalZ = vec2(0.0f, 0.0f);
   final.stripeAvg = 0.0f;
 
+  bool stopSuperSampling = false;
+  float numOfRenderedSamples = 0.0f;
+
   for (float i = 0.0f; i <= 16.0f; i += 1.0f) {
-    if (i >= numOfRows) {
+    if (i >= numOfRows || stopSuperSampling) {
       break;
     }
 
     for (float j = 0.0f; j <= 16.0f; j += 1.0f) {
-      if (j >= pointsPerRow) {
+      if (j >= pointsPerRow || stopSuperSampling) {
         break;
       }
 
       vec2 samplePoint = coord - halfDistanceBetweenPixels + vec2((j + 1.0f) * columnStep, (i + 1.0f) * rowStep);
+
       FractalInfo res = generateFractalIntensity(samplePoint);
+
+      if ((j > 0.0f || i > 0.0f) && coord.x > u_resolution2.x *0.5f ) {
+        float escapeDiff = abs(res.escapeIteration - final.escapeIteration / numOfRenderedSamples);
+        float trapDistDiff = abs(res.trapDistance - final.trapDistance / numOfRenderedSamples);
+
+        // For traps it works badly, probably because first 2 samples is very close. 
+        // Would be better if first two sample were from diffrent corners of the pixel. For now I set very low threshold for trap distance
+        stopSuperSampling = escapeDiff <= 0.5f && trapDistDiff <= 0.000001f;
+      }
+
       final.escapeIteration += res.escapeIteration;
       final.borderDistance += res.borderDistance;
       final.trapDistance += res.trapDistance;
       final.derivative += res.derivative;
       final.finalZ += res.finalZ;
       final.stripeAvg += res.stripeAvg;
+      numOfRenderedSamples += 1.0f;
     }
   }
 
-  final.borderDistance = final.borderDistance / superSampling;
-  final.trapDistance = final.trapDistance / superSampling;
-  final.escapeIteration = final.escapeIteration / superSampling;
-  final.derivative = final.derivative / superSampling;
-  final.finalZ = final.finalZ / superSampling;
-  final.stripeAvg = final.stripeAvg / superSampling;
+  final.borderDistance = final.borderDistance / numOfRenderedSamples;
+  final.trapDistance = final.trapDistance / numOfRenderedSamples;
+  final.escapeIteration = final.escapeIteration / numOfRenderedSamples;
+  final.derivative = final.derivative / numOfRenderedSamples;
+  final.finalZ = final.finalZ / numOfRenderedSamples;
+  final.stripeAvg = final.stripeAvg / numOfRenderedSamples;
 
   output1 = vec4(final.escapeIteration, final.trapDistance, final.borderDistance, final.stripeAvg);
   output2 = vec4(final.derivative.x, final.derivative.y, final.finalZ.x, final.finalZ.y);
