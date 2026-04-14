@@ -1,59 +1,120 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-constraint */
 import { DisplayFractals, FractalParamsBuildRules } from "@/features/fractals";
+import { ReactNode } from "react";
+import styles from "./FractalGallery.module.css";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
 export const FractalGallery = ({
+  hasNextPage,
   fractals,
+  currentPage,
 }: {
-  fractals: FractalParamsBuildRules[];
+  hasNextPage: boolean;
+  currentPage: number;
+  fractals: { name: string; params: FractalParamsBuildRules }[];
 }) => {
+  const indexGrid = toGrid(fractals.map((_, i) => i));
+  const paramsGrid = indexGrid.map((row) =>
+    row.map((index) => fractals[index].params),
+  );
+  useNavigate();
+
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
-      <DisplayFractals play={true} fractals={toGrid(fractals)} />
+    <div className={styles.mainContainer}>
+      <DisplayFractals key={currentPage} play={true} fractals={paramsGrid} />
+      <div className={styles.overlay}>
+        <Grid
+          grid={indexGrid}
+          renderCell={(index) => (
+            <div className={styles.item}>
+              {fractals[index].name && (
+                <div className={styles.name}>{fractals[index].name}</div>
+              )}
+            </div>
+          )}
+        />
+      </div>
+      <div className={styles.navigation}>
+        {currentPage > 1 ? (
+          <Link
+            className={styles.navLink}
+            to='/gallery'
+            search={{
+              p: currentPage - 1,
+            }}
+          >
+            <BlurButton>
+              <BiChevronLeft size={32} />
+            </BlurButton>
+          </Link>
+        ) : (
+          <div />
+        )}
+        {hasNextPage ? (
+          <Link
+            className={styles.navLink}
+            to='/gallery'
+            search={{
+              p: currentPage + 1,
+            }}
+          >
+            <BlurButton>
+              <BiChevronRight size={32} />
+            </BlurButton>
+          </Link>
+        ) : (
+          <div />
+        )}
+      </div>
     </div>
   );
 };
 
-const toGrid = (
-  fractals: FractalParamsBuildRules[],
-): FractalParamsBuildRules[][] => {
-  if (fractals.length >= 7) {
-    console.log("Using 4 columns");
-    const maxPerRow = 4;
-    const rows = Math.ceil(fractals.length / maxPerRow);
-    const grid: FractalParamsBuildRules[][] = [];
-    for (let i = 0; i < rows; i++) {
-      grid.push(fractals.slice(i * maxPerRow, (i + 1) * maxPerRow));
-    }
-    return grid;
-  }
+const BlurButton = ({ children }: { children?: ReactNode }) => {
+  return (
+    <button className={styles.blurButton} onClick={() => {}}>
+      {children}
+    </button>
+  );
+};
 
-  if (fractals.length >= 5) {
-    const maxPerRow = 3;
-    const rows = Math.ceil(fractals.length / maxPerRow);
-    const grid: FractalParamsBuildRules[][] = [];
-    for (let i = 0; i < rows; i++) {
-      grid.push(fractals.slice(i * maxPerRow, (i + 1) * maxPerRow));
-    }
-    return grid;
-  }
-
-  if (fractals.length >= 3) {
-    const maxPerRow = 2;
-    const rows = Math.ceil(fractals.length / maxPerRow);
-    const grid: FractalParamsBuildRules[][] = [];
-    for (let i = 0; i < rows; i++) {
-      grid.push(fractals.slice(i * maxPerRow, (i + 1) * maxPerRow));
-    }
-    return grid;
-  }
-  if (fractals.length === 2) {
-    return [[fractals[0]], [fractals[1]]];
-  }
-  if (fractals.length === 1) {
-    return [fractals];
-  }
+const toGrid = <T extends unknown>(fractals: T[]): T[][] => {
   if (fractals.length === 0) {
     return [[]];
   }
 
-  return [fractals];
+  const maxPerRow = Math.ceil(Math.sqrt(fractals.length));
+  const rows = Math.ceil(fractals.length / maxPerRow);
+  const grid: T[][] = [];
+  for (let i = 0; i < rows; i++) {
+    grid.push(fractals.slice(i * maxPerRow, (i + 1) * maxPerRow));
+  }
+  return grid;
+};
+
+const Grid = ({
+  grid,
+  renderCell,
+}: {
+  grid: number[][];
+  renderCell: (index: number) => ReactNode;
+}) => {
+  return (
+    <div className={styles.grid}>
+      {grid.map((row, r) => (
+        <div key={r} className={styles.gridRow}>
+          {row.map((index, c) => (
+            <div
+              key={c}
+              className={styles.gridCell}
+              onClick={() => renderCell(index)}
+            >
+              {renderCell(index)}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
 };

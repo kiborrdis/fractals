@@ -109,7 +109,7 @@ export const createShowcaseFractalsVisualizer = (
       return new FractalImage(context as WebGL2RenderingContext, fractalParams);
     });
   });
-  const renderer = new FractalsRenderer(context, canvasSize, fractalImagesGrid);
+  const renderer = new FractalsRenderer(context as WebGL2RenderingContext, canvasSize, fractalImagesGrid);
 
   renderer.render(0, { offset: [0, 0], scale: 1 }, true);
 

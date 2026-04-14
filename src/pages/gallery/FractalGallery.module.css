@@ -1,0 +1,107 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.item:hover .name {
+  opacity: 1;
+}
+
+.name {
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
+
+  background: rgb(46 46 46 / 40%);
+  color: white;
+  border: 1px solid rgb(255 255 255 / 20%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.blurButton {
+  background: rgb(46 46 46 / 40%);
+  color: white;
+
+  transition: background 0.3s ease;
+  cursor: pointer;
+
+  border: 1px solid rgb(255 255 255 / 20%);
+  backdrop-filter: blur(6px);
+  /* padding: 8px 16px; */
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  pointer-events: all;
+  /* border-radius: 50%; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 48px;
+  border-radius: 8px;
+}
+
+.blurButton:hover {
+  background: rgb(46 46 46 / 60%);
+}
+
+.mainContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.navigation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  pointer-events: none;
+}
+
+.navLink {
+  pointer-events: all;
+}
+
+.grid {
+  display: flex;
+  justify-content: stretch;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.gridRow {
+  display: flex;
+  justify-content: stretch;
+  flex: 1;
+}
+
+.gridCell {
+  flex: 1;
+}

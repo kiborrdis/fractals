@@ -181,7 +181,8 @@
                 "schema": {
                   "type": "object",
                   "required": [
-                    "list"
+                    "list",
+                    "hasNext"
                   ],
                   "properties": {
                     "list": {
@@ -189,6 +190,9 @@
                       "items": {
                         "$ref": "#/components/schemas/FractalRecordOut"
                       }
+                    },
+                    "hasNext": {
+                      "type": "boolean"
                     }
                   }
                 }
@@ -457,7 +461,8 @@
           "result": {
             "type": "object",
             "required": [
-              "list"
+              "list",
+              "hasNext"
             ],
             "properties": {
               "list": {
@@ -465,6 +470,9 @@
                 "items": {
                   "$ref": "#/components/schemas/FractalRecordOut"
                 }
+              },
+              "hasNext": {
+                "type": "boolean"
               }
             }
           },
