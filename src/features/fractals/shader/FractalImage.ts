@@ -26,9 +26,14 @@ export class FractalImage {
   private coloringShader: ColoringShader;
   private builtParams: FractalParams | null = null;
 
+  getColoringShader() {
+    return this.coloringShader;
+  }
+
   constructor(
     private context: WebGL2RenderingContext,
     private params: FractalParamsBuildRules,
+    coloringShader?: ColoringShader,
   ) {
     this.shader = createFractalShader(
       this.context,
@@ -37,7 +42,7 @@ export class FractalImage {
       params.initialZFormula,
       params.initialCFormula,
     );
-    this.coloringShader = createColoringShader(this.context);
+    this.coloringShader = coloringShader || createColoringShader(this.context);
   }
 
   updateParams(newParams: FractalParamsBuildRules) {

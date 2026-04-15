@@ -145,6 +145,17 @@ export class FractalsRenderer {
   }
 
   public resize(newSize: Vector2) {
+    if (
+      newSize[0] === this.canvasSize[0] &&
+      newSize[1] === this.canvasSize[1]
+    ) {
+      return;
+    }
+
+    if (newSize[0] <= 0 || newSize[1] <= 0) {
+      return;
+    }
+
     this.canvasSize = newSize;
 
     this.context.deleteTexture(this.tex0);

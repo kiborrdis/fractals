@@ -33,21 +33,33 @@ export const Showcase = ({
       observer.disconnect();
     };
   }, []);
+  const [showFractals, setShowFractals] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowFractals(true);
+    }, 100); // Show fractals after 0.1 second
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <div>
       <div className={styles.showcaseContainer} ref={containerRef}>
-        <DisplayFractals
-          play={play}
-          fractals={toGrid(
-            fractals.length > rows * cols
-              ? fractals.slice(0, rows * cols)
-              : fractals,
-            rows,
-            cols,
-          )}
-        />
-        <BoxShadowGrid rows={rows} cols={cols} />
+        {showFractals && (
+          <DisplayFractals
+            play={play}
+            fractals={toGrid(
+              fractals.length > rows * cols
+                ? fractals.slice(0, rows * cols)
+                : fractals,
+              rows,
+              cols,
+            )}
+          />
+        )}
+        {showFractals && <BoxShadowGrid rows={rows} cols={cols} />}
+        {showFractals && <div className={styles.animateIn} />}
         <HeroOverlay />
       </div>
       <SecondScreen />
