@@ -12,6 +12,8 @@ const derivative = (node: CalcNode, variable: "z") => {
     ln: "ln",
     cosh: "cosh",
     sinh: "sinh",
+    acos: "acos",
+    asin: "asin",
   });
 };
 

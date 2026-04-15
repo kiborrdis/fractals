@@ -21,6 +21,7 @@ export const createColoringShader = (context: WebGL2RenderingContext) => {
     context.FRAGMENT_SHADER,
     fragment,
   );
+
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
 
   if (!shaderProgram) {

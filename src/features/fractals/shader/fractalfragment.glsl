@@ -32,7 +32,6 @@ uniform vec4 u_mirroring_passes[MAX_MIRRORING_PASSES];
 uniform vec2 u_fractal_r_range_start;
 uniform vec2 u_fractal_r_range_end;
 
-
 const int MAX_TRAPS = 64;
 uniform int u_traps_size;
 uniform int u_trap_types[MAX_TRAPS];
@@ -42,8 +41,8 @@ in highp vec2 vTextureCoord;
 
 //@CUSTOM_VARS_DECLARATION_PLACEHOLDER@
 
-layout(location = 0) out vec4 output1;
-layout(location = 1) out vec4 output2;
+layout (location = 0) out vec4 output1;
+layout (location = 1) out vec4 output2;
 
 float decodeFloat(vec4 encoded) {
   float b1 = floor(encoded.x * 255.0f + 0.5f);
@@ -455,7 +454,7 @@ FractalInfo generateFractalIntensity(vec2 point) {
   if (u_smooth_pow >= 0 && powZ >= 2.0f && iteration < maxIteration) {
     iterationSmooth = float(iteration) - log(log(length(z)) / log(r)) / log(powZ);
   }
- 
+
   FractalInfo info;
   info.escapeIteration = iterationSmooth;
   info.borderDistance = dist;
@@ -466,7 +465,7 @@ FractalInfo generateFractalIntensity(vec2 point) {
   if (u_stripe_enabled == 1) {
     float curStripeAvg = stripeSum / max(float(iteration), 1.0f);
     float smoothFrac = fract(iterationSmooth);
-    info.stripeAvg = mix(prevStripeSumVal / max(float(iteration)- 1.0f, 1.0f), curStripeAvg, smoothFrac);
+    info.stripeAvg = mix(prevStripeSumVal / max(float(iteration) - 1.0f, 1.0f), curStripeAvg, smoothFrac);
   }
 
   return info;
@@ -488,7 +487,6 @@ void main() {
   float columnStep = 1.0f / (pointsPerRow + 1.0f);
   float rowStep = 1.0f / (numOfRows + 1.0f);
   vec2 halfDistanceBetweenPixels = vec2(0.5f);
-
 
   FractalInfo final;
   final.escapeIteration = 0.0f;
@@ -515,7 +513,7 @@ void main() {
 
       FractalInfo res = generateFractalIntensity(samplePoint);
 
-      if ((j > 0.0f || i > 0.0f) && coord.x > u_resolution2.x *0.5f ) {
+      if ((j > 0.0f || i > 0.0f)) {
         float escapeDiff = abs(res.escapeIteration - final.escapeIteration / numOfRenderedSamples);
         float trapDistDiff = abs(res.trapDistance - final.trapDistance / numOfRenderedSamples);
 

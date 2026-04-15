@@ -7,6 +7,8 @@ export type StdFnNames = {
   sinh: string;
   cos: string;
   cosh: string;
+  asin: string;
+  acos: string;
   tan: string;
 };
 
@@ -370,6 +372,114 @@ export const derivative = (
             r: [0, 0],
           },
           derivative(node.o[0], variable, stdFnNames, custom),
+        ],
+        r: [0, 0],
+      };
+    }
+
+    if (node.n === stdFnNames.asin) {
+      // d/dx asin(f(x)) = 1 / sqrt(1 - (f(x))^2) * f'(x)
+      const divider: CalcNode = {
+        t: CalcNodeType.Operation,
+        v: "^",
+        c: [
+          {
+            t: CalcNodeType.Operation,
+            v: "-",
+            c: [
+              {
+                t: CalcNodeType.Number,
+                re: 1,
+                im: 0,
+                r: [0, 0],
+              },
+              {
+                t: CalcNodeType.Operation,
+                v: "^",
+                c: [
+                  node.o[0],
+                  { t: CalcNodeType.Number, re: 2, im: 0, r: [0, 0] },
+                ],
+                r: [0, 0],
+              },
+            ],
+            r: [0, 0],
+          },
+          {
+            t: CalcNodeType.Number,
+            re: 0.5,
+            im: 0,
+            r: [0, 0],
+          },
+        ],
+        r: [0, 0],
+      };
+
+      return {
+        t: CalcNodeType.Operation,
+        v: "/",
+        c: [derivative(node.o[0], variable, stdFnNames, custom), divider],
+        r: [0, 0],
+      };
+    }
+
+    if (node.n === stdFnNames.acos) {
+      // d/dx acos(f(x)) = -1 / sqrt(1 - (f(x))^2) * f'(x)
+      const divider: CalcNode = {
+        t: CalcNodeType.Operation,
+        v: "^",
+        c: [
+          {
+            t: CalcNodeType.Operation,
+            v: "-",
+            c: [
+              {
+                t: CalcNodeType.Number,
+                re: 1,
+                im: 0,
+                r: [0, 0],
+              },
+              {
+                t: CalcNodeType.Operation,
+                v: "^",
+                c: [
+                  node.o[0],
+                  { t: CalcNodeType.Number, re: 2, im: 0, r: [0, 0] },
+                ],
+                r: [0, 0],
+              },
+            ],
+            r: [0, 0],
+          },
+          {
+            t: CalcNodeType.Number,
+            re: 0.5,
+            im: 0,
+            r: [0, 0],
+          },
+        ],
+        r: [0, 0],
+      };
+
+      return {
+        t: CalcNodeType.Operation,
+        v: "/",
+        c: [
+          {
+            t: CalcNodeType.Operation,
+            r: [0, 0],
+            v: "*",
+            c: [
+              {
+                t: CalcNodeType.Number,
+                re: -1,
+                im: 0,
+                r: [0, 0],
+              },
+              derivative(node.o[0], variable, stdFnNames, custom),
+            ],
+          },
+          divider,
         ],
         r: [0, 0],
       };

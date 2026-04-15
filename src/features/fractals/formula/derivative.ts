@@ -14,6 +14,8 @@ export const fractalsStdFnNames: StdFnNames = {
   tan: "tan",
   sinh: "sinh",
   cosh: "cosh",
+  acos: "acos",
+  asin: "asin",
 };
 
 const customDerivatives: CustomDerivatives = {
