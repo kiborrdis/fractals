@@ -1,6 +1,5 @@
 import { Stack, Text, Group, Button } from "@mantine/core";
 import { useCurrentTime } from "../../stores/editStore/data/useCurrentTime";
-import { useActions } from "../../stores/editStore/data/useActions";
 import { EditorLabel } from "../../ui/EditorLabel";
 
 const docKeys = "initial-time";
@@ -13,7 +12,6 @@ export const InitialTimeEdit = ({
   onChange: (value: number) => void;
 }) => {
   const currentTime = useCurrentTime();
-  const { initialLoopStateChange } = useActions();
 
   return (
     <Stack>
@@ -23,7 +21,6 @@ export const InitialTimeEdit = ({
         <Button
           variant='outline'
           onClick={() => {
-            initialLoopStateChange(0);
             setInitialTime(currentTime);
           }}
         >
