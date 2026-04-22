@@ -4,11 +4,13 @@ import { FractalParams, FractalParamsBuildRules } from "../types";
 import { createFractalShader, FractalShader } from "./createFractalShader";
 import { FractalRendererContext } from "./FractalsRenderer";
 import { ColoringShader, createColoringShader } from "./createColoringShader";
+import { isVector2Rule } from "@/shared/libs/numberRule";
 
 const convertCustomVarsToTypes = (customVars: Record<string, unknown>) => {
   return Object.entries(customVars).reduce(
     (acc, [key, val]) => {
-      acc[key] = Array.isArray(val) ? "vector2" : "number";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      acc[key] = isVector2Rule(val as unknown as any) ? "vector2" : "number";
       return acc;
     },
     {} as Record<string, "number" | "vector2">,
@@ -120,7 +122,7 @@ export class FractalImage {
     applyInitialTime: boolean = false,
     {
       framebuffer,
-      textures
+      textures,
     }: {
       framebuffer: WebGLFramebuffer;
       textures: [WebGLTexture, WebGLTexture];
@@ -153,6 +155,7 @@ export class FractalImage {
         (size[1][1] - size[0][1]) * canvasSize[1],
       ] as const,
     });
+
     this.shader.applyCustomVars(this.builtParams.custom);
 
     const positions = calculateFaceVertices(canvasSize, size);

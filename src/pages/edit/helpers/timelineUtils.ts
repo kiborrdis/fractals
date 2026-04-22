@@ -38,7 +38,7 @@ export function useTimelineGraphData(
 
     return rules.map((ruleItem) => {
       const points: Vector2[] = [];
-      const ruleToCalc = { ...ruleItem.rule, range: [-1, 1] as Vector2 };
+      const ruleToCalc = { ...ruleItem.rule, range: [1, -1] as Vector2 };
 
       for (let i = 0; i <= SAMPLE_POINTS; i++) {
         const time = (i / SAMPLE_POINTS) * period;
@@ -61,6 +61,7 @@ function getVector2RuleBounds(rule: Vector2BSplineRule | NVectorStepRule<2>): {
     maxX = -Infinity,
     minY = Infinity,
     maxY = -Infinity;
+
   for (const p of points) {
     if (p[0] < minX) {
       minX = p[0];
@@ -105,7 +106,7 @@ export function useTimelineVector2GraphData(
         const time = (i / SAMPLE_POINTS) * period;
         const val = convertRuleOrArrayToResult(rule, time);
         const norm0 =
-          (2 * (val[0] - bounds.min[0])) / (bounds.max[0] - bounds.min[0]) - 1;
+          (2 * (val[0] - bounds.max[0])) / (bounds.min[0] - bounds.max[0]) - 1;
         const norm1 =
           (2 * (val[1] - bounds.min[1])) / (bounds.max[1] - bounds.min[1]) - 1;
         data.push([time, norm0, norm1]);
