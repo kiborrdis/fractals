@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-constraint */
 import { DisplayFractals, FractalParamsBuildRules } from "@/features/fractals";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import styles from "./FractalGallery.module.css";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
 export const FractalGallery = ({
@@ -14,27 +14,58 @@ export const FractalGallery = ({
   currentPage: number;
   fractals: { name: string; params: FractalParamsBuildRules }[];
 }) => {
-  const indexGrid = toGrid(fractals.map((_, i) => i));
-  const paramsGrid = indexGrid.map((row) =>
-    row.map((index) => fractals[index].params),
+  const [prev, setPrev] = useState<{
+    page: number;
+    fractals: { name: string; params: FractalParamsBuildRules }[];
+  } | null>({
+    page: currentPage,
+    fractals,
+  });
+  const previousSnapshotRef = useRef({
+    page: currentPage,
+    fractals,
+  });
+  const hidePreviousTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
   );
-  useNavigate();
+
+  useEffect(() => {
+    const previousSnapshot = previousSnapshotRef.current;
+    if (previousSnapshot.page !== currentPage) {
+      setPrev(previousSnapshot);
+    }
+
+    previousSnapshotRef.current = {
+      page: currentPage,
+      fractals,
+    };
+
+    if (hidePreviousTimeoutRef.current) {
+      clearTimeout(hidePreviousTimeoutRef.current);
+    }
+
+    hidePreviousTimeoutRef.current = setTimeout(() => {
+      hidePreviousTimeoutRef.current = null;
+      setPrev({
+        fractals,
+        page: currentPage,
+      });
+    }, 1000);
+
+    return () => {
+      if (hidePreviousTimeoutRef.current) {
+        clearTimeout(hidePreviousTimeoutRef.current);
+        hidePreviousTimeoutRef.current = null;
+      }
+    };
+  }, [fractals, currentPage]);
 
   return (
     <div className={styles.mainContainer}>
-      <DisplayFractals key={currentPage} play={true} fractals={paramsGrid} />
-      <div className={styles.overlay}>
-        <Grid
-          grid={indexGrid}
-          renderCell={(index) => (
-            <div className={styles.item}>
-              {fractals[index].name && (
-                <div className={styles.name}>{fractals[index].name}</div>
-              )}
-            </div>
-          )}
-        />
-      </div>
+      {prev && prev.page !== currentPage && (
+        <Fractals key={prev.page} play={false} fractals={prev.fractals} />
+      )}
+      <Fractals key={currentPage} play fractals={fractals} />
       <div className={styles.navigation}>
         {currentPage > 1 ? (
           <Link
@@ -66,6 +97,37 @@ export const FractalGallery = ({
         ) : (
           <div />
         )}
+      </div>
+    </div>
+  );
+};
+
+const Fractals = ({
+  fractals,
+  play,
+}: {
+  fractals: { name: string; params: FractalParamsBuildRules }[];
+  play: boolean;
+}) => {
+  const indexGrid = toGrid(fractals.map((_, i) => i));
+  const paramsGrid = indexGrid.map((row) =>
+    row.map((index) => fractals[index].params),
+  );
+
+  return (
+    <div className={styles.fractalsContainer}>
+      <DisplayFractals play={play} fractals={paramsGrid} />
+      <div className={styles.overlay}>
+        <Grid
+          grid={indexGrid}
+          renderCell={(index) => (
+            <div className={styles.item}>
+              {fractals[index].name && (
+                <div className={styles.name}>{fractals[index].name}</div>
+              )}
+            </div>
+          )}
+        />
       </div>
     </div>
   );

@@ -99,6 +99,7 @@ export const createShowcaseFractalsVisualizer = (
   canvas: HTMLCanvasElement | OffscreenCanvas,
   canvasSize: Vector2,
   fractals: FractalParamsBuildRules[][],
+  params: { play: boolean } = { play: true },
 ) => {
   const context = canvas.getContext("webgl2", { antialias: true });
   if (!context) {
@@ -140,7 +141,7 @@ export const createShowcaseFractalsVisualizer = (
   const loop = new RenderLoop(
     iterationCallback,
     {
-      play: true,
+      play: params.play,
       initialTime: 0,
       timeMultiplier: 1,
     },
@@ -149,6 +150,9 @@ export const createShowcaseFractalsVisualizer = (
 
   return {
     loop,
+    cleanup: () => {
+      renderer.cleanup();
+    },
     resize: (newSize: Vector2) => {
       renderer.resize(newSize);
     },

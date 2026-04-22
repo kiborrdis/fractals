@@ -29,10 +29,12 @@ export const DisplayFractals = ({
       canvas,
       [width, height],
       fractals,
+      { play },
     );
     visualizerRef.current = visializer;
     return () => {
       visializer.loop.stop();
+      visializer.cleanup();
     };
     // This is intentional, only recreate visualizer if new canvas element
     // eslint-disable-next-line react-hooks/exhaustive-deps
