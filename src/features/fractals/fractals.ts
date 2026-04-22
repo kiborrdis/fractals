@@ -3,7 +3,6 @@ import { FractalsRenderer } from "./shader/FractalsRenderer";
 import { Vector2 } from "@/shared/libs/vectors";
 import { FractalImage } from "./shader/FractalImage";
 import { RenderLoop } from "@/shared/libs/render-loop";
-import { createColoringShader } from "./shader/createColoringShader";
 
 const BUDGET = 500;
 
@@ -106,17 +105,9 @@ export const createShowcaseFractalsVisualizer = (
     throw new Error("WebGL2 context initialization failed");
   }
 
-  const coloringshader = createColoringShader(
-    context as WebGL2RenderingContext,
-  );
-
   const fractalImagesGrid: FractalImage[][] = fractals.map((row) => {
     return row.map((fractalParams) => {
-      return new FractalImage(
-        context as WebGL2RenderingContext,
-        fractalParams,
-        coloringshader,
-      );
+      return new FractalImage(context as WebGL2RenderingContext, fractalParams);
     });
   });
   const renderer = new FractalsRenderer(
