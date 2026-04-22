@@ -151,6 +151,10 @@ export class FractalsRenderer {
     },
     applyInitialTime: boolean = false,
   ): Promise<number> {
+    if (this.canvasSize[0] <= 0 || this.canvasSize[1] <= 0) {
+      return Promise.resolve(-1);
+    }
+
     this.lastCamera = camera;
 
     let resolve: (value: number) => void = () => {};

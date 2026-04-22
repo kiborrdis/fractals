@@ -108,7 +108,11 @@ vec2 complexPLog(vec2 a) {
   return vec2(log(length(a)), vectorAngle(a));
 }
 
-vec2 complexPow(vec2 a, float p) {
+vec2 complexPow(vec2 a, vec2 p) {
+  return complexExp(complexMul(p, complexPLog(a)));
+}
+
+vec2 complexRealPow(vec2 a, float p) {
   return complexExp(p * complexPLog(a));
 }
 
@@ -132,13 +136,13 @@ vec2 complexAsin(vec2 v) {
   vec2 i = vec2(0.0f, 1.0f);
   vec2 iz = complexMul(i, v);
 
-  return complexMul(-1.0f * i, complexPLog(complexAdd(iz, complexPow((vec2(1.0f, 0.0f) - complexPow(v, 2.0f)), 0.5f))));
+  return complexMul(-1.0f * i, complexPLog(complexAdd(iz, complexRealPow((vec2(1.0f, 0.0f) - complexRealPow(v, 2.0f)), 0.5f))));
 }
 
 vec2 complexAcos(vec2 v) {
   vec2 i = vec2(0.0f, 1.0f);
   vec2 iz = complexMul(i, v);
-  vec2 sqrtTerm = complexPow(vec2(1.0f, 0.0f) - complexPow(v, 2.0f), 0.5f);
+  vec2 sqrtTerm = complexRealPow(vec2(1.0f, 0.0f) - complexRealPow(v, 2.0f), 0.5f);
   vec2 logTerm = complexPLog(complexAdd(iz, sqrtTerm));
 
   return vec2(PI / 2.0f, 0.0f) + complexMul(i, logTerm);

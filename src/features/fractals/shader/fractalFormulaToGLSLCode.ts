@@ -138,11 +138,19 @@ const transformToGLSLCode = (
           variableTransform,
         )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
       } else {
+        if (node.c[1].t === CalcNodeType.Number && node.c[1].im === 0) {
+          return `complexRealPow(${transformToGLSLCode(
+            node.c[0],
+            map,
+            variableTransform,
+          )}, ${transformToGLSLCode(node.c[1], map, variableTransform)}.x)`;
+        }
+
         return `${operationToFnMap[node.v]}(${transformToGLSLCode(
           node.c[0],
           map,
           variableTransform,
-        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)}.x)`;
+        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
       }
     }
     case CalcNodeType.FuncCall:
