@@ -1,5 +1,6 @@
 import { Vector2 } from "@/shared/libs/vectors";
 import { FractalImage } from "./FractalImage";
+import { FractalMapImage } from "./FractaMapImage";
 
 const createMemoryTexture = (
   context: WebGL2RenderingContext,
@@ -82,7 +83,7 @@ export class FractalsRenderer {
   constructor(
     private context: WebGL2RenderingContext,
     canvasSize: Vector2,
-    private grid: FractalImage[][],
+    private grid: (FractalImage | FractalMapImage)[][],
   ) {
     this.canvasSize = canvasSize;
     this.rendererContext = createRendererContext(this.context);
@@ -112,60 +113,34 @@ export class FractalsRenderer {
     this.tex1 = createMemoryTexture(context, canvasSize);
 
     this.framebuffer = context.createFramebuffer();
-    this.attachTexturesToFramebuffer([this.tex0, this.tex1]);
+
   }
 
-  private attachTexturesToFramebuffer(
-    texturePair: [WebGLTexture, WebGLTexture],
-  ) {
-    const context = this.context;
-    const fb = this.framebuffer;
-
-    context.bindFramebuffer(context.FRAMEBUFFER, fb);
-
-    context.framebufferTexture2D(
-      context.FRAMEBUFFER,
-      context.COLOR_ATTACHMENT0,
-      context.TEXTURE_2D,
-      texturePair[0],
-      0,
-    );
-    context.framebufferTexture2D(
-      context.FRAMEBUFFER,
-      context.COLOR_ATTACHMENT1,
-      context.TEXTURE_2D,
-      texturePair[1],
-      0,
-    );
-
-    const status = context.checkFramebufferStatus(context.FRAMEBUFFER);
-    if (status !== context.FRAMEBUFFER_COMPLETE) {
-      throw new Error("Framebuffer not complete: " + status.toString());
-    }
-  }
-
-  public resize(newSize: Vector2) {
+  public resize(newSize: Vector2, render: boolean = true): Promise<number> {
     if (
       newSize[0] === this.canvasSize[0] &&
       newSize[1] === this.canvasSize[1]
     ) {
-      return;
-    }
-
-    if (newSize[0] <= 0 || newSize[1] <= 0) {
-      return;
+      return Promise.resolve(-1);
     }
 
     this.canvasSize = newSize;
+
+    if (newSize[0] <= 0 || newSize[1] <= 0) {
+      return Promise.resolve(-1);
+    }
 
     this.context.deleteTexture(this.tex0);
     this.context.deleteTexture(this.tex1);
 
     this.tex0 = createMemoryTexture(this.context, this.canvasSize);
     this.tex1 = createMemoryTexture(this.context, this.canvasSize);
-    this.attachTexturesToFramebuffer([this.tex0, this.tex1]);
+   
+    if (!render) {
+      return Promise.resolve(0);
+    }
 
-    this.render(this.lastRenderTime, this.lastCamera);
+    return this.render(this.lastRenderTime, this.lastCamera);
   }
 
   public render(
@@ -209,20 +184,36 @@ export class FractalsRenderer {
           continue;
         }
 
-        fractalImage.renderCalculationPass(
-          time,
-          camera,
-          [this.canvasSize[0], this.canvasSize[1]],
-          [
-            [col / gridCols, row / gridRows],
-            [(col + 1) / gridCols, (row + 1) / gridRows],
-          ],
-          this.rendererContext,
-          applyInitialTime,
-          {
-            framebuffer: this.framebuffer,
-          },
-        );
+        if (fractalImage instanceof FractalMapImage) {
+          fractalImage.renderCalculationPass(
+            [this.canvasSize[0], this.canvasSize[1]],
+            [
+              [col / gridCols, row / gridRows],
+              [(col + 1) / gridCols, (row + 1) / gridRows],
+            ],
+            this.rendererContext,
+            {
+              framebuffer: this.framebuffer,
+              textures: [this.tex0, this.tex1],
+            },
+          );
+        } else {
+          fractalImage.renderCalculationPass(
+            time,
+            camera,
+            [this.canvasSize[0], this.canvasSize[1]],
+            [
+              [col / gridCols, row / gridRows],
+              [(col + 1) / gridCols, (row + 1) / gridRows],
+            ],
+            this.rendererContext,
+            applyInitialTime,
+            {
+              framebuffer: this.framebuffer,
+              textures: [this.tex0, this.tex1],
+            },
+          );
+        }
       }
     }
 

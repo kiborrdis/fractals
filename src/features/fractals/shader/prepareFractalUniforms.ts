@@ -28,6 +28,18 @@ export const createResolutionUniformApplier = (
     ["2f", "u_resolution2", (data) => data.renderResolution],
   ]);
 
+export const createResolutionUniformApplier2 = (
+  ctx: WebGL2RenderingContext,
+  program: WebGLProgram,
+  memory: UniformApplierMemory,
+) =>
+  createUniformApplier<{
+    fullResolution: [number, number];
+    renderResolution: [number, number];
+  }>(ctx, program, memory, [
+    ["2f", "u_resolution", (data) => data.fullResolution],
+  ]);
+
 export const createCameraUniformApplier = (
   ctx: WebGL2RenderingContext,
   program: WebGLProgram,
@@ -39,6 +51,54 @@ export const createCameraUniformApplier = (
   }>(ctx, program, memory, [
     ["2f", "u_camera_offset", (data) => data.offset],
     ["1f", "u_camera_scale", (data) => data.scale],
+  ]);
+
+export const createMapParamsUniformApplier = (
+  ctx: WebGL2RenderingContext,
+  program: WebGLProgram,
+  memory: UniformApplierMemory,
+) =>
+  createUniformApplier<{
+    axisSizes: [number, number];
+    offset: [number, number];
+    targetDetailLevel: number;
+    prevDetailLevel: number;
+    prevData: WebGLTexture;
+  }>(ctx, program, memory, [
+    ['texture', 'u_prev_data', (data) => data.prevData],
+    ["2f", "u_axis_sizes", (data) => data.axisSizes],
+    ["2f", "u_offset", (data) => data.offset],
+    ["1i", "u_target_detail_level", (data) => data.targetDetailLevel],
+    ["1i", "u_prev_detail_level", (data) => data.prevDetailLevel],
+  ]);
+
+export const createMapFractalUniformApplier = (
+  ctx: WebGL2RenderingContext,
+  program: WebGLProgram,
+  memory: UniformApplierMemory,
+) =>
+  createUniformApplier<FractalParams>(ctx, program, memory, [
+    ["2f", "u_fractal_c", (data) => data.dynamic.c],
+    ["1f", "u_fractal_r", (data) => data.dynamic.r],
+    ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
+    [
+      "2f",
+      "u_fractal_r_range_start",
+      (data) =>
+        [
+          data.dynamic.rlVisibleRange[0],
+          data.dynamic.imVisibleRange[0],
+        ] as const,
+    ],
+    [
+      "2f",
+      "u_fractal_r_range_end",
+      (data) =>
+        [
+          data.dynamic.rlVisibleRange[1],
+          data.dynamic.imVisibleRange[1],
+        ] as const,
+    ],
   ]);
 
 export const createFractalUniformApplier = (

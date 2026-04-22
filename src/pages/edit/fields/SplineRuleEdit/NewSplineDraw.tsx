@@ -96,14 +96,14 @@ export const NewSplineDraw = ({
         <GraphEdit
           axisRangeSizes={axisRangeSizes}
           offset={offset}
+          background={renderGraphMap?.()}
           onClick={() => {
             if (!isPanning && currentControl) {
               setControls([...controls, [...currentControl]]);
             }
           }}
         >
-          <GraphBackgroundColor color='black' />
-          {renderGraphMap?.()}
+          <GraphBackgroundColor color='transparent' />
 
           <Graph2DGrid renderRuler={defaultRenderGridRuler} />
           <GraphViewportControls

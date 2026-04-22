@@ -424,12 +424,7 @@ FractalInfo generateFractalIntensity(vec2 point) {
     xSqrd = z.x * z.x;
     ySqrd = z.y * z.y;
 
-    // Detecting cycles to speed up the rendering of some fractals
-    if (abs(z.x - zPrev.x) < earlyStopThreshholdX && abs(z.y - zPrev.y) < earlyStopThreshholdY) {
-      iteration = maxIteration;
-      earlyStop = true;
-      break;
-    }
+
 
     period = period + 1;
     if (period > 25) {

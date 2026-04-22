@@ -21,12 +21,14 @@ export const GraphEdit = ({
   offset,
   axisRangeSizes,
   mappingMode = "fit",
+  background,
   onClick,
   children,
 }: {
   mappingMode?: "fit" | "fill";
   offset: Vector2;
   axisRangeSizes: Vector2;
+  background?: ReactNode;
   onClick?: (e: MouseEvent) => void;
   children?: ReactNode;
 }) => {
@@ -207,6 +209,19 @@ export const GraphEdit = ({
             height: `${height}px`,
           }}
         >
+          {background && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: `${width}px`,
+                height: `${height}px`,
+              }}
+            >
+              {background}
+            </div>
+          )}
           <canvas
             ref={canvasRef}
             style={{

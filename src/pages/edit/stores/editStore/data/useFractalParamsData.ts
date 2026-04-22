@@ -12,6 +12,11 @@ export const useFractalCustomRules = () => {
   return fractal;
 };
 
+export const useRawFractalParams = () => {
+  const fractal = useEditStore((state) => state.fractal);
+  return fractal;
+}
+
 export const useFractalParamsData = () => {
   const fractal = useEditStore((state) => state.fractal);
   const overrides = useEditStore((state) => state.fractalOverrides);

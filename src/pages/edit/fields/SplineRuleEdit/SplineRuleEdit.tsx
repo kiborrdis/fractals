@@ -112,9 +112,8 @@ export const SplineRuleEdit = ({
       {label && <Label>{label}</Label>}
 
       <div className={styles.graphContainer}>
-        <GraphEdit axisRangeSizes={axisRangeSizes} offset={offset}>
-          <GraphBackgroundColor color='black' />
-          {renderGraphMap?.()}
+        <GraphEdit background={renderGraphMap?.()} axisRangeSizes={axisRangeSizes} offset={offset}>
+          <GraphBackgroundColor color='transparent' />
           <Graph2DGrid renderRuler={defaultRenderGridRuler} />
           <Graph2DLine
             data={data.data}

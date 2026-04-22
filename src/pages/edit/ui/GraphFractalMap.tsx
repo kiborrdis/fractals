@@ -1,4 +1,3 @@
-import { GraphFractalBackground } from "@/features/fractals";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
   formulaVars,
@@ -8,6 +7,11 @@ import {
 } from "@/features/fractals";
 import { useMemo } from "react";
 import { useFractalFormula } from "../stores/editStore/data/useFractalFormula";
+import {
+  GraphFractalMultipointMap as GraphFractalMultipointMapView,
+  GraphFractalSimpleMap as GraphFractalSimpleMapView,
+} from "@/features/fractals";
+import { useRawFractalParams } from "../stores/editStore/data/useFractalParamsData";
 
 const BACKGROUND_GRADIENT: GradientStop[] = [
   [0, [0, 0, 0, 1.0]],
@@ -18,6 +22,12 @@ const BACKGROUND_GRADIENT: GradientStop[] = [
   [99, [0.6274509803921569, 0.7294117647058823, 0.6549019607843137, 1.0]],
   [100, [0.14901960784313725, 0.14901960784313725, 0.14901960784313725, 1.0]],
 ];
+
+export const GraphFractalMultipointMap = () => {
+  const fractal = useRawFractalParams();
+
+  return <GraphFractalMultipointMapView fractal={fractal} />;
+};
 
 export const GraphFractalMap = ({
   c,
@@ -45,7 +55,7 @@ export const GraphFractalMap = ({
   }
 
   return (
-    <GraphFractalBackground
+    <GraphFractalSimpleMapView
       priority={priority}
       c={c}
       formula={formula}

@@ -55,6 +55,13 @@ export const EditorSettings = ({ onClose }: { onClose: () => void }) => {
         checked={settings.normalColoring}
         onChange={(e) => setSetting("normalColoring", e.currentTarget.checked)}
       />
+
+      <Switch
+        label='Simple C map'
+        description='Use simple map for C parameter'
+        checked={settings.singlePointMap}
+        onChange={(e) => setSetting("singlePointMap", e.currentTarget.checked)}
+      />
     </Stack>
   );
 };

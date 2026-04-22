@@ -7,12 +7,14 @@ import { NumberBuildRule, Vector2BulidRule } from "@/shared/libs/numberRule";
 import { Vector2RuleEdit } from "../Vector2RuleEdit/Vector2RuleEdit";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { useActions } from "../../stores/editStore/data/useActions";
-import { GraphFractalMap } from "../../ui/GraphFractalMap";
+import { GraphFractalMap, GraphFractalMultipointMap } from "../../ui/GraphFractalMap";
 import {
   GraphMapParamProvider,
   useGraphMapParam,
 } from "../../stores/graphMapState";
+import { useSetting } from "../../stores/settings";
 import { MapEditMode } from "../../ui/MapEditMode/MapEditMode";
+import { Vector2 } from "@/shared/libs/vectors/types";
 
 type RuleValue = NumberBuildRule | Vector2BulidRule;
 
@@ -31,13 +33,58 @@ type RuleRenderers = {
 };
 
 const CGraphMap = () => {
+  const singlePointMap = useSetting('singlePointMap');
+
+  if (singlePointMap) {
+    return <SimpleCGraphMap />;
+  }
+
+  return <GraphFractalMultipointMap />;
+};
+
+const CGraphMapEdit = ({ params }: { params: { offset: Vector2; axisRangeSizes: Vector2; setViewport: (axisRangeSizes: Vector2, newOffset: Vector2) => void; onExit: () => void } }) => {
+  const singlePointMap = useSetting('singlePointMap');
+
+  if (!singlePointMap) {
+    return null;
+  }
+
+  return <MapEditMode {...params} />;
+};
+
+const SimpleCGraphMap = () => {
   const [c] = useGraphMapParam();
 
   return <GraphFractalMap c={c} />;
+}
+
+
+const Vector2RuleEditContainer = (
+  props: ComponentProps<typeof Vector2RuleEdit>,
+) => {
+  const { dynamicParamOverride } = useActions();
+
+  const onPreview = useCallback(
+    (name: string, value: [number, number] | undefined) => {
+      dynamicParamOverride([name], value);
+    },
+    [dynamicParamOverride],
+  );
+
+  return <Vector2RuleEdit onPreview={onPreview} {...props} />;
 };
 
 const renderGraphMapForC = () => {
   return <CGraphMap />;
+};
+
+const renderGraphMapEditForC = (params: {
+  offset: Vector2;
+  axisRangeSizes: Vector2;
+  setViewport: (axisRangeSizes: Vector2, newOffset: Vector2) => void;
+  onExit: () => void;
+}) => {
+  return <CGraphMapEdit params={params} />;
 };
 
 const ruleConfigs: RuleRenderers = {
@@ -65,21 +112,7 @@ const ruleConfigs: RuleRenderers = {
           docKey1='imaginary'
           sublabels={["Real", "Imaginary"]}
           renderGraphMap={renderGraphMapForC}
-          renderGraphMapEdit={({
-            offset,
-            axisRangeSizes,
-            onExit,
-            setViewport,
-          }) => {
-            return (
-              <MapEditMode
-                offset={offset}
-                axisRangeSizes={axisRangeSizes}
-                setViewport={setViewport}
-                onExit={onExit}
-              />
-            );
-          }}
+          renderGraphMapEdit={renderGraphMapEditForC}
           {...props}
         />
       </GraphMapParamProvider>
@@ -187,20 +220,6 @@ const ruleConfigs: RuleRenderers = {
   coloring: () => null,
 };
 
-const Vector2RuleEditContainer = (
-  props: ComponentProps<typeof Vector2RuleEdit>,
-) => {
-  const { dynamicParamOverride } = useActions();
-
-  const onPreview = useCallback(
-    (name: string, value: [number, number] | undefined) => {
-      dynamicParamOverride([name], value);
-    },
-    [dynamicParamOverride],
-  );
-
-  return <Vector2RuleEdit onPreview={onPreview} {...props} />;
-};
 
 export const DynamicRuleEdit = ({
   name,

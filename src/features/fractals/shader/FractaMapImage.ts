@@ -1,9 +1,15 @@
 import { Vector2 } from "@/shared/libs/vectors";
 import { makeFractalParamsFromRules } from "../ruleConversion";
 import { FractalParams, FractalParamsBuildRules } from "../types";
-import { createFractalShader, FractalShader } from "./createFractalShader";
 import { FractalRendererContext } from "./FractalsRenderer";
-import { ColoringShader, createColoringShader } from "./createColoringShader";
+import {
+  createFractalMapShader,
+  FractalMapShader,
+} from "./createFractalMapShader";
+import {
+  createMapColoringShader,
+  MapColoringShader,
+} from "./createMapColoringShader";
 
 const convertCustomVarsToTypes = (customVars: Record<string, unknown>) => {
   return Object.entries(customVars).reduce(
@@ -21,10 +27,12 @@ const textureCoordinates = [
   1.0, 1.0, 0.0, 1.0, 1.0, 0.0,
 ];
 
-export class FractalImage {
-  private shader: FractalShader;
-  private coloringShader: ColoringShader;
+export class FractalMapImage {
+  private shader: FractalMapShader;
+  private coloringShader: MapColoringShader;
   private builtParams: FractalParams | null = null;
+  private textureToRenderTo = 0;
+  private prevDetailLevel = 0;
 
   getColoringShader() {
     return this.coloringShader;
@@ -33,16 +41,22 @@ export class FractalImage {
   constructor(
     private context: WebGL2RenderingContext,
     private params: FractalParamsBuildRules,
-    coloringShader?: ColoringShader,
+    private mapParams: {
+      axisSizes: Vector2;
+      offset: Vector2;
+      targetDetailLevel: number;
+    },
+    coloringShader?: MapColoringShader,
   ) {
-    this.shader = createFractalShader(
+    this.shader = createFractalMapShader(
       this.context,
       params.formula,
       convertCustomVarsToTypes(params.custom),
       params.initialZFormula,
       params.initialCFormula,
     );
-    this.coloringShader = coloringShader || createColoringShader(this.context);
+    this.coloringShader =
+      coloringShader || createMapColoringShader(this.context);
   }
 
   private attachTexturesToFramebuffer(
@@ -62,14 +76,7 @@ export class FractalImage {
       context.FRAMEBUFFER,
       context.COLOR_ATTACHMENT0,
       context.TEXTURE_2D,
-      texturePair[0],
-      0,
-    );
-    context.framebufferTexture2D(
-      context.FRAMEBUFFER,
-      context.COLOR_ATTACHMENT1,
-      context.TEXTURE_2D,
-      texturePair[1],
+      texturePair[this.textureToRenderTo],
       0,
     );
 
@@ -79,7 +86,29 @@ export class FractalImage {
     }
   }
 
+  updateMapParams(newMapParams: {
+    axisSizes: Vector2;
+    offset: Vector2;
+    targetDetailLevel: number;
+  }) {
+    if (newMapParams.targetDetailLevel !== this.mapParams.targetDetailLevel) {
+      this.prevDetailLevel = Math.max(this.mapParams.targetDetailLevel, this.prevDetailLevel);
+    }
+
+    if (
+      this.mapParams.axisSizes[0] !== newMapParams.axisSizes[0] ||
+      this.mapParams.axisSizes[1] !== newMapParams.axisSizes[1] ||
+      this.mapParams.offset[0] !== newMapParams.offset[0] ||
+      this.mapParams.offset[1] !== newMapParams.offset[1]
+    ) {
+      this.prevDetailLevel = 0;
+    }
+
+    this.mapParams = newMapParams;
+  }
+
   updateParams(newParams: FractalParamsBuildRules) {
+    this.prevDetailLevel = 0;
     if (
       Object.keys(newParams.custom).length !==
         Object.keys(this.params.custom).length ||
@@ -88,7 +117,7 @@ export class FractalImage {
       this.params.initialZFormula !== newParams.initialZFormula
     ) {
       this.shader.cleanup();
-      this.shader = createFractalShader(
+      this.shader = createFractalMapShader(
         this.context,
         newParams.formula,
         convertCustomVarsToTypes(newParams.custom),
@@ -108,19 +137,13 @@ export class FractalImage {
   }
 
   renderCalculationPass(
-    time: number,
-    camera: {
-      offset: Vector2;
-      scale: number;
-    },
     canvasSize: Vector2,
     //** @desciption top left and bottom right corners of the area to render. From 0 to 1
     size: [Vector2, Vector2],
     { context, positionBuffer, uvBuffer }: FractalRendererContext,
-    applyInitialTime: boolean = false,
     {
       framebuffer,
-      textures
+      textures,
     }: {
       framebuffer: WebGLFramebuffer;
       textures: [WebGLTexture, WebGLTexture];
@@ -139,13 +162,18 @@ export class FractalImage {
     context.useProgram(this.shader.program);
     context.bindFramebuffer(context.FRAMEBUFFER, framebuffer);
 
-    this.builtParams = makeFractalParamsFromRules(
-      this.params,
-      time + (applyInitialTime ? (this.params.initialTime ?? 0) : 0),
-    );
+    this.builtParams = makeFractalParamsFromRules(this.params, 0);
 
-    this.shader.applyFractalParams(this.builtParams);
-    this.shader.applyCameraParams(camera);
+    this.shader.applyMapParams({
+      ...this.mapParams,
+      prevDetailLevel: this.prevDetailLevel,
+      prevData: textures[(this.textureToRenderTo + 1) % 2],
+    });
+    this.shader.applyMapFractalParams(this.builtParams);
+    this.shader.applyCameraParams({
+      offset: [0, 0],
+      scale: 1,
+    });
     this.shader.applyResolutionParams({
       fullResolution: canvasSize,
       renderResolution: [
@@ -197,14 +225,16 @@ export class FractalImage {
     const offset2 = 0;
     const count2 = 6;
 
-    context.drawBuffers([context.COLOR_ATTACHMENT0, context.COLOR_ATTACHMENT1]);
+    context.drawBuffers([context.COLOR_ATTACHMENT0]);
     context.drawArrays(primitiveType, offset2, count2);
 
     context.disable(context.SCISSOR_TEST);
+
+    this.textureToRenderTo = (this.textureToRenderTo + 1) % 2;
   }
 
   renderColoringPass(
-    time: number,
+    _: number,
     camera: {
       offset: Vector2;
       scale: number;
@@ -219,12 +249,6 @@ export class FractalImage {
       textures: [WebGLTexture, WebGLTexture];
     },
   ) {
-    if (!this.builtParams) {
-      throw new Error(
-        "Fractal params not built. Make sure to call renderCalculationPass before renderColoringPass",
-      );
-    }
-
     const ySize = size[1][1] - size[0][1];
 
     context.enable(context.SCISSOR_TEST);
@@ -238,20 +262,15 @@ export class FractalImage {
     context.bindFramebuffer(context.FRAMEBUFFER, null);
     context.useProgram(this.coloringShader.program);
 
-    this.coloringShader.applyFractalParams(this.builtParams);
-    this.coloringShader.applyTime(time);
-    this.coloringShader.applyCameraParams(camera);
-    this.coloringShader.applyResolutionParams({
-      fullResolution: canvasSize,
-      renderResolution: [
+    this.coloringShader.applyColorParams({
+      resolution: [
         (size[1][0] - size[0][0]) * canvasSize[0],
         (size[1][1] - size[0][1]) * canvasSize[1],
       ] as const,
+      detailLevel: this.mapParams.targetDetailLevel,
+      data: textures[(this.textureToRenderTo + 1) % 2],
     });
-    this.coloringShader.applyFractalData({
-      fractalData1: textures[0],
-      fractalData2: textures[1],
-    });
+    this.coloringShader.applyCameraParams(camera);
 
     context.bindBuffer(context.ARRAY_BUFFER, uvBuffer);
     context.bufferData(
@@ -297,8 +316,6 @@ export class FractalImage {
 
     context.drawArrays(primitiveType, offset2, count2);
     context.disable(context.SCISSOR_TEST);
-
-    this.builtParams = null;
   }
 
   cleanup() {

@@ -8,17 +8,20 @@ type Settings = {
     coloringLayers: boolean;
     advancedMirroringSettings: boolean;
     normalColoring: boolean;
+    singlePointMap: boolean;
   };
 };
 
 const initialSettings: Settings = {
-  version: 4,
+  version: 5,
   data: {
     timelineRange: false,
     coloringLayers: false,
+    
     advancedMirroringSettings: false,
-
     normalColoring: false,
+
+    singlePointMap: false,
   },
 };
 
