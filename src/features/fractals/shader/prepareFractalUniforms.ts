@@ -233,6 +233,20 @@ export const createFractalUniformApplier = (
     ],
   ]);
 
+const memoizedGradientsEncoder = (texture: WebGLTexture) => {
+  let prevGradients: FractalParams["gradients"] | null = null; 
+
+  return ({gradients}: Pick<FractalParams, 'gradients'>, ctx: WebGL2RenderingContext) => {
+    if (prevGradients === gradients && texture) {
+      return texture;
+    }
+
+    prevGradients = gradients;
+    encodeGradientsInTexture(ctx, texture, gradients);
+    return texture;
+  }
+}
+
 export const createColoringUniformApplier = (
   ctx: WebGL2RenderingContext,
   program: WebGLProgram,
@@ -245,10 +259,8 @@ export const createColoringUniformApplier = (
     [
       "texture",
       "u_gradients_sampler",
-      (data, ctx) =>
-        encodeGradientsInTexture(ctx, gradientTexture, data.gradients),
+      memoizedGradientsEncoder(gradientTexture),
     ],
-
     [
       "1iv",
       "u_gradient_wls",
