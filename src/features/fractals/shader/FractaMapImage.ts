@@ -92,7 +92,10 @@ export class FractalMapImage {
     targetDetailLevel: number;
   }) {
     if (newMapParams.targetDetailLevel !== this.mapParams.targetDetailLevel) {
-      this.prevDetailLevel = Math.max(this.mapParams.targetDetailLevel, this.prevDetailLevel);
+      this.prevDetailLevel = Math.max(
+        this.mapParams.targetDetailLevel,
+        this.prevDetailLevel,
+      );
     }
 
     if (

@@ -7,7 +7,10 @@ import { NumberBuildRule, Vector2BulidRule } from "@/shared/libs/numberRule";
 import { Vector2RuleEdit } from "../Vector2RuleEdit/Vector2RuleEdit";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { useActions } from "../../stores/editStore/data/useActions";
-import { GraphFractalMap, GraphFractalMultipointMap } from "../../ui/GraphFractalMap";
+import {
+  GraphFractalMap,
+  GraphFractalMultipointMap,
+} from "../../ui/GraphFractalMap";
 import {
   GraphMapParamProvider,
   useGraphMapParam,
@@ -33,7 +36,7 @@ type RuleRenderers = {
 };
 
 const CGraphMap = () => {
-  const singlePointMap = useSetting('singlePointMap');
+  const singlePointMap = useSetting("singlePointMap");
 
   if (singlePointMap) {
     return <SimpleCGraphMap />;
@@ -42,8 +45,17 @@ const CGraphMap = () => {
   return <GraphFractalMultipointMap />;
 };
 
-const CGraphMapEdit = ({ params }: { params: { offset: Vector2; axisRangeSizes: Vector2; setViewport: (axisRangeSizes: Vector2, newOffset: Vector2) => void; onExit: () => void } }) => {
-  const singlePointMap = useSetting('singlePointMap');
+const CGraphMapEdit = ({
+  params,
+}: {
+  params: {
+    offset: Vector2;
+    axisRangeSizes: Vector2;
+    setViewport: (axisRangeSizes: Vector2, newOffset: Vector2) => void;
+    onExit: () => void;
+  };
+}) => {
+  const singlePointMap = useSetting("singlePointMap");
 
   if (!singlePointMap) {
     return null;
@@ -56,8 +68,7 @@ const SimpleCGraphMap = () => {
   const [c] = useGraphMapParam();
 
   return <GraphFractalMap c={c} />;
-}
-
+};
 
 const Vector2RuleEditContainer = (
   props: ComponentProps<typeof Vector2RuleEdit>,
@@ -219,7 +230,6 @@ const ruleConfigs: RuleRenderers = {
 
   coloring: () => null,
 };
-
 
 export const DynamicRuleEdit = ({
   name,

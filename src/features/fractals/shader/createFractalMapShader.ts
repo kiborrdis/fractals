@@ -126,7 +126,11 @@ export const createFractalMapShader = (
       shaderProgram,
       memory,
     ),
-    applyMapParams: createMapParamsUniformApplier(context, shaderProgram, memory),
+    applyMapParams: createMapParamsUniformApplier(
+      context,
+      shaderProgram,
+      memory,
+    ),
     applyCameraParams,
     applyResolutionParams,
     applyCustomVars,

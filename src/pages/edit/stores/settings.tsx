@@ -17,7 +17,7 @@ const initialSettings: Settings = {
   data: {
     timelineRange: false,
     coloringLayers: false,
-    
+
     advancedMirroringSettings: false,
     normalColoring: false,
 

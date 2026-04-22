@@ -4,9 +4,7 @@ import {
   createUniformApplier,
   UniformApplierMemory,
 } from "@/shared/libs/webgl";
-import {
-  createCameraUniformApplier,
-} from "./prepareFractalUniforms";
+import { createCameraUniformApplier } from "./prepareFractalUniforms";
 import vertex from "./fractalvertex.glsl?raw";
 import fragment from "./mapcolorshader.glsl?raw";
 import { Vector2 } from "@/shared/libs/vectors";

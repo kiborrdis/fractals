@@ -106,7 +106,9 @@ export const createShowcaseFractalsVisualizer = (
     throw new Error("WebGL2 context initialization failed");
   }
 
-  const coloringshader = createColoringShader(context as WebGL2RenderingContext);
+  const coloringshader = createColoringShader(
+    context as WebGL2RenderingContext,
+  );
 
   const fractalImagesGrid: FractalImage[][] = fractals.map((row) => {
     return row.map((fractalParams) => {

@@ -93,7 +93,11 @@ export const Vector2StepRuleEdit = ({
   return (
     <Stack>
       <div className={styles.graphContainer}>
-        <GraphEdit background={renderGraphMap?.()} axisRangeSizes={axisRangeSizes} offset={offset}>
+        <GraphEdit
+          background={renderGraphMap?.()}
+          axisRangeSizes={axisRangeSizes}
+          offset={offset}
+        >
           <GraphBackgroundColor color='transparent' />
           <Graph2DGrid renderRuler={defaultRenderGridRuler} />
           <Graph2DLine data={data} getColor={getColor} />

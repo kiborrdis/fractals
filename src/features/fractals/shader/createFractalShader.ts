@@ -130,12 +130,13 @@ export const createFractalShader = (
     memory,
     Object.keys(customVars).map((varName) => {
       const type = customVars[varName] === "vector2" ? "2f" : "1f";
-
       if (type === "2f") {
         return [
           "2f",
           `u_cstm_${varName}`,
-          (data) => (data[varName] as [number, number]) ?? null,
+          (data) => {
+            return (data[varName] as [number, number]) ?? null;
+          },
         ] as const;
       }
 

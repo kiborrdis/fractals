@@ -113,7 +113,6 @@ export class FractalsRenderer {
     this.tex1 = createMemoryTexture(context, canvasSize);
 
     this.framebuffer = context.createFramebuffer();
-
   }
 
   public resize(newSize: Vector2, render: boolean = true): Promise<number> {
@@ -135,7 +134,7 @@ export class FractalsRenderer {
 
     this.tex0 = createMemoryTexture(this.context, this.canvasSize);
     this.tex1 = createMemoryTexture(this.context, this.canvasSize);
-   
+
     if (!render) {
       return Promise.resolve(0);
     }

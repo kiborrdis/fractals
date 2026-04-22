@@ -65,7 +65,7 @@ export const createMapParamsUniformApplier = (
     prevDetailLevel: number;
     prevData: WebGLTexture;
   }>(ctx, program, memory, [
-    ['texture', 'u_prev_data', (data) => data.prevData],
+    ["texture", "u_prev_data", (data) => data.prevData],
     ["2f", "u_axis_sizes", (data) => data.axisSizes],
     ["2f", "u_offset", (data) => data.offset],
     ["1i", "u_target_detail_level", (data) => data.targetDetailLevel],
