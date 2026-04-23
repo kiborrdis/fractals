@@ -10,7 +10,7 @@ import { useState, useCallback, useMemo, ReactNode } from "react";
 import { useViewport } from "./useViewport";
 import {
   Graph2DGrid,
-  GraphBackgroundColor,
+  GraphFillColor,
   GraphEdit,
   GraphViewportControls,
   Graph2DLine,
@@ -140,7 +140,7 @@ export const GraphDimsRuleEdit = ({
         axisRangeSizes={axisRangeSizes}
         offset={offset}
       >
-        <GraphBackgroundColor color='transparent' />
+        <GraphFillColor color={renderGraphMap ? "transparent" : "black"} />
         <Graph2DGrid renderRuler={defaultRenderGridRuler} />
 
         {pathData && (

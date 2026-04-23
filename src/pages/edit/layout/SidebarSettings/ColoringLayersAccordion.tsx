@@ -51,8 +51,6 @@ const blendModeOptions = Object.entries({
   [BlendMode.Exclusion]: "Exclusion",
   [BlendMode.Overlay]: "Overlay",
   [BlendMode.HardLight]: "Hard Light",
-  [BlendMode.InvertedOverlay]: "Inverted Overlay",
-  [BlendMode.InvertedHardLight]: "Inverted Hard Light",
   [BlendMode.SoftLight]: "Soft Light",
 }).map(([value, label]) => ({ value, label }));
 

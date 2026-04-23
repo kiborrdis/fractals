@@ -7,7 +7,7 @@ import { useRuleData } from "./useRuleData";
 import {
   defaultRenderGridRuler,
   Graph2DGrid,
-  GraphBackgroundColor,
+  GraphFillColor,
   GraphEdit,
   GraphViewportControls,
   PointsEdit,
@@ -103,7 +103,7 @@ export const NewSplineDraw = ({
             }
           }}
         >
-          <GraphBackgroundColor color='transparent' />
+          <GraphFillColor color={renderGraphMap ? "transparent" : "black"} />
 
           <Graph2DGrid renderRuler={defaultRenderGridRuler} />
           <GraphViewportControls

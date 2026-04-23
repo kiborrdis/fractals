@@ -3,7 +3,7 @@ import { clearWithColor } from "./render2D";
 import { Vector2 } from "@/shared/libs/vectors";
 import { useRegisterCanvasRender } from "./context";
 
-export const GraphBackgroundColor = ({
+export const GraphFillColor = ({
   color,
   priority,
 }: {

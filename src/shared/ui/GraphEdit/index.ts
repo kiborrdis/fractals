@@ -4,7 +4,7 @@ export {
   GridCellRuler,
   defaultRenderGridRuler,
 } from "./Graph2DGrid";
-export { GraphBackgroundColor } from "./GraphBackgroundColor";
+export { GraphFillColor } from "./GraphFillColor";
 
 export { PointsEdit } from "./GraphPointsEdit";
 export { GraphEdit } from "./GraphEdit";

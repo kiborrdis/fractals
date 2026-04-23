@@ -1,7 +1,8 @@
 import {
-  Button,
+  ActionIcon,
   Divider,
   Group,
+  Menu,
   Stack,
   Tabs,
   ThemeIcon,
@@ -14,7 +15,6 @@ import { DynamicRuleEdit } from "../../fields/DynamicRuleEdit/DynamicRuleEdit";
 import { CustomVariables } from "../../fields/CustomVariables/CustomVariables";
 import {
   TbAdjustments,
-  TbCircle,
   TbFlipHorizontal,
   TbMathFunction,
   TbPalette,
@@ -28,6 +28,7 @@ import { useSetting } from "../../stores/settings";
 import { BasicMirroringEdit } from "../../fields/MirroringEdit/BasicMirroringEdit";
 import { AdvancedMirroringEdit } from "../../fields/MirroringEdit/AdvancedMirroringEdit";
 import { ColoringSettings } from "./ColoringSettings";
+import { FiMenu } from "react-icons/fi";
 
 export const ShapeParams = React.memo(() => {
   const [activeTab, setActiveTab] = React.useState<string | null>("c");
@@ -37,17 +38,25 @@ export const ShapeParams = React.memo(() => {
   return (
     <Stack gap='sm'>
       <SettingsSection>
-        <Group align='flex-start' gap='sm'>
+        <Group align='center' gap='sm'>
           <div className={styles.formulaContainer}>
             <StaticRuleEdit name='formula' />
           </div>
-          <Button
-            size='sm'
-            variant='light'
-            onClick={() => setPresetModalOpen(true)}
-          >
-            Presets
-          </Button>
+
+          <Menu position='bottom-end' shadow='md'>
+            <Menu.Target>
+              <Tooltip label='Actions' position='left'>
+                <ActionIcon size='sm' variant='transparent'>
+                  <FiMenu />
+                </ActionIcon>
+              </Tooltip>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item onClick={() => setPresetModalOpen(true)}>
+                Load preset
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
 
         <ModeEdit />
@@ -61,14 +70,8 @@ export const ShapeParams = React.memo(() => {
             activeTab={activeTab}
           />
           <TabWithIcon
-            value='r'
-            label='Escape radius'
-            icon={TbCircle}
-            activeTab={activeTab}
-          />
-          <TabWithIcon
-            value='Iterations'
-            label='Max iterations'
+            value='stopCondition'
+            label='Stop conditions'
             icon={TbRepeat}
             activeTab={activeTab}
           />
@@ -100,18 +103,11 @@ export const ShapeParams = React.memo(() => {
             <DynamicRuleEdit name='cDistVariation' />
           </SettingsSection>
         </Tabs.Panel>
-        <Tabs.Panel value='r'>
-          <SettingsSection>
-            <DynamicRuleEdit name='r' />
 
-            <DynamicRuleEdit name='rDistVariation' />
-          </SettingsSection>
-        </Tabs.Panel>
-        <Tabs.Panel value='Iterations'>
+        <Tabs.Panel value='stopCondition'>
           <SettingsSection>
             <DynamicRuleEdit name='maxIterations' />
-
-            <DynamicRuleEdit name='iterationsDistVariation' />
+            <DynamicRuleEdit name='r' />
           </SettingsSection>
         </Tabs.Panel>
 

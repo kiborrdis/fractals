@@ -24,8 +24,12 @@ type VariableType = "number" | "vector2";
 const docKeys = "custom-variables";
 
 export const CustomVariables = memo(() => {
-  const { customVariableCreate, customVariableDelete, customRuleChange } =
-    useActions();
+  const {
+    customVariableCreate,
+    customVariableDelete,
+    customRuleChange,
+    customParamOverride,
+  } = useActions();
   const customVars = useFractalCustomRules();
   const formula = useFractalFormula();
 
@@ -73,7 +77,7 @@ export const CustomVariables = memo(() => {
     <Stack gap='md'>
       <EditorLabel docKeys={docKeys}>Custom Variables</EditorLabel>
       <Chip.Group
-        value={selectedVar || undefined}
+        value={selectedVar || null}
         onChange={(value: string | string[]) => {
           if (typeof value === "string") {
             setSelectedVar(value);
@@ -120,9 +124,12 @@ export const CustomVariables = memo(() => {
               sublabels={["X", "Y"]}
               min={-100}
               max={100}
-              minRange={1}
+              minRange={0.1}
               value={selectedValue}
               onChange={handleVector2RuleChange}
+              onPreview={(name, value) => {
+                customParamOverride([name], value);
+              }}
             />
           ) : (
             <div>ha</div>

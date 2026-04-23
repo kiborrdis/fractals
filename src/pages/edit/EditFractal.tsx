@@ -25,6 +25,7 @@ import { SettingsProvider } from "./stores/settings";
 import { ContentArea } from "./layout/ContentArea/ContentArea";
 import { EditorSettings } from "./layout/EditorSettings/EditorSettings";
 import { ShareButton } from "./ShareButton";
+import { GraphMapParamProvider } from "./stores/graphMapState";
 
 export function EditFractal({
   data,
@@ -55,7 +56,9 @@ export function EditFractal({
     <SettingsProvider>
       <DocModalProvider>
         <EditStoreProvider store={storeRef.current}>
-          <EditFractalLoaded />
+          <GraphMapParamProvider>
+            <EditFractalLoaded />
+          </GraphMapParamProvider>
         </EditStoreProvider>
       </DocModalProvider>
     </SettingsProvider>

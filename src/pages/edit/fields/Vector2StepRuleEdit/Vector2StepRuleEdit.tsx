@@ -14,7 +14,7 @@ import { useRuleData } from "./useRuleData";
 import { useViewport } from "./useViewport";
 import {
   Graph2DGrid,
-  GraphBackgroundColor,
+  GraphFillColor,
   GraphEdit,
   GraphViewportControls,
   Graph2DLine,
@@ -98,7 +98,7 @@ export const Vector2StepRuleEdit = ({
           axisRangeSizes={axisRangeSizes}
           offset={offset}
         >
-          <GraphBackgroundColor color='transparent' />
+          <GraphFillColor color={renderGraphMap ? "transparent" : "black"} />
           <Graph2DGrid renderRuler={defaultRenderGridRuler} />
           <Graph2DLine data={data} getColor={getColor} />
           <GraphViewportControls onViewportChange={setViewport} />

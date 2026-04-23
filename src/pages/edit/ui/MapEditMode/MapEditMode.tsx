@@ -4,7 +4,7 @@ import {
   defaultRenderGridRuler,
   Graph2DGrid,
   Graph2DLine,
-  GraphBackgroundColor,
+  GraphFillColor,
   GraphEdit,
   GraphValueClick,
   GraphViewportControls,
@@ -38,7 +38,7 @@ export const MapEditMode = ({
     <Stack>
       <div className={styles.graphContainer}>
         <GraphEdit axisRangeSizes={axisRangeSizes} offset={offset}>
-          <GraphBackgroundColor color='black' />
+          <GraphFillColor color='black' />
           <GraphFractalMap c={previewC} />
           <Graph2DGrid renderRuler={defaultRenderGridRuler} />
 

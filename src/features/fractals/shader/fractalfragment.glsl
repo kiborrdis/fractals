@@ -346,10 +346,9 @@ FractalInfo generateFractalIntensity(vec2 point) {
   vec2 normCentCoord = centCoord / u_resolution2.y;
 
   float normLenFromCenter = length(normCentCoord);
-  float normLenFromCenterClamped = clamp(normLenFromCenter, 0.0f, 1.0f);
 
   vec2 preparedCoord = centCoord;
-  vec2 coord = mirrorCoord(preparedCoord, normLenFromCenterClamped);
+  vec2 coord = mirrorCoord(preparedCoord, normLenFromCenter);
   vec2 fCoord = toFractalSpace(coord, u_fractal_r_range_start, u_fractal_r_range_end);
 
   float cx = u_fractal_c.x;
@@ -357,10 +356,10 @@ FractalInfo generateFractalIntensity(vec2 point) {
   float r = u_fractal_r;
   int maxIteration = int(u_max_iterations);
 
-  r = u_fractal_r + u_r_dist_variation * normLenFromCenterClamped;
-  maxIteration = maxIteration + int(u_iterations_dist_variation * normLenFromCenterClamped);
+  r = u_fractal_r + u_r_dist_variation * normLenFromCenter;
+  maxIteration = maxIteration + int(u_iterations_dist_variation * normLenFromCenter);
 
-  vec2 c0 = calcC0(vec2(cx, cy), u_c_dist_variation, normLenFromCenterClamped);
+  vec2 c0 = calcC0(vec2(cx, cy), u_c_dist_variation, normLenFromCenter);
   vec2 c = vec2(0.0f, 0.0f);
   vec2 z0 = vec2(0.0f, 0.0f);
   vec2 dz0 = vec2(1.0f, 0.0f);

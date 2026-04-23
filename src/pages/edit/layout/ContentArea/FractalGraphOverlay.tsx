@@ -3,7 +3,7 @@ import { convertRuleOrArrayToResult } from "@/shared/libs/numberRule";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
   GraphEdit,
-  GraphBackgroundColor,
+  GraphFillColor,
   GraphSelectArea,
   GraphViewportControls,
 } from "@/shared/ui/GraphEdit";
@@ -57,7 +57,7 @@ export const FractalGraphOverlay = () => {
   return (
     <div className={styles.container}>
       <GraphEdit axisRangeSizes={axisRangeSizes} offset={offset}>
-        <GraphBackgroundColor
+        <GraphFillColor
           color={trapEditMode ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0)"}
         />
         {selectAreaActive && (

@@ -14,7 +14,7 @@ import {
 import { Vector2 } from "@/shared/libs/vectors";
 import {
   GraphEdit,
-  GraphBackgroundColor,
+  GraphFillColor,
   Graph2DGrid,
   Graph2DLine,
   PointsEdit,
@@ -245,7 +245,7 @@ export const TimelineGraph = ({
         axisRangeSizes={axisRangeSizes}
         offset={offset}
       >
-        <GraphBackgroundColor color='black' />
+        <GraphFillColor color='black' />
         {(lineData.length !== 0 || vector2LineData.length !== 0) && (
           <Graph2DGrid
             xCellSize={100}

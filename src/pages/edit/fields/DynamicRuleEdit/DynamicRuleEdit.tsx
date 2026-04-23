@@ -11,10 +11,7 @@ import {
   GraphFractalMap,
   GraphFractalMultipointMap,
 } from "../../ui/GraphFractalMap";
-import {
-  GraphMapParamProvider,
-  useGraphMapParam,
-} from "../../stores/graphMapState";
+import { useGraphMapParam } from "../../stores/graphMapState";
 import { useSetting } from "../../stores/settings";
 import { MapEditMode } from "../../ui/MapEditMode/MapEditMode";
 import { Vector2 } from "@/shared/libs/vectors/types";
@@ -115,18 +112,16 @@ const ruleConfigs: RuleRenderers = {
 
   c: (props) => {
     return (
-      <GraphMapParamProvider>
-        <Vector2RuleEditContainer
-          label='Complex Constant (C)'
-          docKey='c'
-          docKey0='real'
-          docKey1='imaginary'
-          sublabels={["Real", "Imaginary"]}
-          renderGraphMap={renderGraphMapForC}
-          renderGraphMapEdit={renderGraphMapEditForC}
-          {...props}
-        />
-      </GraphMapParamProvider>
+      <Vector2RuleEditContainer
+        label='Complex Constant (C)'
+        docKey='c'
+        docKey0='real'
+        docKey1='imaginary'
+        sublabels={["Real", "Imaginary"]}
+        renderGraphMap={renderGraphMapForC}
+        renderGraphMapEdit={renderGraphMapEditForC}
+        {...props}
+      />
     );
   },
 

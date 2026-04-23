@@ -8,7 +8,7 @@ import { convertRuleOrArrayToResult } from "@/shared/libs/numberRule";
 import { Vector2 } from "@/shared/libs/vectors";
 import {
   GraphEdit,
-  GraphBackgroundColor,
+  GraphFillColor,
   Graph2DGrid,
   Graph2DLine,
   GraphValueHover,
@@ -73,7 +73,6 @@ export const RecordingTimelineGraph = ({
     },
     [rules, onDynamicParamOverride, onDynamicParamOverrideReset],
   );
-
   return (
     <div className={styles.graphContainer}>
       <GraphEdit
@@ -81,7 +80,7 @@ export const RecordingTimelineGraph = ({
         axisRangeSizes={axisRangeSizes}
         offset={offset}
       >
-        <GraphBackgroundColor color='black' />
+        <GraphFillColor color='black' />
         {(lineData.length !== 0 || vector2LineData.length !== 0) && (
           <Graph2DGrid xCellSize={100} centerAxis={false} />
         )}
