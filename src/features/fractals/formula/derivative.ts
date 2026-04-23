@@ -30,6 +30,14 @@ const customDerivatives: CustomDerivatives = {
     r: node.r,
   }),
 
+  log: (der, node, varName, ...rest) => {
+    if (node.t === CalcNodeType.FuncCall) {
+      node.n = "PLog";
+    }
+
+    return der(node, varName, ...rest);
+  },
+
   // I make an assumtion that there is no z in o[1].
   // If there were, it would be wrong derivative. For now I leave it like this
   rotate: (der, node, varName, ...rest) => {
@@ -68,6 +76,7 @@ const customDerivatives: CustomDerivatives = {
   }),
   cmpl: (_derivative, node) => node,
   conjugate: (_derivative, node) => node,
+  abs: (_derivative, node) => node,
 };
 
 export const derivative = (node: CalcNode): CalcNode => {

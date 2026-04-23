@@ -7,3 +7,4 @@ export * from "./error";
 export * from "./grammar";
 export * from "./parseFormula";
 export * from "./trackTypes";
+export * from "./fnAndVarDescr";

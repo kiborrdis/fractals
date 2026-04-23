@@ -1,4 +1,4 @@
-import { CalcNode, CalcNodeType } from "@/shared/libs/complexVariableFormula";
+import { CalcNode, CalcNodeType } from "./CalcNode";
 
 export type StdFnNames = {
   exp: string;

@@ -1,4 +1,4 @@
-import { CalcNode, ErrAtCalcNode } from "@/shared/libs/complexVariableFormula";
+import { CalcNode, ErrAtCalcNode } from "./CalcNode";
 
 export class ParseFormulaError extends Error {
   constructor(

@@ -1,13 +1,7 @@
-import {
-  CalcNode,
-  CalcNodeType,
-  forEachNodeChild,
-} from "@/shared/libs/complexVariableFormula";
+import { CalcNode, CalcNodeType } from "./CalcNode";
 import { CalcNodeResultType, CalcNodeResultTypeMap } from "./types";
-import {
-  funcNameToSignature,
-  varNameToType,
-} from "@/features/fractals/formula/fnAndVarDescr";
+import { funcNameToSignature, varNameToType } from "./fnAndVarDescr";
+import { forEachNodeChild } from "./utils";
 
 const isReal = (node: CalcNode): boolean => {
   return node.t === CalcNodeType.Number && node.im === 0;
@@ -41,6 +35,10 @@ const getTypeForNode = (
 ): CalcNodeResultType => {
   switch (node.t) {
     case CalcNodeType.Number:
+      if (isReal(node)) {
+        return "number";
+      }
+
       return "vector2";
     case CalcNodeType.Variable:
       return vars[node.v] ?? "error";
@@ -51,8 +49,13 @@ const getTypeForNode = (
         !signature ||
         node.o.length !== signature.params.length ||
         !node.o.every((pnode, i) => {
-          if (!map.has(pnode) && map.get(pnode) !== "error") {
+          if (!map.has(pnode) || map.get(pnode) === "error") {
             return false;
+          }
+
+          // We accept numbers to vector parameters, but not the opposite
+          if (signature.params[i] === "vector2") {
+            return true;
           }
 
           return map.get(pnode) === signature.params[i];
@@ -71,19 +74,8 @@ const getTypeForNode = (
         return "error";
       }
 
-      if (node.v === "^") {
-        if (rightP === "vector2") {
-          return "error";
-        }
-
-        if (leftP === "vector2") {
-          return "vector2";
-        }
-
-        return "vector2";
-      }
-
       if (
+        node.v === "^" ||
         node.v === "+" ||
         node.v === "-" ||
         node.v === "/" ||

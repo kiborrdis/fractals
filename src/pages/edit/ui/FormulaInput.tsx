@@ -10,6 +10,7 @@ import { mergeDocKeys } from "@/shared/ui/DocTooltip";
 import { HighlightedInputRange, HightlightInput } from "./HighlightInput";
 import {
   CalcNodeType,
+  calcTypesOfNodes,
   forEachNodeChild,
 } from "@/shared/libs/complexVariableFormula";
 
@@ -33,7 +34,6 @@ export const FormulaInput = ({
   const customVars = useCustomVars();
 
   const [formula, setFormula] = useState(value);
-  const [error, setError] = useState<string | null>(null);
 
   const customVarTypes: VarNameToTypeMap = useMemo(() => {
     return Object.entries(customVars).reduce(
@@ -48,39 +48,67 @@ export const FormulaInput = ({
     return new Set(Object.keys(customVarTypes));
   }, [customVarTypes]);
 
-  const ranges: HighlightedInputRange[] = useMemo(() => {
+  const [formulaNode, formulaTypes, error] = useMemo(() => {
     try {
       const node = parseFormula(formula);
-      const ranges: HighlightedInputRange[] = [];
+      let [valid, message] = validateFormula(node, customVarsSet);
+      const types = calcTypesOfNodes(node, customVarTypes);
 
-      forEachNodeChild(node, (child) => {
-        if (child.t === CalcNodeType.Variable) {
-          ranges.push({
-            r: child.r as [number, number],
-            data: { color: "#81C7FF" },
-          });
-        }
+      if (valid && types.get(node) === "error") {
+        valid = false;
+        message = "Type error in formula";
+      }
 
-        if (child.t === CalcNodeType.FuncCall) {
-          ranges.push({
-            r: child.r as [number, number],
-            data: { color: "#D4A5D4" },
-          });
-        }
-
-        if (child.t === CalcNodeType.Number) {
-          ranges.push({
-            r: child.r as [number, number],
-            data: { color: child.im ? "#80CBC4" : "#FFB366" },
-          });
-        }
-      });
-
-      return ranges;
+      return [node, types, valid ? null : message] as const;
     } catch {
+      return [null, new Map(), "Wrong formula"] as const;
+    }
+  }, [formula, customVarsSet, customVarTypes]);
+
+  const ranges: HighlightedInputRange[] = useMemo(() => {
+    if (!formulaNode) {
       return [];
     }
-  }, [formula]);
+
+    const ranges: HighlightedInputRange[] = [];
+
+    forEachNodeChild(formulaNode, (child) => {
+      if (child.t === CalcNodeType.Variable) {
+        ranges.push({
+          r: child.r as [number, number],
+          data: { color: "#81C7FF" },
+        });
+      }
+
+      if (child.t === CalcNodeType.FuncCall) {
+        // If the function call itself is not valid, highlight it as an error
+        if (
+          formulaTypes.get(child) === "error" &&
+          child.o.every((c) => formulaTypes.get(c) !== "error")
+        ) {
+          ranges.push({
+            r: child.r as [number, number],
+            data: { color: "#FF6E6E" },
+          });
+          return;
+        }
+
+        ranges.push({
+          r: child.r as [number, number],
+          data: { color: "#D4A5D4" },
+        });
+      }
+
+      if (child.t === CalcNodeType.Number) {
+        ranges.push({
+          r: child.r as [number, number],
+          data: { color: child.im ? "#80CBC4" : "#FFB366" },
+        });
+      }
+    });
+
+    return ranges;
+  }, [formulaNode, formulaTypes]);
 
   return (
     <HightlightInput
@@ -94,7 +122,6 @@ export const FormulaInput = ({
       onBlur={() => {
         if (error) {
           setFormula(value);
-          setError(null);
         } else {
           onChange(formula);
         }
@@ -104,21 +131,6 @@ export const FormulaInput = ({
       onChange={(e) => {
         const newFormula = e.target.value;
         setFormula(newFormula);
-
-        try {
-          const node = parseFormula(newFormula);
-
-          const [valid, message] = validateFormula(node, customVarsSet);
-          if (!valid) {
-            setError(message);
-            return;
-          }
-
-          setError(null);
-        } catch (e) {
-          console.log(e);
-          setError("Wrong formula");
-        }
       }}
     />
   );

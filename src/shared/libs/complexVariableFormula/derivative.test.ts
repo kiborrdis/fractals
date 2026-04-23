@@ -1,4 +1,4 @@
-import { CalcNode, CalcNodeType } from "@/shared/libs/complexVariableFormula";
+import { CalcNode, CalcNodeType } from "./CalcNode";
 import { expect, test, describe } from "vitest";
 import { derivative as baseDerivative } from "./derivative";
 import { parseFormula } from "./parseFormula";

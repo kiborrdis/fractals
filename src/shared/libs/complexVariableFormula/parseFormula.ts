@@ -3,15 +3,12 @@ import {
   CalcNodeError,
   CalcNodeNumber,
   CalcNodeType,
-  forEachNodeChild,
-} from "@/shared/libs/complexVariableFormula";
-import {
-  funcNameToSignature,
-  varNameToType,
-} from "@/features/fractals/formula/fnAndVarDescr";
+} from "./CalcNode";
+import { funcNameToSignature, varNameToType } from "./fnAndVarDescr";
 import { formulaGrammar } from "./grammar";
 import { ParseFormulaError } from "./error";
 import { GrammarParser } from "@/shared/libs/parseFormula";
+import { forEachNodeChild } from "./utils";
 
 export const parseFormula = (formula: string) => {
   if (formula.trim() === "") {
@@ -62,7 +59,7 @@ export const validateFormula = (
     ) {
       message = `Unknown variable "${node.v}", only ${[...allowedVars, ...customVars].join(", ")} are allowed`;
     } else if (node.t == CalcNodeType.FuncCall && !allowedFns.has(node.n)) {
-      message = `Unknown variable "${node.n}", only ${[...allowedFns, ...customVars].join(", ")} are allowed`;
+      message = `Unknown function "${node.n}", only ${[...allowedFns].join(", ")} are allowed`;
     }
   });
 

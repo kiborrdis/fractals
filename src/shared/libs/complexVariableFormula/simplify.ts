@@ -1,8 +1,4 @@
-import {
-  CalcNode,
-  CalcNodeNumber,
-  CalcNodeType,
-} from "@/shared/libs/complexVariableFormula";
+import { CalcNode, CalcNodeNumber, CalcNodeType } from "./CalcNode";
 
 const isReal = (node: CalcNode): boolean => {
   return node.t === CalcNodeType.Number && node.im === 0;

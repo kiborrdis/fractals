@@ -43,20 +43,14 @@ const julia: FractalParamsBuildRules = {
       dimension: 2,
     },
 
-    // Escape radius pulses gently
     r: {
-      t: RuleType.RangeNumber,
-      range: [3, 5],
-      period: 20,
-      phase: 0,
+      t: RuleType.StaticNumber,
+      value: 4,
     },
 
-    // Max iterations increases for more detail
     maxIterations: {
-      t: RuleType.RangeNumber,
-      range: [80, 150],
-      period: 40,
-      phase: 0,
+      t: RuleType.StaticNumber,
+      value: 100,
     },
 
     rlVisibleRange: [
@@ -148,7 +142,7 @@ const mandelbrot: FractalParamsBuildRules = {
     ],
     r: {
       t: 0,
-      value: 2,
+      value: 4,
     },
     rlVisibleRange: [
       {
@@ -199,7 +193,7 @@ const mandelbrot: FractalParamsBuildRules = {
 };
 
 const burningship: FractalParamsBuildRules = {
-  formula: "cmpl(abs(re(z)), abs(im(z)))^2 + c",
+  formula: "(abs(re(z)) + abs(im(z))*1i)^2 + c",
   gradients: [
     [
       [0, [0, 0, 0, 1]],

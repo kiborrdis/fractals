@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest";
-import { CalcNode, CalcNodeType } from "@/shared/libs/complexVariableFormula";
+import { CalcNode, CalcNodeType } from "./CalcNode";
 import { simplify } from "./simplify";
 import { parseFormula } from "./parseFormula";
 

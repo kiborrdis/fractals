@@ -172,6 +172,7 @@ const operationToFnMap: Record<string, string> = {
 
 const fnNameToFnMap: Record<string, string> = {
   PLog: "complexPLog",
+  log: "complexPLog",
   im: "im",
   re: "re",
   cmpl: "cmpl",
