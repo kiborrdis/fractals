@@ -6,8 +6,8 @@ export const animationFns: {
     d: Extract<StepTransitionFn, { t: K }>["data"],
   ) => number;
 } = {
-  linear: (t) => t,
   t: (t) => Math.pow(t, 2) * Math.sin((Math.PI * 17 * t) / 2),
+  linear: (t) => t,
   easeInSine: (t) => 1 - Math.cos((t * Math.PI) / 2),
   easeOutSine: (t) => Math.sin((t * Math.PI) / 2),
   easeInOutSine: (t) => -((Math.cos(Math.PI * t) - 1) / 2),

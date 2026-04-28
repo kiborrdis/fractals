@@ -52,30 +52,49 @@ export const TimelineBaseRuleEdit = ({
             </Stack>
           )}
           {editingRule.t === RuleType.RangeNumber && (
-            <Button
-              onClick={() => {
-                if (editingRule.t !== RuleType.RangeNumber) {
-                  return;
-                }
-                const partLen = editingRule.period / 2;
+            <Stack>
+              <NumberRuleEdit
+                canSwitchType={false}
+                max={10000}
+                min={-10000}
+                minRange={0.1}
+                name={"-"}
+                onChange={(_, val) => onRuleChange(val)}
+                step={0.1}
+                value={editingRule}
+              />
+              <Group justify='flex-end'>
+                <Tooltip label={"Convert to step rule "}>
+                  <Button
+                    size='xs'
+                    variant='outline'
+                    color='gray'
+                    onClick={() => {
+                      if (editingRule.t !== RuleType.RangeNumber) {
+                        return;
+                      }
+                      const partLen = editingRule.period / 2;
 
-                const r0: StepNumberRule = {
-                  t: RuleType.StepNumber,
-                  range: editingRule.range,
-                  steps: [0.5, 1, 0.5, 0],
-                  transitions: [
-                    { fn: { t: "linear" }, len: partLen },
-                    { fn: { t: "linear" }, len: partLen },
-                    { fn: { t: "linear" }, len: partLen },
-                    { fn: { t: "linear" }, len: partLen },
-                  ],
-                };
+                      const r0: StepNumberRule = {
+                        t: RuleType.StepNumber,
+                        range: editingRule.range,
+                        steps: [0.5, 1, 0.5, 0],
+                        transitions: [
+                          { fn: { t: "linear" }, len: partLen },
+                          { fn: { t: "linear" }, len: partLen },
+                          { fn: { t: "linear" }, len: partLen },
+                          { fn: { t: "linear" }, len: partLen },
+                        ],
+                      };
 
-                onRuleChange(r0);
-              }}
-            >
-              Transform to Step
-            </Button>
+                      onRuleChange(r0);
+                    }}
+                  >
+                    To step rule
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
           )}
         </>
       )}

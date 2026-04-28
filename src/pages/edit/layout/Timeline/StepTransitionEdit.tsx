@@ -71,10 +71,12 @@ const animationFnNameToLabel: {
   [K in StepTransitionFnType]?: string;
 } = {
   linear: "Linear",
-  easeInSine: "Ease in sine",
+  easeInSine: "Ease in",
+  easeOutSine: "Ease out",
+  easeInOutSine: "Ease in/out",
 };
 const animationOptions: { label: string; value: StepTransitionFnType }[] =
-  Object.keys(animationFns).map((fnName) => ({
+  Object.keys(animationFns).filter((fnName) => fnName in animationFnNameToLabel).map((fnName) => ({
     value: fnName as StepTransitionFnType,
     label: animationFnNameToLabel[fnName as StepTransitionFnType] || fnName,
   }));

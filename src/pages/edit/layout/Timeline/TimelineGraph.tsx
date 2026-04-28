@@ -134,7 +134,7 @@ export const TimelineGraph = ({
     rule.steps.forEach((stepValue, i) => {
       // Map step value (0-1) to display space (-1, 1)
       const displayValue = stepValue * 2 - 1;
-      points.push([startTime, displayValue]);
+      points.push([startTime, -displayValue]);
       startTime += rule.transitions[i].len * 1000;
     });
 
@@ -177,7 +177,7 @@ export const TimelineGraph = ({
 
       // newPos[0] is time in ms, newPos[1] is value in display space (-1, 1)
       // Convert display value back to step value (0-1)
-      const newValue = (newPos[1] + 1) / 2;
+      const newValue = (-newPos[1] + 1) / 2;
       const time = newPos[0];
 
       const newRule = moveRuleStep(editRule.rule, index, time, newValue);
