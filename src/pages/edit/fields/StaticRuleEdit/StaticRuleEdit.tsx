@@ -29,6 +29,7 @@ type RuleRenderers = {
 const ruleConfigs: RuleRenderers = {
   formula: (props) => (
     <FormulaInput
+      textarea
       vars={formulaVars}
       value={props.value as string}
       docKey='fractal-formula'

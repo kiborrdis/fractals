@@ -7,7 +7,11 @@ import { useMemo, useState } from "react";
 import { useCustomVars } from "../stores/editStore/data/useCustomVars";
 import { EditorDocTooltip } from "./EditorDocTooltip";
 import { mergeDocKeys } from "@/shared/ui/DocTooltip";
-import { HighlightedInputRange, HightlightInput } from "./HighlightInput";
+import {
+  HighlightedInputRange,
+  HightlightInput,
+  HightlightTextarea,
+} from "./HighlightInput";
 import {
   CalcNodeType,
   calcTypesOfNodes,
@@ -17,6 +21,7 @@ import {
 const defaultVars: VarNameToTypeMap = {};
 
 export const FormulaInput = ({
+  textarea = false,
   value,
   onChange,
   vars = defaultVars,
@@ -24,6 +29,7 @@ export const FormulaInput = ({
   docKey,
   label,
 }: {
+  textarea?: boolean;
   value: string;
   onChange: (newFormula: string) => void;
   vars?: VarNameToTypeMap;
@@ -109,6 +115,36 @@ export const FormulaInput = ({
 
     return ranges;
   }, [formulaNode, formulaTypes]);
+
+  if (textarea) {
+    return (
+      <HightlightTextarea
+        autosize
+        minRows={1}
+        maxRows={3}
+        ranges={ranges}
+        label={label}
+        placeholder={placeholder}
+        size='sm'
+        rightSection={
+          docKey ? <EditorDocTooltip docKeys={mergeDocKeys(docKey)} /> : null
+        }
+        onBlur={() => {
+          if (error) {
+            setFormula(value);
+          } else {
+            onChange(formula);
+          }
+        }}
+        error={error ? error : undefined}
+        value={formula}
+        onChange={(e) => {
+          const newFormula = e.target.value;
+          setFormula(newFormula);
+        }}
+      />
+    );
+  }
 
   return (
     <HightlightInput

@@ -38,25 +38,26 @@ export const ShapeParams = React.memo(() => {
   return (
     <Stack gap='sm'>
       <SettingsSection>
-        <Group align='center' gap='sm'>
+        <Group align='flex-start' gap='sm'>
           <div className={styles.formulaContainer}>
             <StaticRuleEdit name='formula' />
           </div>
-
-          <Menu position='bottom-end' shadow='md'>
-            <Menu.Target>
-              <Tooltip label='Actions' position='left'>
-                <ActionIcon size='sm' variant='transparent'>
-                  <FiMenu />
-                </ActionIcon>
-              </Tooltip>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item onClick={() => setPresetModalOpen(true)}>
-                Load preset
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          <div className={styles.formulaMenuContainer}>
+            <Menu position='bottom-end' shadow='md'>
+              <Menu.Target>
+                <Tooltip label='Actions' position='left'>
+                  <ActionIcon size='sm' variant='transparent'>
+                    <FiMenu />
+                  </ActionIcon>
+                </Tooltip>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item onClick={() => setPresetModalOpen(true)}>
+                  Load preset
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </div>
         </Group>
 
         <ModeEdit />

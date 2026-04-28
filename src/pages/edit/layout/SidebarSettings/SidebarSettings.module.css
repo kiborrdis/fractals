@@ -5,3 +5,8 @@
 .formulaContainer {
   flex: 1;
 }
+.formulaMenuContainer {
+  display: flex;
+  align-items: center;
+  height: 36px;
+}

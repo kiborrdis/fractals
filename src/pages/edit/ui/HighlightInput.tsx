@@ -1,10 +1,11 @@
-import { TextInput } from "@mantine/core";
+import { Textarea, TextInput } from "@mantine/core";
 import { ComponentProps } from "react";
 import {
   useInputHighlight,
   InputOverlay,
   HighlightedText,
   type HighlightedRange,
+  useTextareaHighlight,
 } from "@brightgoose/react-highlight";
 import styles from "./HighlightInput.module.css";
 
@@ -48,6 +49,47 @@ export const HightlightInput = ({
       />
       {displaying && (
         <InputOverlay ref={overlayRef} style={overlayStyle}>
+          <HighlightedText
+            text={String(props.value || "")}
+            ranges={ranges}
+            renderRange={renderRange}
+          />
+        </InputOverlay>
+      )}
+    </div>
+  );
+};
+
+export const HightlightTextarea = ({
+  ranges = [],
+  ...props
+}: ComponentProps<typeof Textarea> & {
+  ranges?: HighlightedInputRange[];
+}) => {
+  const {
+    containerRef,
+    inputRef,
+    overlayRef,
+    overlayStyle,
+    displaying,
+    onScroll,
+  } = useTextareaHighlight();
+
+  return (
+    <div ref={containerRef} className={styles.container}>
+      <Textarea
+        {...props}
+        ref={inputRef}
+        onScroll={onScroll}
+        styles={{
+          input: {
+            color: displaying ? "transparent" : undefined,
+            caretColor: displaying ? "var(--mantine-color-text)" : undefined,
+          },
+        }}
+      />
+      {displaying && (
+        <InputOverlay textarea ref={overlayRef} style={overlayStyle}>
           <HighlightedText
             text={String(props.value || "")}
             ranges={ranges}
