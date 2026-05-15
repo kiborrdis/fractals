@@ -8,8 +8,7 @@
     "target": "es2022",
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": true,
-    "downlevelIteration": true
+    "noEmit": true
   },
   "include": ["vite.config.ts", "vite-plugins/**/*", "codegen/**/*", "scripts/**/*"]
 }

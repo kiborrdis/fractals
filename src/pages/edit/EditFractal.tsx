@@ -26,6 +26,7 @@ import { ContentArea } from "./layout/ContentArea/ContentArea";
 import { EditorSettings } from "./layout/EditorSettings/EditorSettings";
 import { ShareButton } from "./ShareButton";
 import { GraphMapParamProvider } from "./stores/graphMapState";
+import { useDocModal } from "@/shared/ui/DocTooltip/DocModalContext";
 
 export function EditFractal({
   data,
@@ -70,6 +71,11 @@ export function EditFractalLoaded() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { play, timeMultiplier } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed } = useActions();
+  const { openDoc } = useDocModal();
+
+  useEffect(() => {
+    openDoc(['introduction']);
+  }, []);
 
   const handleExitRecording = useCallback(() => {
     setIsRecordingMode(false);

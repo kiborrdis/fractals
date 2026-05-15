@@ -18,7 +18,7 @@ export default function generateDocsPlugin(): Plugin {
 
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const match = req.url?.match(/^\/assets\/docs\/(.+\.md)$/);
+        const match = req.url?.match(/^\/assets\/docs\/(.+\.md|assets\/.*)$/);
         if (!match) return next();
 
         const filename = match[1];
@@ -27,6 +27,13 @@ export default function generateDocsPlugin(): Plugin {
         if (!fs.existsSync(filePath)) {
           res.statusCode = 404;
           res.end('Not found');
+          return;
+        }
+
+        if (!filename.endsWith('.md')) {
+          res.setHeader('Content-Type', 'application/octet-stream');
+          const fileStream = fs.createReadStream(filePath);
+          fileStream.pipe(res);
           return;
         }
 
@@ -53,8 +60,14 @@ export default function generateDocsPlugin(): Plugin {
       if (!fs.existsSync(DOCS_OUTPUT_DIR)) {
         fs.mkdirSync(DOCS_OUTPUT_DIR, { recursive: true });
       }
+      const rawFiles = fs.readdirSync(DOCS_SOURCE_DIR);
+      const files = rawFiles.filter(f => f.endsWith('.md'));
 
-      const files = fs.readdirSync(DOCS_SOURCE_DIR).filter(f => f.endsWith('.md'));
+      const assetsFolder = rawFiles.find(f => f === 'assets');
+
+      if (assetsFolder) {
+        fullDirCopy(path.join(DOCS_SOURCE_DIR, assetsFolder), path.join(DOCS_OUTPUT_DIR, 'assets'));
+      }
 
       files.forEach(file => {
         const filePath = path.join(DOCS_SOURCE_DIR, file);
@@ -70,3 +83,22 @@ export default function generateDocsPlugin(): Plugin {
     }
   };
 }
+
+const fullDirCopy = (src: string, dest: string) => {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+
+  entries.forEach(entry => {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      fullDirCopy(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  });
+};

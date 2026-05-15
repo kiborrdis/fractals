@@ -33,3 +33,4 @@ dist-ssr
 .output.json
 
 src/generated
+public-docs/.obsidian
