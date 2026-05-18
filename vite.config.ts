@@ -10,6 +10,19 @@ const root = resolve(__dirname, "src");
 
 export default defineConfig({
   plugins: [
+    {
+      name: 'inject-analytics',
+      transformIndexHtml(html) {
+        const analyticsUrl = process.env.VITE_ANALYTICS_URL;
+        if (analyticsUrl) {
+          return html.replace(
+            '</head>',
+            `<script async src="${analyticsUrl}"></script>\n</head>`
+          );
+        }
+        return html;
+      },
+    },
     generateDocsPlugin(),
     tanstackRouter({
       target: "react",
