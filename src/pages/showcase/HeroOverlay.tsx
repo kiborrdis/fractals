@@ -1,5 +1,6 @@
 import { FaGithub } from "react-icons/fa";
 import styles from "./HeroOverlay.module.css";
+import { Link } from "@tanstack/react-router";
 
 export const HeroOverlay = () => {
   return (
@@ -22,12 +23,20 @@ export const HeroOverlay = () => {
           Real-time GPU-rendered fractal art with custom animations.
         </p>
         <div className={styles.buttons}>
-          <a
-            href='/edit'
+          <Link
+            to='/edit'
+            search={{ s: "" }}
             className={styles.primaryButton + " " + styles.editorButton}
           >
             Create Your Own
-          </a>
+          </Link>
+          <Link
+            search={{ p: 1 }}
+            to='/gallery'
+            className={styles.primaryButton + " " + styles.galleryButton}
+          >
+            View Gallery
+          </Link>
           <p className={styles.description + " " + styles.usePCNote}>
             Use a Desktop or a Laptop to create your own
           </p>

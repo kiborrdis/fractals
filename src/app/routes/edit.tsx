@@ -44,6 +44,7 @@ function EditPage() {
         const base64 = await serializeBuildRules(data);
 
         navigate({
+          replace: true,
           from: Route.id,
           to: Route.id,
           search: (old) => ({
