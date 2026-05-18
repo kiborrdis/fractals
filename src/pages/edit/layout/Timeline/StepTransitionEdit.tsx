@@ -76,7 +76,9 @@ const animationFnNameToLabel: {
   easeInOutSine: "Ease in/out",
 };
 const animationOptions: { label: string; value: StepTransitionFnType }[] =
-  Object.keys(animationFns).filter((fnName) => fnName in animationFnNameToLabel).map((fnName) => ({
-    value: fnName as StepTransitionFnType,
-    label: animationFnNameToLabel[fnName as StepTransitionFnType] || fnName,
-  }));
+  Object.keys(animationFns)
+    .filter((fnName) => fnName in animationFnNameToLabel)
+    .map((fnName) => ({
+      value: fnName as StepTransitionFnType,
+      label: animationFnNameToLabel[fnName as StepTransitionFnType] || fnName,
+    }));

@@ -61,7 +61,7 @@ export const FractalViewportToolbar = memo(
           />
           <Divider orientation='vertical' />
           <DocTooltip
-            docKeys={mergeDocKeys("main-content-area")}
+            docKeys={mergeDocKeys("introduction")}
             anchor={<ToolbarItem icon={BiQuestionMark} color='gray' />}
           />
         </Group>

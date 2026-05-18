@@ -427,8 +427,6 @@ FractalInfo generateFractalIntensity(vec2 point) {
     xSqrd = z.x * z.x;
     ySqrd = z.y * z.y;
 
-
-
     period = period + 1;
     if (period > 25) {
       zPrev = z;

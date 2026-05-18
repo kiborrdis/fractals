@@ -20,7 +20,7 @@ export const GraphViewportControls = ({
 }) => {
   const { size, axisRangeSizes, offset, options, getBoundPos } =
     useGraphEditContext();
-  const { elementHandlers } = useDrag({
+  const { elementHandlers, dragInProgress } = useDrag({
     canStartDrag: true,
     onDragStart: () => {
       onPanToggle?.(true);
@@ -75,5 +75,16 @@ export const GraphViewportControls = ({
     priority,
   );
 
-  return null;
+  return dragInProgress ? (
+    <div
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        cursor: "grabbing",
+      }}
+    />
+  ) : null;
 };

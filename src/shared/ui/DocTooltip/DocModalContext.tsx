@@ -70,10 +70,11 @@ export const DocModalProvider = ({
         <Modal
           opened={opened}
           onClose={closeModal}
-          size='md'
+          size='lg'
           styles={{
             header: {
               position: "absolute",
+              backgroundColor: "transparent",
               right: 0,
             },
           }}

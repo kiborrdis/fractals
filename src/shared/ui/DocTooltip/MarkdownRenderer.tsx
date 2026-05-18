@@ -146,7 +146,7 @@ export function MarkdownRenderer({
         return (
           <img
             key={tokenKey}
-            src={'/assets/docs/' + imageToken.href}
+            src={"/assets/docs/" + imageToken.href}
             alt={imageToken.text || ""}
             className={styles.image}
           />

@@ -21,7 +21,7 @@ import styles from "./EditFractal.module.css";
 import { DocModalProvider } from "@/shared/ui/DocTooltip";
 import { TbSettings, TbVideo } from "react-icons/tb";
 import { RecordingScreen } from "./Recording/RecordingScreen";
-import { SettingsProvider } from "./stores/settings";
+import { SettingsProvider, useSettings } from "./stores/settings";
 import { ContentArea } from "./layout/ContentArea/ContentArea";
 import { EditorSettings } from "./layout/EditorSettings/EditorSettings";
 import { ShareButton } from "./ShareButton";
@@ -71,11 +71,6 @@ export function EditFractalLoaded() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { play, timeMultiplier } = useAnimationData();
   const { toggleAnimation, changeAnimationSpeed } = useActions();
-  const { openDoc } = useDocModal();
-
-  useEffect(() => {
-    openDoc(['introduction']);
-  }, []);
 
   const handleExitRecording = useCallback(() => {
     setIsRecordingMode(false);
@@ -99,6 +94,7 @@ export function EditFractalLoaded() {
           breakpoint: "xs",
         }}
       >
+        <Introduction />
         <AppShellAside className={styles.asideContainer}>
           <Group
             bg='dark.8'
@@ -155,3 +151,18 @@ export function EditFractalLoaded() {
     </div>
   );
 }
+
+const Introduction = () => {
+  const { openDoc } = useDocModal();
+  const { settings, setSetting } = useSettings();
+  const introductionSeen = settings.introductionSeen;
+
+  useEffect(() => {
+    if (!introductionSeen) {
+      openDoc(["introduction"]);
+      setSetting("introductionSeen", true);
+    }
+  }, [introductionSeen, openDoc, setSetting]);
+
+  return null;
+};
