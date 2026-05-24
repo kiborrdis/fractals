@@ -36,6 +36,7 @@ export function EditFractal({
   onSave?: (data: FractalParamsBuildRules) => void;
 }) {
   const storeRef = useRef<ReturnType<typeof createEditStore>>(null);
+  const savedRef = useRef<FractalParamsBuildRules>(data);
 
   if (!storeRef.current) {
     storeRef.current = createEditStore(data);
@@ -47,8 +48,9 @@ export function EditFractal({
     }
 
     return storeRef.current.subscribe((state) => {
-      if (onSave) {
+      if (savedRef.current !== state.fractal && onSave) {
         onSave(state.fractal);
+        savedRef.current = state.fractal;
       }
     });
   }, [onSave]);
