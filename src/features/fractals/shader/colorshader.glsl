@@ -80,7 +80,7 @@ vec4 createTrapGradient(float dist, int gradRow, int wl) {
   return color;
 }
 
-vec4 createGradient(float part, int maxIterations, int gradRow, int wl) {
+vec4 createGradient(float part, float maxIterations, int gradRow, int wl) {
   int numColors = wl * 2;
   vec2 texDim = vec2(GRADIENT_TEXTURE_LENGTH, GRADIENT_TEXTURE_ROWS);
   if (numColors == 0) {
@@ -105,9 +105,9 @@ vec4 createGradient(float part, int maxIterations, int gradRow, int wl) {
 
     vec4 texel = texture(u_gradients_sampler, getTexCoord(vec2(i, float(gradRow)), texDim));
     float stopCoord = decodeUnsignedFloat(texture(u_gradients_sampler, getTexCoord(vec2(i + 1, float(gradRow)), texDim)));
-    float curPos = stopCoord / float(maxIterations);
+    float curPos = stopCoord / maxIterations;
 
-    if (stopCoord > float(maxIterations)) {
+    if (stopCoord > maxIterations) {
       if (nextBailOut) {
         curPos = 1.0f;
         texel = texture(u_gradients_sampler, getTexCoord(vec2(numColors - 2, float(gradRow)), texDim));
@@ -248,7 +248,7 @@ vec4 doColoring(FractalInfo info) {
     // Time escape gradient coloring
     if (coloringMode == 1) {
       float colorInt = info.escapeIteration / u_max_iterations;
-      currentColor = createGradient(colorInt, int(u_max_iterations), gradId, u_gradient_wls[gradId]);
+      currentColor = createGradient(colorInt, u_max_iterations, gradId, u_gradient_wls[gradId]);
      
       // 8-bit per color channel are too small sometimes for smooth gradients, add dithering to hide this shameful fact
       float dither = (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898f, 78.233f))) * 43758.5453f) - 0.5f) / 255.0f;

@@ -21,7 +21,6 @@ const resetIdleTimeout = () => {
     clearTimeout(idleTimeoutId);
   }
   idleTimeoutId = setTimeout(() => {
-    console.log("Worker idle timeout - terminating");
     self.close();
   }, IDLE_TIMEOUT_MS);
 };

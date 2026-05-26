@@ -1,6 +1,7 @@
 import { Vector2 } from "@/shared/libs/vectors";
 import { FractalImage } from "./FractalImage";
 import { FractalMapImage } from "./FractaMapImage";
+import { WebGLError } from "../errors";
 
 const createMemoryTexture = (
   context: WebGL2RenderingContext,
@@ -61,17 +62,8 @@ export const createRendererContext = (context: WebGL2RenderingContext) => {
 export type FractalRendererContext = ReturnType<typeof createRendererContext>;
 
 export class FractalsRenderer {
-  private lastCamera: {
-    offset: Vector2;
-    scale: number;
-  } = {
-    offset: [0, 0],
-    scale: 1,
-  };
-
   private canvasSize: Vector2;
   private rendererContext: FractalRendererContext;
-  private lastRenderTime: number = 0;
   private timeQueryExtension: {
     TIME_ELAPSED_EXT: number;
   } | null = null;
@@ -97,16 +89,12 @@ export class FractalsRenderer {
 
     const floatExt = this.context.getExtension("EXT_color_buffer_float");
     if (!floatExt) {
-      console.error(
-        "EXT_color_buffer_float not supported — RGBA32F FBO will fail",
-      );
+      throw new WebGLError("EXT_color_buffer_float not supported — RGBA32F FBO will fail");
     }
 
     const ext = this.context.getExtension("OES_texture_float_linear");
     if (!ext) {
-      console.error(
-        "OES_texture_float_linear not supported — linear filtering on floating point textures will not work",
-      );
+      throw new WebGLError("OES_texture_float_linear not supported — linear filtering on floating point textures will not work");
     }
 
     this.tex0 = createMemoryTexture(context, canvasSize);
@@ -115,18 +103,18 @@ export class FractalsRenderer {
     this.framebuffer = context.createFramebuffer();
   }
 
-  public resize(newSize: Vector2, render: boolean = true): Promise<number> {
+  public resize(newSize: Vector2): void {
     if (
       newSize[0] === this.canvasSize[0] &&
       newSize[1] === this.canvasSize[1]
     ) {
-      return Promise.resolve(-1);
+      return;
     }
 
     this.canvasSize = newSize;
 
     if (newSize[0] <= 0 || newSize[1] <= 0) {
-      return Promise.resolve(-1);
+      return;
     }
 
     this.context.deleteTexture(this.tex0);
@@ -134,12 +122,6 @@ export class FractalsRenderer {
 
     this.tex0 = createMemoryTexture(this.context, this.canvasSize);
     this.tex1 = createMemoryTexture(this.context, this.canvasSize);
-
-    if (!render) {
-      return Promise.resolve(0);
-    }
-
-    return this.render(this.lastRenderTime, this.lastCamera);
   }
 
   public render(
@@ -154,14 +136,12 @@ export class FractalsRenderer {
       return Promise.resolve(-1);
     }
 
-    this.lastCamera = camera;
 
     let resolve: (value: number) => void = () => {};
     const renderPromise = new Promise<number>((newResolve) => {
       resolve = newResolve;
     });
 
-    this.lastRenderTime = time;
     const context = this.rendererContext.context;
     let query: WebGLQuery | null = null;
     if (this.timeQueryExtension) {
@@ -173,8 +153,6 @@ export class FractalsRenderer {
     context.viewport(0, 0, ...this.canvasSize);
     context.clearColor(1, 1, 1, 1);
     context.clear(context.COLOR_BUFFER_BIT);
-    // context.enable(context.BLEND);
-    // context.blendFunc(context.SRC_ALPHA, context.ONE_MINUS_SRC_ALPHA);
 
     const gridRows = this.grid.length;
 

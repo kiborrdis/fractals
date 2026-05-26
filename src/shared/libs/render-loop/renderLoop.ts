@@ -27,6 +27,7 @@ export class RenderLoop {
       loopDuration?: number;
     },
     maxFps: number = 60,
+    private onError?: (error: unknown) => void,
   ) {
     this.timeSinceStart = params.initialTime || 0;
     this.multiplier = params.timeMultiplier || 1;
@@ -122,6 +123,12 @@ export class RenderLoop {
       this.callback({
         timeDelta,
         timeSinceStart: this.timeSinceStart,
+      }).catch((error) => {
+        if (this.onError) {
+          this.onError(error);
+          return;
+        }
+        throw error;
       });
     }
   }

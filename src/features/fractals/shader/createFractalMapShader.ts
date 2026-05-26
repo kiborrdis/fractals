@@ -19,6 +19,7 @@ import {
   createMapParamsUniformApplier,
   createResolutionUniformApplier2,
 } from "./prepareFractalUniforms";
+import { WebGLError } from "../errors";
 
 export const createFractalMapShader = (
   context: WebGL2RenderingContext,
@@ -73,7 +74,7 @@ export const createFractalMapShader = (
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
 
   if (!shaderProgram) {
-    throw new Error("Shader program is undefined");
+    throw new WebGLError("Shader program is undefined");
   }
 
   const memory = new UniformApplierMemory();

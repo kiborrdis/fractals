@@ -33,8 +33,6 @@ export const DisplayFractal = () => {
       return;
     }
 
-    console.log("render");
-
     params.formula = "z^4 - z^-2/20 + sin(z/10) + zp + c";
     params.dynamic.maxIterations = {
       t: RuleType.StaticNumber,
@@ -63,9 +61,7 @@ export const DisplayFractal = () => {
       [width, height],
       [[fractalMap]],
     );
-    renderer.render(0, { offset: [0, 0], scale: 1 }).then((time) => {
-      console.log("Render time:", time);
-    });
+    renderer.render(0, { offset: [0, 0], scale: 1 });
     fractalRef.current = renderer;
 
     return () => {

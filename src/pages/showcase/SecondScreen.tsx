@@ -1,98 +1,40 @@
-import { FractalParamsBuildRules } from "@/features/fractals";
+import { DisplayFractal, FractalParamsBuildRules } from "@/features/fractals";
 import styles from "./SecondScreen.module.css";
-import { useEffect, useRef, useState } from "react";
-import { createFractalVisualizer } from "@/features/fractals/fractals";
-import { DisplayCanvas } from "@/shared/ui/DisplayCanvas/DisplayCanvas";
+import { useMemo, useState } from "react";
 import { exampleFractal } from "./exampleFractal";
 import {
-  extractMaxValueFromRule,
-  makeNumberFromRangeRule,
-  RuleType,
+  makeRuleFromNumber,
 } from "@/shared/libs/numberRule";
 import { GradientLine } from "./GradientLine";
 
 const DisplayExampleFractal = ({
-  time,
+  maxIterations,
   fractal,
 }: {
-  time: number;
+  maxIterations: number;
   fractal: FractalParamsBuildRules;
 }) => {
-  const [[width, height], setSize] = useState([0, 0]);
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
-  const visualizerRef = useRef<{
-    resize: (newSize: [number, number]) => void;
-    loop: {
-      stop: () => void;
-      run: () => void;
-      currentTime: number;
-    };
-  } | null>(null);
-
-  useEffect(() => {
-    if (!canvas || width === 0 || height === 0) {
-      return;
-    }
-
-    const visializer = createFractalVisualizer(
-      canvas,
-      [width, height],
-      fractal,
-      {
-        play: false,
-        time: fractal.initialTime ?? 0,
-        timeMultiplier: 1,
-        maxFps: 0,
+  const updatedParams = useMemo(() => {
+    return {
+      ...fractal,
+      dynamic: {
+        ...fractal.dynamic,
+        maxIterations: makeRuleFromNumber(maxIterations),
       },
-    );
-
-    visualizerRef.current = visializer;
-    return () => {
-      visializer.loop.stop();
     };
-    // This is intentional, only recreate visualizer if new canvas element
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canvas]);
+  }, [fractal, maxIterations]);
 
-  useEffect(() => {
-    if (visualizerRef.current) {
-      visualizerRef.current.resize([width, height]);
-    }
-  }, [width, height]);
-
-  useEffect(() => {
-    if (visualizerRef.current) {
-      visualizerRef.current.loop.currentTime = time;
-    }
-  }, [time]);
-
-  return (
-    <DisplayCanvas
-      ref={setCanvas}
-      width={width === 0 ? undefined : width}
-      height={height === 0 ? undefined : height}
-      onSizeChange={setSize}
-    />
-  );
+  return <DisplayFractal params={updatedParams} play={false} />;
 };
 
 const SecondScreen = () => {
-  const [time, setTime] = useState(0);
-  const fractalInitialTime = exampleFractal.initialTime ?? 0;
-  const minTime = -fractalInitialTime;
-  const maxTime =
-    exampleFractal.dynamic.maxIterations.t === RuleType.StepNumber
-      ? exampleFractal.dynamic.maxIterations.transitions.reduce(
-          (sum, rule) => sum + rule.len * 1000,
-          -1 - fractalInitialTime,
-        )
-      : 1000;
-  const maxIter = extractMaxValueFromRule(exampleFractal.dynamic.maxIterations);
+  const maxIter = exampleFractal.gradients[0][exampleFractal.gradients[0].length - 1][0];
+  const [maxIterations, setMaxIterations] = useState(40);
 
   return (
     <div className={styles.secondScreen}>
       <div className={styles.secondScreenLeft}>
-        <DisplayExampleFractal time={time} fractal={exampleFractal} />
+        <DisplayExampleFractal maxIterations={maxIterations} fractal={exampleFractal} />
       </div>
       <div className={styles.secondScreenRight}>
         <div className={styles.secondScreenContent}>
@@ -127,13 +69,10 @@ const SecondScreen = () => {
             <GradientLine
               gradient={exampleFractal.gradients[0]}
               maxIterations={maxIter}
-              currentIteration={makeNumberFromRangeRule(
-                exampleFractal.dynamic.maxIterations,
-                time + fractalInitialTime,
-              )}
-              minValue={minTime}
-              maxValue={maxTime}
-              onChange={setTime}
+              currentIteration={maxIterations}
+              minValue={1}
+              maxValue={maxIter}
+              onChange={setMaxIterations}
             />
           </div>
           <p>

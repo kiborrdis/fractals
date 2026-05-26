@@ -5,6 +5,7 @@ import { createFractalShader, FractalShader } from "./createFractalShader";
 import { FractalRendererContext } from "./FractalsRenderer";
 import { ColoringShader, createColoringShader } from "./createColoringShader";
 import { isVector2Rule } from "@/shared/libs/numberRule";
+import { WebGLError } from "../errors";
 
 const convertCustomVarsToTypes = (customVars: Record<string, unknown>) => {
   return Object.entries(customVars).reduce(
@@ -77,7 +78,7 @@ export class FractalImage {
 
     const status = context.checkFramebufferStatus(context.FRAMEBUFFER);
     if (status !== context.FRAMEBUFFER_COMPLETE) {
-      throw new Error("Framebuffer not complete: " + status.toString());
+      throw new WebGLError("Framebuffer not complete: " + status.toString());
     }
   }
 

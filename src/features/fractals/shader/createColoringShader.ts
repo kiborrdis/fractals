@@ -13,6 +13,7 @@ import {
 import vertex from "./fractalvertex.glsl?raw";
 import fragment from "./colorshader.glsl?raw";
 import { createGradientTexture } from "./texture";
+import { WebGLError } from "../errors";
 
 export const createColoringShader = (context: WebGL2RenderingContext) => {
   const vertexShader = createShader(context, context.VERTEX_SHADER, vertex);
@@ -25,7 +26,7 @@ export const createColoringShader = (context: WebGL2RenderingContext) => {
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
 
   if (!shaderProgram) {
-    throw new Error("Shader program is undefined");
+    throw new WebGLError("Shader program is undefined");
   }
 
   const memory = new UniformApplierMemory();

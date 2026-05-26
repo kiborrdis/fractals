@@ -81,12 +81,16 @@ export const GraphEdit = ({
 
       renderFns.forEach(([fn]) => {
         if (ctx) {
-          fn(ctx, {
-            offset,
-            axisRangeSizes,
-            size,
-            options,
-          });
+          try {
+            fn(ctx, {
+              offset,
+              axisRangeSizes,
+              size,
+              options,
+            });
+          } catch (error) {
+            console.error("Error in canvas render function:", error);
+          }
         }
       });
     },

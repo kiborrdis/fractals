@@ -2,14 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { DisplayCanvas } from "@/shared/ui/DisplayCanvas/DisplayCanvas";
 import { FractalParamsBuildRules } from "./types";
 import { createShowcaseFractalsVisualizer } from "./fractals";
+import { useErrorBoundary } from "@/shared/ui/ErrorBoundary/ErrorBoundary";
+import { withFractalErrorBoundary } from "./DisplayFractalError";
 
-export const DisplayFractals = ({
-  play,
-  fractals,
-}: {
+type DisplayFractalsProps = {
   play: boolean;
   fractals: FractalParamsBuildRules[][];
-}) => {
+};
+
+export const DisplayFractals = withFractalErrorBoundary('DisplayFractals', ({
+  play,
+  fractals,
+}: DisplayFractalsProps) => {
   const [[width, height], setSize] = useState([0, 0]);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const visualizerRef = useRef<{
@@ -19,6 +23,7 @@ export const DisplayFractals = ({
       run: () => void;
     };
   } | null>(null);
+  const reportError = useErrorBoundary();
 
   useEffect(() => {
     if (!canvas) {
@@ -30,6 +35,7 @@ export const DisplayFractals = ({
       [width, height],
       fractals,
       { play },
+      reportError,
     );
     visualizerRef.current = visializer;
     return () => {
@@ -64,4 +70,4 @@ export const DisplayFractals = ({
       onSizeChange={setSize}
     />
   );
-};
+});

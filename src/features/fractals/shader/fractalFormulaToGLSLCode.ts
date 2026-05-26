@@ -8,6 +8,7 @@ import {
   validateFormula,
 } from "@/shared/libs/complexVariableFormula/parseFormula";
 import { VarNameToTypeMap } from "../formula/fnAndVarDescr";
+import { FractalFormulaError } from "../errors";
 
 export const fractalFormulaToGLSLCode = (
   formula: string,
@@ -20,11 +21,11 @@ export const fractalFormulaToGLSLCode = (
     node = parseFormulaFn(formula);
     node = simplify(node);
   } catch (e) {
-    throw new Error("fractalFormulaToGLSLCode: failed to parse formula " + e);
+    throw new FractalFormulaError("fractalFormulaToGLSLCode: failed to parse formula " + e);
   }
 
   if (!node) {
-    throw new Error("fractalFormulaToGLSLCode: failed to parse formula");
+    throw new FractalFormulaError("fractalFormulaToGLSLCode: failed to parse formula");
   }
   const [valid, msg] = validateFormula(
     node,
@@ -32,7 +33,7 @@ export const fractalFormulaToGLSLCode = (
   );
 
   if (!valid) {
-    throw new Error('fractalFormulaToGLSLCode: invalid formula "' + msg + '"');
+    throw new FractalFormulaError('fractalFormulaToGLSLCode: invalid formula "' + msg + '"');
   }
 
   const pow = getMaxZPower(node) || 0;
@@ -158,7 +159,7 @@ const transformToGLSLCode = (
         .map((n) => transformToGLSLCode(n, map, variableTransform))
         .join(", ")})`;
     case CalcNodeType.Error:
-      throw new Error("CalcNodeError met during GLSL code generation");
+      throw new FractalFormulaError("CalcNodeError met during GLSL code generation");
   }
 };
 

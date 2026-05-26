@@ -8,6 +8,7 @@ import { createCameraUniformApplier } from "./prepareFractalUniforms";
 import vertex from "./fractalvertex.glsl?raw";
 import fragment from "./mapcolorshader.glsl?raw";
 import { Vector2 } from "@/shared/libs/vectors";
+import { WebGLError } from "../errors";
 
 const createDataApplier = (
   ctx: WebGL2RenderingContext,
@@ -35,7 +36,7 @@ export const createMapColoringShader = (context: WebGL2RenderingContext) => {
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
 
   if (!shaderProgram) {
-    throw new Error("Shader program is undefined");
+    throw new WebGLError("Shader program is undefined");
   }
 
   const memory = new UniformApplierMemory();

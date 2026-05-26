@@ -21,6 +21,7 @@ import {
   createFractalUniformApplier,
   createResolutionUniformApplier,
 } from "./prepareFractalUniforms";
+import { FractalFormulaError, WebGLError } from "../errors";
 
 export const createFractalShader = (
   context: WebGL2RenderingContext,
@@ -53,7 +54,7 @@ export const createFractalShader = (
       const node = simplify(derivative(parseFormula(formula)));
 
       if (node.t === CalcNodeType.Error) {
-        throw new Error("Derivative formula must result in an error node");
+        throw new FractalFormulaError("Derivative formula must result in an error node");
       }
 
       return node;
@@ -104,7 +105,7 @@ export const createFractalShader = (
   const shaderProgram = createProgram(context, vertexShader, fragmentShader);
 
   if (!shaderProgram) {
-    throw new Error("Shader program is undefined");
+    throw new WebGLError("Shader program is undefined");
   }
 
   const memory = new UniformApplierMemory();

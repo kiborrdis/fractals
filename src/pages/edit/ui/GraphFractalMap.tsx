@@ -31,7 +31,6 @@ export const GraphFractalMultipointMap = () => {
 
 export const GraphFractalMap = ({
   c,
-  priority,
 }: {
   c: Vector2;
   priority?: number;
@@ -67,7 +66,6 @@ export const GraphFractalMap = ({
 
   return (
     <GraphFractalSimpleMapView
-      priority={priority}
       c={c}
       formula={formula}
       gradient={BACKGROUND_GRADIENT}

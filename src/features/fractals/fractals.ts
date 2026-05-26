@@ -3,6 +3,7 @@ import { FractalsRenderer } from "./shader/FractalsRenderer";
 import { Vector2 } from "@/shared/libs/vectors";
 import { FractalImage } from "./shader/FractalImage";
 import { RenderLoop } from "@/shared/libs/render-loop";
+import { WebGLError } from "./errors";
 
 const BUDGET = 500;
 
@@ -26,19 +27,30 @@ export const createFractalVisualizer = (
     offset: [0, 0],
     scale: 1,
   },
+  onError?: (error: unknown) => void,
 ) => {
   let camera = initialCamera;
 
   const context = canvas.getContext("webgl2", { antialias: true });
   if (!context) {
-    throw new Error("WebGL2 context initialization failed");
+    throw new WebGLError("WebGL2 context initialization failed");
   }
 
   const fractalImage = new FractalImage(context, initialFractalParams);
   const renderer = new FractalsRenderer(context, canvasSize, [[fractalImage]]);
   const firstRenderTime = loopParams.time ?? 0;
 
-  renderer.render(firstRenderTime, camera);
+  const render: typeof renderer.render = (...args) => {
+    return renderer.render(...args).catch((error) => {
+      if (onError) {
+        onError(error);
+        return -1;
+      }
+      throw error;
+    });
+  }
+
+  render(firstRenderTime, camera);
   renderCallback?.(firstRenderTime);
 
   const iterationCallback = async ({
@@ -46,7 +58,7 @@ export const createFractalVisualizer = (
   }: {
     timeSinceStart: number;
   }) => {
-    renderer.render(timeSinceStart, camera).then((renderTimeMs: number) => {
+    const promise = render(timeSinceStart, camera).then((renderTimeMs: number) => {
       if (loopParams.maxFps === 0) {
         return;
       }
@@ -63,6 +75,8 @@ export const createFractalVisualizer = (
     if (renderCallback) {
       renderCallback(timeSinceStart);
     }
+
+    return promise;
   };
 
   const loop = new RenderLoop(
@@ -75,22 +89,25 @@ export const createFractalVisualizer = (
       loopDuration: loopParams.loopDuration,
     },
     loopParams.maxFps,
+    onError,
   );
 
   const updateParams = (newParams: FractalParamsBuildRules): Promise<void> => {
     fractalImage.updateParams(newParams);
-    return renderer.render(loop.currentTime, camera).then(() => {});
-  };
 
+    return render(loop.currentTime, camera).then(() => {});
+  };
+  
   return {
     loop,
     updateParams,
     setCamera: (newCamera: { offset: Vector2; scale: number }) => {
       camera = newCamera;
-      renderer.render(loop.currentTime, camera);
+      render(loop.currentTime, camera);
     },
     resize: (newSize: Vector2) => {
       renderer.resize(newSize);
+      render(loop.currentTime, camera);
     },
   };
 };
@@ -100,10 +117,11 @@ export const createShowcaseFractalsVisualizer = (
   canvasSize: Vector2,
   fractals: FractalParamsBuildRules[][],
   params: { play: boolean } = { play: true },
+  onError?: (error: unknown) => void,
 ) => {
   const context = canvas.getContext("webgl2", { antialias: true });
   if (!context) {
-    throw new Error("WebGL2 context initialization failed");
+    throw new WebGLError("WebGL2 context initialization failed");
   }
 
   const fractalImagesGrid: FractalImage[][] = fractals.map((row) => {
@@ -117,15 +135,24 @@ export const createShowcaseFractalsVisualizer = (
     fractalImagesGrid,
   );
 
-  renderer.render(0, { offset: [0, 0], scale: 1 }, true);
+  const render: typeof renderer.render = (...args): Promise<number> => {
+    return renderer.render(...args).catch((error) => {
+      if (onError) {
+        onError(error);
+        return -1;
+      }
+      throw error;
+    });
+  }
+
+  render(0, { offset: [0, 0], scale: 1 }, true);
 
   const iterationCallback = async ({
     timeSinceStart,
   }: {
     timeSinceStart: number;
   }) => {
-    renderer
-      .render(timeSinceStart, { offset: [0, 0], scale: 1 }, true)
+    return render(timeSinceStart, { offset: [0, 0], scale: 1 }, true)
       .then((renderTimeMs: number) => {
         if (renderTimeMs < 0) {
           return;
@@ -146,6 +173,7 @@ export const createShowcaseFractalsVisualizer = (
       timeMultiplier: 1,
     },
     60,
+    onError,
   );
 
   return {
@@ -155,6 +183,7 @@ export const createShowcaseFractalsVisualizer = (
     },
     resize: (newSize: Vector2) => {
       renderer.resize(newSize);
+      render(loop.currentTime, { offset: [0, 0], scale: 1 }, true);
     },
   };
 };

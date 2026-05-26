@@ -10,6 +10,7 @@ import {
   createMapColoringShader,
   MapColoringShader,
 } from "./createMapColoringShader";
+import { WebGLError } from "../errors";
 
 const convertCustomVarsToTypes = (customVars: Record<string, unknown>) => {
   return Object.entries(customVars).reduce(
@@ -82,7 +83,7 @@ export class FractalMapImage {
 
     const status = context.checkFramebufferStatus(context.FRAMEBUFFER);
     if (status !== context.FRAMEBUFFER_COMPLETE) {
-      throw new Error("Framebuffer not complete: " + status.toString());
+      throw new WebGLError("Framebuffer not complete: " + status.toString());
     }
   }
 

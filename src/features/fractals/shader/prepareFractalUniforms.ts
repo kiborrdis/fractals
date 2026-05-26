@@ -80,7 +80,7 @@ export const createMapFractalUniformApplier = (
   createUniformApplier<FractalParams>(ctx, program, memory, [
     ["2f", "u_fractal_c", (data) => data.dynamic.c],
     ["1f", "u_fractal_r", (data) => data.dynamic.r],
-    ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
+    ["1f", "u_max_iterations", (data) => Math.round(data.dynamic.maxIterations)],
     [
       "2f",
       "u_fractal_r_range_start",
@@ -109,7 +109,7 @@ export const createFractalUniformApplier = (
   createUniformApplier<FractalParams>(ctx, program, memory, [
     ["2f", "u_fractal_c", (data) => data.dynamic.c],
     ["1f", "u_fractal_r", (data) => data.dynamic.r],
-    ["1f", "u_max_iterations", (data) => data.dynamic.maxIterations],
+    ["1f", "u_max_iterations", (data) => Math.round(data.dynamic.maxIterations)],
     [
       "2f",
       "u_fractal_r_range_start",
