@@ -28,6 +28,19 @@ export const createResolutionUniformApplier = (
     ["2f", "u_resolution2", (data) => data.renderResolution],
   ]);
 
+export const createColoringResolutionUniformApplier = (
+  ctx: WebGL2RenderingContext,
+  program: WebGLProgram,
+  memory: UniformApplierMemory,
+) =>
+  createUniformApplier<{
+    fullResolution: [number, number];
+    renderResolution: [number, number];
+  }>(ctx, program, memory, [
+    ["2f", "u_resolution", (data) => data.fullResolution],
+  ]);
+
+
 export const createResolutionUniformApplier2 = (
   ctx: WebGL2RenderingContext,
   program: WebGLProgram,
@@ -78,7 +91,6 @@ export const createMapFractalUniformApplier = (
   memory: UniformApplierMemory,
 ) =>
   createUniformApplier<FractalParams>(ctx, program, memory, [
-    ["2f", "u_fractal_c", (data) => data.dynamic.c],
     ["1f", "u_fractal_r", (data) => data.dynamic.r],
     ["1f", "u_max_iterations", (data) => Math.round(data.dynamic.maxIterations)],
     [

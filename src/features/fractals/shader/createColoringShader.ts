@@ -6,8 +6,8 @@ import {
 } from "@/shared/libs/webgl";
 import {
   createCameraUniformApplier,
+  createColoringResolutionUniformApplier,
   createColoringUniformApplier,
-  createResolutionUniformApplier,
   createTimeUniformApplier,
 } from "./prepareFractalUniforms";
 import vertex from "./fractalvertex.glsl?raw";
@@ -50,7 +50,7 @@ export const createColoringShader = (context: WebGL2RenderingContext) => {
     shaderProgram,
     memory,
   );
-  const applyResolutionParams = createResolutionUniformApplier(
+  const applyResolutionParams = createColoringResolutionUniformApplier(
     context,
     shaderProgram,
     memory,
@@ -62,7 +62,6 @@ export const createColoringShader = (context: WebGL2RenderingContext) => {
     applyCameraParams,
     applyResolutionParams,
     applyFractalData,
-    applyTime: createTimeUniformApplier(context, shaderProgram, memory),
     cleanup: () => {
       context.deleteProgram(shaderProgram);
 
