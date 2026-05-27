@@ -54,7 +54,9 @@ export const createFractalShader = (
       const node = simplify(derivative(parseFormula(formula)));
 
       if (node.t === CalcNodeType.Error) {
-        throw new FractalFormulaError("Derivative formula must result in an error node");
+        throw new FractalFormulaError(
+          "Derivative formula must result in an error node",
+        );
       }
 
       return node;

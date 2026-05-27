@@ -1,7 +1,5 @@
 import { Vector2 } from "@/shared/libs/vectors";
-import {
-  useGraphEditContext,
-} from "@/shared/ui/GraphEdit/context";
+import { useGraphEditContext } from "@/shared/ui/GraphEdit/context";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FractalsRenderer } from "./shader/FractalsRenderer";
 import { FractalParamsBuildRules, GradientStop } from "./types";
@@ -71,7 +69,7 @@ export const GraphFractalSimpleMap = ({
     offset,
     gradient,
     formula,
-    c
+    c,
   );
 
   return <DisplayFractal params={params} play={false} />;

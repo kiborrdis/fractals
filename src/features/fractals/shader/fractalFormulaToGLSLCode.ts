@@ -278,5 +278,5 @@ const fnNameToFnMap: Record<string, string> = {
   len: "length",
   clamp: "clamp",
   mod: "mod",
-  normalize: 'complexNormalize'
+  normalize: "complexNormalize",
 };

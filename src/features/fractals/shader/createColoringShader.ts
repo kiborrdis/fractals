@@ -8,7 +8,6 @@ import {
   createCameraUniformApplier,
   createColoringResolutionUniformApplier,
   createColoringUniformApplier,
-  createTimeUniformApplier,
 } from "./prepareFractalUniforms";
 import vertex from "./fractalvertex.glsl?raw";
 import fragment from "./colorshader.glsl?raw";

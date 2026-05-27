@@ -29,12 +29,7 @@ export const GraphFractalMultipointMap = () => {
   return <GraphFractalMultipointMapView fractal={fractal} />;
 };
 
-export const GraphFractalMap = ({
-  c,
-}: {
-  c: Vector2;
-  priority?: number;
-}) => {
+export const GraphFractalMap = ({ c }: { c: Vector2; priority?: number }) => {
   const formula = useFractalFormula();
 
   const canRender = useMemo(() => {

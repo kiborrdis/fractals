@@ -48,7 +48,7 @@ export const createFractalVisualizer = (
       }
       throw error;
     });
-  }
+  };
 
   render(firstRenderTime, camera);
   renderCallback?.(firstRenderTime);
@@ -58,19 +58,23 @@ export const createFractalVisualizer = (
   }: {
     timeSinceStart: number;
   }) => {
-    const promise = render(timeSinceStart, camera).then((renderTimeMs: number) => {
-      if (loopParams.maxFps === 0) {
-        return;
-      }
+    const promise = render(timeSinceStart, camera).then(
+      (renderTimeMs: number) => {
+        if (loopParams.maxFps === 0) {
+          return;
+        }
 
-      if (renderTimeMs < 0) {
-        loop.maxFps = 30;
-        return;
-      }
+        if (renderTimeMs < 0) {
+          loop.maxFps = 30;
+          return;
+        }
 
-      loop.maxFps =
-        renderTimeMs > 0 ? Math.min(60, Math.floor(BUDGET / renderTimeMs)) : 60;
-    });
+        loop.maxFps =
+          renderTimeMs > 0
+            ? Math.min(60, Math.floor(BUDGET / renderTimeMs))
+            : 60;
+      },
+    );
 
     if (renderCallback) {
       renderCallback(timeSinceStart);
@@ -97,7 +101,7 @@ export const createFractalVisualizer = (
 
     return render(loop.currentTime, camera).then(() => {});
   };
-  
+
   return {
     loop,
     updateParams,
@@ -143,7 +147,7 @@ export const createShowcaseFractalsVisualizer = (
       }
       throw error;
     });
-  }
+  };
 
   render(0, { offset: [0, 0], scale: 1 }, true);
 
@@ -152,8 +156,8 @@ export const createShowcaseFractalsVisualizer = (
   }: {
     timeSinceStart: number;
   }) => {
-    return render(timeSinceStart, { offset: [0, 0], scale: 1 }, true)
-      .then((renderTimeMs: number) => {
+    return render(timeSinceStart, { offset: [0, 0], scale: 1 }, true).then(
+      (renderTimeMs: number) => {
         if (renderTimeMs < 0) {
           return;
         }
@@ -162,7 +166,8 @@ export const createShowcaseFractalsVisualizer = (
           renderTimeMs > 0
             ? Math.min(60, Math.floor(BUDGET / renderTimeMs))
             : 60;
-      });
+      },
+    );
   };
 
   const loop = new RenderLoop(

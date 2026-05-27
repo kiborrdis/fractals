@@ -89,5 +89,6 @@ export const funcNameToSignature: Record<
   },
   normalize: {
     params: ["vector2"],
-    return: "vector2",}
+    return: "vector2",
+  },
 };

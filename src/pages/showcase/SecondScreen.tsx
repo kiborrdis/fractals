@@ -2,9 +2,7 @@ import { DisplayFractal, FractalParamsBuildRules } from "@/features/fractals";
 import styles from "./SecondScreen.module.css";
 import { useMemo, useState } from "react";
 import { exampleFractal } from "./exampleFractal";
-import {
-  makeRuleFromNumber,
-} from "@/shared/libs/numberRule";
+import { makeRuleFromNumber } from "@/shared/libs/numberRule";
 import { GradientLine } from "./GradientLine";
 
 const DisplayExampleFractal = ({
@@ -28,13 +26,17 @@ const DisplayExampleFractal = ({
 };
 
 const SecondScreen = () => {
-  const maxIter = exampleFractal.gradients[0][exampleFractal.gradients[0].length - 1][0];
+  const maxIter =
+    exampleFractal.gradients[0][exampleFractal.gradients[0].length - 1][0];
   const [maxIterations, setMaxIterations] = useState(40);
 
   return (
     <div className={styles.secondScreen}>
       <div className={styles.secondScreenLeft}>
-        <DisplayExampleFractal maxIterations={maxIterations} fractal={exampleFractal} />
+        <DisplayExampleFractal
+          maxIterations={maxIterations}
+          fractal={exampleFractal}
+        />
       </div>
       <div className={styles.secondScreenRight}>
         <div className={styles.secondScreenContent}>

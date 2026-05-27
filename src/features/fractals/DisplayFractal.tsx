@@ -7,12 +7,8 @@ import { FractalParamsBuildRules } from "./types";
 import { throttle } from "@/shared/libs/fn-modifiers/throttle";
 import { DisplayCanvas } from "@/shared/ui/DisplayCanvas/DisplayCanvas";
 import { Vector2 } from "@/shared/libs/vectors";
-import {
-  useErrorBoundary,
-} from "@/shared/ui/ErrorBoundary/ErrorBoundary";
-import {
-  withFractalErrorBoundary,
-} from "./DisplayFractalError";
+import { useErrorBoundary } from "@/shared/ui/ErrorBoundary/ErrorBoundary";
+import { withFractalErrorBoundary } from "./DisplayFractalError";
 
 const defaultInitialState = { time: 0 };
 const defaultOffset: Vector2 = [0, 0];
@@ -165,7 +161,7 @@ export const DisplayFractal = withFractalErrorBoundary(
         fractalRerenderRef.current?.(params);
         onRender?.(fractalRef.current.loop.currentTime);
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialLoopState, onRender]);
 
     return (

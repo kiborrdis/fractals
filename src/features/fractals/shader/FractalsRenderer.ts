@@ -89,12 +89,16 @@ export class FractalsRenderer {
 
     const floatExt = this.context.getExtension("EXT_color_buffer_float");
     if (!floatExt) {
-      throw new WebGLError("EXT_color_buffer_float not supported — RGBA32F FBO will fail");
+      throw new WebGLError(
+        "EXT_color_buffer_float not supported — RGBA32F FBO will fail",
+      );
     }
 
     const ext = this.context.getExtension("OES_texture_float_linear");
     if (!ext) {
-      throw new WebGLError("OES_texture_float_linear not supported — linear filtering on floating point textures will not work");
+      throw new WebGLError(
+        "OES_texture_float_linear not supported — linear filtering on floating point textures will not work",
+      );
     }
 
     this.tex0 = createMemoryTexture(context, canvasSize);
@@ -135,7 +139,6 @@ export class FractalsRenderer {
     if (this.canvasSize[0] <= 0 || this.canvasSize[1] <= 0) {
       return Promise.resolve(-1);
     }
-
 
     let resolve: (value: number) => void = () => {};
     const renderPromise = new Promise<number>((newResolve) => {
