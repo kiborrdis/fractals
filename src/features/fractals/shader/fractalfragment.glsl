@@ -166,12 +166,20 @@ vec2 hexMirror(vec2 centeredCoord, float height) {
   return resultCoords;
 }
 
-vec2 re(vec2 v) {
-  return vec2(v.x, 0.0f);
+float re(vec2 v) {
+  return v.x;
 }
 
-vec2 im(vec2 v) {
-  return vec2(v.y, 0.0f);
+float im(vec2 v) {
+  return v.y;
+}
+
+vec2 complexNormalize(vec2 v) {
+  float len = length(v);
+  if (len > 0.0f) {
+    return v / len;
+  }
+  return vec2(0.0f);
 }
 
 vec2 cmpl(float x, float y) {
@@ -215,8 +223,8 @@ vec2 complexMirror(vec2 i) {
   return vec2(i.y, i.x);
 }
 
-vec2 complexRotate(vec2 i, vec2 ang) {
-  return rotate(ang.x, i);
+vec2 complexRotate(vec2 i, float ang) {
+  return rotate(ang, i);
 }
 
 vec2 complexMul(vec2 a, vec2 b) {

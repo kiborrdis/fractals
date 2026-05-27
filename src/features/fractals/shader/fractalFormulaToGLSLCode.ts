@@ -1,6 +1,8 @@
 import {
   CalcNode,
   CalcNodeType,
+  calcTypesOfNodes,
+  funcNameToSignature,
   simplify,
 } from "@/shared/libs/complexVariableFormula";
 import {
@@ -21,36 +23,44 @@ export const fractalFormulaToGLSLCode = (
     node = parseFormulaFn(formula);
     node = simplify(node);
   } catch (e) {
-    throw new FractalFormulaError("fractalFormulaToGLSLCode: failed to parse formula " + e);
+    throw new FractalFormulaError(
+      "fractalFormulaToGLSLCode: failed to parse formula " + e,
+    );
   }
 
   if (!node) {
-    throw new FractalFormulaError("fractalFormulaToGLSLCode: failed to parse formula");
+    throw new FractalFormulaError(
+      "fractalFormulaToGLSLCode: failed to parse formula",
+    );
   }
   const [valid, msg] = validateFormula(
     node,
     new Set([...Object.keys(customVars ?? {}), ...Object.keys(vars)]),
   );
 
+  const types = calcTypesOfNodes(node, { ...vars, ...customVars });
+
   if (!valid) {
-    throw new FractalFormulaError('fractalFormulaToGLSLCode: invalid formula "' + msg + '"');
+    throw new FractalFormulaError(
+      'fractalFormulaToGLSLCode: invalid formula "' + msg + '"',
+    );
   }
 
   const pow = getMaxZPower(node) || 0;
 
-  const res = transformToGLSLCode(
-    node,
-    {
+  const res = transformToGLSLCode(node, {
+    map: {
       ...vars,
       ...customVars,
     },
-    (varName: string) => {
+    nodeTypeMap: types,
+    variableTransform: (varName: string) => {
       if (customVars[varName]) {
         return `u_cstm_${varName}`;
       }
       return varName;
     },
-  );
+  });
 
   return [res, pow] as const;
 };
@@ -109,59 +119,135 @@ const getMaxZPower = (node: CalcNode): number | null => {
   }
 };
 
+const identity = <T>(x: T) => x;
 const transformToGLSLCode = (
   node: CalcNode,
-  map: VarNameToTypeMap,
-  variableTransform = (varName: string) => varName,
+  context: {
+    map: VarNameToTypeMap;
+    nodeTypeMap: Map<CalcNode, "number" | "vector2" | "error">;
+    variableTransform?: (varName: string) => string;
+  },
 ): string => {
+  const { nodeTypeMap, variableTransform = identity } = context;
+
   switch (node.t) {
     case CalcNodeType.Number: {
-      const im = String(node.im).includes(".")
-        ? String(node.im)
-        : `${String(node.im)}.0`;
-      const re = String(node.re).includes(".")
-        ? String(node.re)
-        : `${String(node.re)}.0`;
+      if (nodeTypeMap.get(node) === "number") {
+        return toGlslFloat(node.re);
+      }
+
+      const im = toGlslFloat(node.im);
+      const re = toGlslFloat(node.re);
 
       return `vec2(${re}, ${im})`;
     }
     case CalcNodeType.Variable:
-      if (map[node.v] === "number") {
-        return `vec2(${variableTransform(node.v)}, 0.0)`;
-      }
-
       return `${variableTransform(node.v)}`;
     case CalcNodeType.Operation: {
       if (node.v !== "^") {
-        return `${operationToFnMap[node.v]}(${transformToGLSLCode(
-          node.c[0],
-          map,
-          variableTransform,
-        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
-      } else {
-        if (node.c[1].t === CalcNodeType.Number && node.c[1].im === 0) {
-          return `complexRealPow(${transformToGLSLCode(
-            node.c[0],
-            map,
-            variableTransform,
-          )}, ${transformToGLSLCode(node.c[1], map, variableTransform)}.x)`;
+        const arg1Type = nodeTypeMap.get(node.c[0]);
+        const arg2Type = nodeTypeMap.get(node.c[1]);
+
+        const arg1 = matchType(
+          transformToGLSLCode(node.c[0], context),
+          nodeTypeMap.get(node.c[0]),
+          nodeTypeMap.get(node),
+        );
+
+        const arg2 = matchType(
+          transformToGLSLCode(node.c[1], context),
+          nodeTypeMap.get(node.c[1]),
+          nodeTypeMap.get(node),
+        );
+
+        if (arg1Type === "number" && arg2Type === "number") {
+          return `(${arg1} ${node.v} ${arg2})`;
         }
 
-        return `${operationToFnMap[node.v]}(${transformToGLSLCode(
-          node.c[0],
-          map,
-          variableTransform,
-        )}, ${transformToGLSLCode(node.c[1], map, variableTransform)})`;
+        return `${operationToFnMap[node.v]}(${arg1}, ${arg2})`;
+      } else {
+        const arg1Type = nodeTypeMap.get(node.c[0]);
+        const arg2Type = nodeTypeMap.get(node.c[1]);
+
+        if (arg1Type === "number" && arg2Type === "number") {
+          const arg1 = transformToGLSLCode(node.c[0], context);
+          const arg2 = transformToGLSLCode(node.c[1], context);
+          return `pow(${arg1}, ${arg2})`;
+        }
+
+        const arg1 = matchType(
+          transformToGLSLCode(node.c[0], context),
+          arg1Type,
+          nodeTypeMap.get(node),
+        );
+
+        if (node.c[1].t === CalcNodeType.Number && node.c[1].im === 0) {
+          const arg2 = matchType(
+            transformToGLSLCode(node.c[1], context),
+            nodeTypeMap.get(node.c[1]),
+            "number",
+          );
+          return `complexRealPow(${arg1}, ${arg2})`;
+        }
+
+        const arg2 = matchType(
+          transformToGLSLCode(node.c[1], context),
+          arg2Type,
+          nodeTypeMap.get(node),
+        );
+
+        return `${operationToFnMap[node.v]}(${arg1}, ${arg2})`;
       }
     }
     case CalcNodeType.FuncCall:
       return `${fnNameToFnMap[node.n]}(${node.o
-        .map((n) => transformToGLSLCode(n, map, variableTransform))
+        .map((n, i) => {
+          let argType: "number" | "vector2" | "error" | null =
+            funcNameToSignature[node.n]?.params[i] ?? null;
+          if (argType === "error") {
+            argType = null;
+          }
+
+          return matchType(
+            transformToGLSLCode(n, context),
+            nodeTypeMap.get(n),
+            argType ?? undefined,
+          );
+        })
         .join(", ")})`;
     case CalcNodeType.Error:
-      throw new FractalFormulaError("CalcNodeError met during GLSL code generation");
+      throw new FractalFormulaError(
+        "CalcNodeError met during GLSL code generation",
+      );
   }
 };
+
+const matchType = (
+  str: string,
+  currentType?: "number" | "vector2" | "error",
+  targetType?: "number" | "vector2" | "error",
+): string => {
+  if (!currentType || !targetType) {
+    return str;
+  }
+
+  if (currentType === targetType) {
+    return str;
+  }
+
+  if (currentType === "number" && targetType === "vector2") {
+    return `vec2(${str}, 0.0)`;
+  }
+
+  if (currentType === "vector2" && targetType === "number") {
+    return `${str}.x`;
+  }
+
+  return str;
+};
+
+const toGlslFloat = (num: number): string =>
+  String(num).includes(".") ? String(num) : `${String(num)}.0`;
 
 const operationToFnMap: Record<string, string> = {
   "+": "complexAdd",
@@ -189,4 +275,8 @@ const fnNameToFnMap: Record<string, string> = {
   exp: "complexExp",
   tan: "complexTan",
   abs: "abs",
+  len: "length",
+  clamp: "clamp",
+  mod: "mod",
+  normalize: 'complexNormalize'
 };

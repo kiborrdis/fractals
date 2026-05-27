@@ -75,4 +75,19 @@ export const funcNameToSignature: Record<
     params: ["vector2"],
     return: "vector2",
   },
+  len: {
+    params: ["vector2"],
+    return: "number",
+  },
+  clamp: {
+    params: ["number", "number", "number"],
+    return: "number",
+  },
+  mod: {
+    params: ["number", "number"],
+    return: "number",
+  },
+  normalize: {
+    params: ["vector2"],
+    return: "vector2",}
 };

@@ -77,6 +77,10 @@ const customDerivatives: CustomDerivatives = {
   cmpl: (_derivative, node) => node,
   conjugate: (_derivative, node) => node,
   abs: (_derivative, node) => node,
+  len: (_derivative, node) => node,
+  clamp: (_derivative, node) => node,
+  mod: (_derivative, node) => node,
+  normalize: (_derivative, node) => node,
 };
 
 export const derivative = (node: CalcNode): CalcNode => {

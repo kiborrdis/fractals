@@ -35,12 +35,12 @@ vec2 rotate(float angle, vec2 uv) {
   return vec2(newU, newV);
 }
 
-vec2 re(vec2 v) {
-  return vec2(v.x, 0.0f);
+float re(vec2 v) {
+  return v.x;
 }
 
-vec2 im(vec2 v) {
-  return vec2(v.y, 0.0f);
+float im(vec2 v) {
+  return v.y;
 }
 
 float atan2(float y, float x) {
@@ -67,6 +67,14 @@ float vectorAngle(vec2 v) {
   return angle;
 }
 
+vec2 complexNormalize(vec2 v) {
+  float len = length(v);
+  if (len > 0.0f) {
+    return v / len;
+  }
+  return vec2(0.0f);
+}
+
 vec2 complexExp(vec2 i) {
   float expVal = exp(i.x);
   return vec2(expVal * cos(i.y), expVal * sin(i.y));
@@ -80,8 +88,8 @@ vec2 complexMirror(vec2 i) {
   return vec2(i.y, i.x);
 }
 
-vec2 complexRotate(vec2 i, vec2 ang) {
-  return rotate(ang.x, i);
+vec2 complexRotate(vec2 i, float ang) {
+  return rotate(ang, i);
 }
 
 vec2 complexMul(vec2 a, vec2 b) {
